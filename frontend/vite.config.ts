@@ -16,7 +16,7 @@ export default defineConfig({
     host: true,
     port: 3000,//When not running with docker compose, this is the port which will be used in docker
     hmr: {
-      protocol: 'ws://',
+      //protocol: 'ws://',
       overlay: false
     },
   }
