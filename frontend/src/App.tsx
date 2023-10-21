@@ -2,6 +2,7 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import './App.css';
 import GetAllUser from "./components/GetAllUser";
+import GetProfile from "./components/GetProfile";
 import GetHome from "./components/GetHome";
 import PostCreateUser from "./components/PostCreateUser";
 import PostLogin from "./components/PostLogin";
@@ -18,6 +19,7 @@ export default function App() {
         <Route path="home" element={<PrivateRoute><GetHome /></PrivateRoute>} />
         <Route path="logout" element={<PrivateRoute><PostLogout /></PrivateRoute>} />
         <Route path="get" element={<PrivateRoute><GetAllUser /></PrivateRoute>} />
+        <Route path="profile/*" element={<PrivateRoute><GetProfile /></PrivateRoute>} />
       </Routes>
     </BrowserRouter>
   );

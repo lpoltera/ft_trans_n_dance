@@ -1,13 +1,14 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { Friendship } from './entities/friends.entity';
+import { User } from '../user/entities/user.entity';
 
 @Injectable()
 export class FriendsService {
   constructor(
-    @InjectRepository(Friendship)
-    private readonly friendRepository: Repository<Friendship>,
+    @InjectRepository(User) private readonly userDB: Repository<User>,
+    @InjectRepository(Friendship) private readonly friendRepository: Repository<Friendship>,
   ) {}
 
   // create(createFriendDto: CreateFriendDto) {
@@ -101,10 +102,16 @@ export class FriendsService {
         },
       ],
     });
-    return friendValidate;
-    // const allFriends = friendValidate.map((friend) => friend.user.id)
 
-    // return User[];
+    const friendValidateOK = friendValidate.map(item => item.friendId != userId ? item.friendId : item.userId);
+    friendValidateOK.unshift(userId);
+
+    const userFriends = await this.userDB.find({
+      where: {
+        id: In(friendValidateOK),
+      },
+    });
+    return userFriends;
   }
 
   // findOne(id: number) {
