@@ -4,6 +4,7 @@ import { ClassTransformer } from 'class-transformer';
 import { defaultIfEmpty } from 'rxjs';
 import { RelationCountMetadata } from 'typeorm/metadata/RelationCountMetadata';
 import { Friendship } from "../../friends/entities/friends.entity"
+import { MatchsHistory } from '../../matchs-history/entities/matchs-history.entity';
 
 @Entity()
 export class User {
@@ -28,10 +29,16 @@ export class User {
   friends: Friendship[];
   // @OneToMany( ? => ?)
   // historyMatch: string;
-
+  
+  @OneToMany(() => MatchsHistory, matchs => matchs.user_p1)
+  matchsHistory: MatchsHistory[];
 
   @Column()
   connected: string;
+
+  // @Column()
+  // scoresTotal: number;
+
 
   //...
 }
