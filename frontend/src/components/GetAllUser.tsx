@@ -7,6 +7,7 @@ interface User {
   username: string;
   password: string;
   avatar: string;
+  connected: string;
 }
 
 interface AlertProps {
@@ -78,6 +79,7 @@ const GetAllUser: React.FC = () => {
                   <h3>ID: {user.id}</h3>
                   username: {user.username} <br />
                   avatar: {user.avatar} <br />
+				  connected: {user.connected} <br />
                   <button
                     type="button"
                     onClick={() => handleClick("" + user.id)}

@@ -22,6 +22,7 @@ export class UserController {
     const user = await this.userService.login(loginDto);
     session.user = user
     session.connected = true
+	// session.user.connected = true
     return { message: 'Login successful'};
   }
   @Get("/all")
@@ -32,7 +33,8 @@ export class UserController {
 
   @Post("/logout")
   async logout(@Session() session : Record<string, any>) {
-    return await session.destroy(() => {});
+	await session.destroy(() => {});
+	return await this.userService.logout(session.user.username); 
   }
  
   @Get("/connected")

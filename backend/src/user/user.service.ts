@@ -21,7 +21,7 @@ export class UserService {
         if (!av)
         av = "default_img"
         const hash = await bcrypt.hash(password, 10)
-        const user = this.userDB.create({...newUser,password : hash, avatar : av}) //friends: []
+        const user = this.userDB.create({...newUser,password: hash, avatar: av, connected: "déconnecté"}) //friends: []
         await this.userDB.save(user)
         return "User Created!"
     } catch (error) {
@@ -37,7 +37,14 @@ export class UserService {
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch)
       throw new UnauthorizedException("Username not found or invalid password")
-    return user
+	user.connected = "connecté";
+    return await this.userDB.save(user)
+  }
+
+  async logout(username: string) {
+	const user = await this.userDB.findOne({where : {username : username}});
+	user.connected = "déconnecté";
+	return await this.userDB.save(user);
   }
   
   async findAll() {

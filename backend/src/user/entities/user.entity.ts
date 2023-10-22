@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany, ManyToMany, JoinTable } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany, ManyToMany, JoinTable, JoinColumn } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import { ClassTransformer } from 'class-transformer';
 import { defaultIfEmpty } from 'rxjs';
@@ -28,6 +28,10 @@ export class User {
   friends: Friendship[];
   // @OneToMany( ? => ?)
   // historyMatch: string;
+
+
+  @Column()
+  connected: string;
 
   //...
 }

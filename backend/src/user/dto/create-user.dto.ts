@@ -17,5 +17,7 @@ export class CreateUserDto {
 
 	readonly avatar?: string;
 
+	readonly connected?: string;
+
 	readonly friends?: Friendship[];
 }
