@@ -2,7 +2,6 @@ import {IsEmail, IsNotEmpty, IsStrongPassword, Length, IsMobilePhone, IsOptional
 import { Friendship } from 'src/friends/entities/friends.entity';
 export class CreateUserDto {
 
-	//rajouter les exigences pour chaque champ
 	readonly id: number;
 	@Length(3, 15 ,{
 		message: 'Name length must be between $constraint1 and $constraint2 characters\n',

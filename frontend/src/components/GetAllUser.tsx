@@ -68,7 +68,7 @@ const GetAllUser: React.FC = () => {
     <>
       <AlertBox color={alertColor} message={alertMessage} />
       <h1>All Users</h1>
-      <a href="http://localhost:8000/logout">DÃ©connexion</a>
+      <a href="http://localhost:8000/logout">Déconnexion</a>
       <ul>
         {users &&
           users.map(
@@ -85,6 +85,7 @@ const GetAllUser: React.FC = () => {
                     {" "}
                     Ajouter {user.username}
                   </button>
+                  <a href={"http://localhost:8000/profile/" + user.id}>Lien vers le profil</a>
                 </li>
               )
           )}

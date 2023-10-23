@@ -12,10 +12,12 @@ services:
     networks:
       - app-network
     volumes:
-      - /mnt/e/code/Cursus/ft_trans/frontend:/app/
+      - ./frontend:/app/
       - /app/node_modules
     environment:
       - CHOKIDAR_USEPOLLING=true=value
+    env_file:
+      - .env
     # working_dir: /app
 
 

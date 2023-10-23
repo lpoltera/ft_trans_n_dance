@@ -5,6 +5,7 @@ import { AppService } from './app.service';
 import { User } from './user/entities/user.entity';
 import { UserModule } from './user/user.module';
 import { FriendsModule } from './friends/friends.module';
+import { AuthModule } from './auth/auth.module';
 import { Friendship } from './friends/entities/friends.entity';
 
 
@@ -23,6 +24,7 @@ import { Friendship } from './friends/entities/friends.entity';
     }),
     UserModule,
     FriendsModule,
+	AuthModule,
     // SessionModule
   ],
   controllers: [AppController],
