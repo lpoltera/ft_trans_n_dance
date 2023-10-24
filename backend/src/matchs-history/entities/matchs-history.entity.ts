@@ -7,17 +7,17 @@ export class MatchsHistory {
   id: number;
 
   @Column()
-  id_p1: number;
+  name_p1: string;
 
   @Column()
-  id_p2: number;
+  name_p2: string;
   
   @ManyToOne(() => User)
-  @JoinColumn({ name: 'id_p1' })
+  @JoinColumn({ name: 'name_p1', referencedColumnName: 'username' })
   user_p1: User;
   
   @ManyToOne(() => User)
-  @JoinColumn({ name: 'id_p2' })
+  @JoinColumn({ name: 'name_p2', referencedColumnName: 'username' })
   user_p2: User;
   
   @CreateDateColumn()
@@ -43,6 +43,9 @@ export class MatchsHistory {
   
   @Column()
   xp: number;
+
+  @Column()
+  status: string;
   // 1               1/7.30min  * 10 = 1.36
   // 1               1/2.30min  * 10 = 4.34
 

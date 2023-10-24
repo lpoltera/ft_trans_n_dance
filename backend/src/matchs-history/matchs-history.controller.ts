@@ -18,31 +18,34 @@ export class MatchsHistoryController {
   constructor(private readonly matchsHistoryService: MatchsHistoryService) {}
 
   @Post('/create')
-  create(
+  async create(
     @Body() createMatchDto: CreateMatchsHistoryDto,
     @Session() sessionUser: Record<string, any>,
   ) {
-    return this.matchsHistoryService.create(createMatchDto, sessionUser.user.id);
+    return await this.matchsHistoryService.create(
+      createMatchDto,
+      sessionUser.user.username,
+    );
   }
 
-  // @Get()
-  // findAll() {
-  //   return this.matchsHistoryService.findAll();
-  // }
+  @Get('/user-history/:user')
+  async findhistory(@Param('user') user_name: string) {
+    return this.matchsHistoryService.findhistory(user_name);
+  }
+
+  @Patch('/update/:id') // id game - body status: valider
+  async update(
+    @Param('id') id: string,
+    @Body() StatusToUpdate: UpdateMatchsHistoryDto,
+  ) {
+    const statusValue = StatusToUpdate.status.valueOf();
+    return await this.matchsHistoryService.update(+id, statusValue);
+  }
 
   // @Get(':id')
   // findOne(@Param('id') id: string) {
   //   return this.matchsHistoryService.findOne(+id);
   // }
-
-  // @Patch(':id')
-  // update(
-  //   @Param('id') id: string,
-  //   @Body() updateMatchsHistoryDto: UpdateMatchsHistoryDto,
-  // ) {
-  //   return this.matchsHistoryService.update(+id, updateMatchsHistoryDto);
-  // }
-
   // @Delete(':id')
   // remove(@Param('id') id: string) {
   //   return this.matchsHistoryService.remove(+id);
