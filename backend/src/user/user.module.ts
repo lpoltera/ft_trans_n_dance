@@ -5,9 +5,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Friendship } from '../friends/entities/friends.entity';
 import { MatchsHistory } from '../matchs-history/entities/matchs-history.entity';
+import { Notification } from '../notifications/entities/notifications.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, Friendship, MatchsHistory])],
+  imports: [TypeOrmModule.forFeature([User, Friendship, MatchsHistory, Notification])],
   controllers: [UserController],
   providers: [UserService],
 })

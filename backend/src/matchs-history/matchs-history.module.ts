@@ -4,9 +4,10 @@ import { MatchsHistoryController } from './matchs-history.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from '../user/entities/user.entity';
 import { MatchsHistory } from './entities/matchs-history.entity';
+import { Notification } from '../notifications/entities/notifications.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, MatchsHistory])],
+  imports: [TypeOrmModule.forFeature([User, MatchsHistory, Notification])],
   controllers: [MatchsHistoryController],
   providers: [MatchsHistoryService],
 })

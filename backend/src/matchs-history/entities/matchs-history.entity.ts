@@ -1,5 +1,16 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  JoinColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+  OneToMany,
+  OneToOne,
+} from 'typeorm';
 import { User } from '../../user/entities/user.entity';
+import { Notification } from '../../notifications/entities/notifications.entity';
 
 @Entity()
 export class MatchsHistory {
@@ -11,24 +22,24 @@ export class MatchsHistory {
 
   @Column()
   name_p2: string;
-  
+
   @ManyToOne(() => User)
   @JoinColumn({ name: 'name_p1', referencedColumnName: 'username' })
   user_p1: User;
-  
+
   @ManyToOne(() => User)
   @JoinColumn({ name: 'name_p2', referencedColumnName: 'username' })
   user_p2: User;
-  
+
   @CreateDateColumn()
-  readonly created_at: Date
-  
+  readonly created_at: Date;
+
   @UpdateDateColumn()
-  readonly updated_at: Date
+  readonly updated_at: Date;
 
   @Column()
   score_p1: number;
-  
+
   @Column()
   score_p2: number;
 
@@ -37,15 +48,20 @@ export class MatchsHistory {
 
   @Column()
   loss: number; // id_p1 or id_p2
-  
+
   @Column()
   time: number;
-  
+
   @Column()
   xp: number;
 
   @Column()
   status: string;
+
+  @OneToOne(() => Notification)
+  @JoinColumn()
+  notification: Notification;
+
   // 1               1/7.30min  * 10 = 1.36
   // 1               1/2.30min  * 10 = 4.34
 

@@ -25,6 +25,7 @@ export class UserController {
 	// session.user.connected = true
     return { message: 'Login successful'};
   }
+  
   @Get("/all")
   // @UseGuards(SessionGuard) // TODO
   async findAll(@Req() request: Request, @Session() session : Record<string, any>) {

@@ -4,12 +4,15 @@ import { UpdateMatchsHistoryDto } from './dto/update-matchs-history.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MatchsHistory } from './entities/matchs-history.entity';
 import { Repository } from 'typeorm';
+import { Notification } from '../notifications/entities/notifications.entity';
 
 @Injectable()
 export class MatchsHistoryService {
   constructor(
     @InjectRepository(MatchsHistory)
     private readonly MatchDB: Repository<MatchsHistory>,
+	@InjectRepository(Notification)
+    private readonly notifsDB: Repository<Notification>,
   ) {}
   async create(MatchsHistoryDto: CreateMatchsHistoryDto, name_p1: string) {
     try {
@@ -25,7 +28,14 @@ export class MatchsHistoryService {
         status: 'pending',
       });
       await this.MatchDB.save(match);
-      return 'Game created!'; // return game id
+      const notif = this.notifsDB.create({
+        sender: name_p1,
+        receiver: MatchsHistoryDto.name_p2,
+        message: `${name_p1} t'invite à le rejoindre pour faire une partie`,
+        status: 'pending',
+      });
+      await this.notifsDB.save(notif);
+      return 'Game and notification created!';
     } catch (error) {
       throw new ConflictException('erreur service', error.message);
     }
