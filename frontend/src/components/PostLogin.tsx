@@ -3,6 +3,9 @@ import { ChangeEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const PostLogin = () => {
+  const oauthLogin = () => {
+    window.location.href = "/api/auth/school42";
+  };
   const navigate = useNavigate();
   const [login, setLogin] = useState({
     username: "",
@@ -35,7 +38,7 @@ const PostLogin = () => {
   const onChangeForm = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.name === "username") {
       setLogin({ ...login, username: e.target.value });
-    } else if (e.   target.name === "password") {
+    } else if (e.target.name === "password") {
       setLogin({ ...login, password: e.target.value });
     }
   };
@@ -76,6 +79,13 @@ const PostLogin = () => {
         </div>
         <div>
           <a href="http://localhost:8000/signup"> Créer un compte </a>
+        </div>
+        <div>
+          <div>
+            <button type="button" onClick={() => oauthLogin()}>
+              Login 42
+            </button>
+          </div>
         </div>
       </div>
     </div>
