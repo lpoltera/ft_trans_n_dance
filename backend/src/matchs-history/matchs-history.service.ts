@@ -33,6 +33,7 @@ export class MatchsHistoryService {
         receiver: MatchsHistoryDto.name_p2,
         message: `${name_p1} t'invite à le rejoindre pour faire une partie`,
         status: 'pending',
+		game: match,
       });
       await this.notifsDB.save(notif);
       return 'Game and notification created!';

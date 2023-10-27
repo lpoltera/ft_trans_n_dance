@@ -59,7 +59,6 @@ export class MatchsHistory {
   status: string;
 
   @OneToOne(() => Notification)
-  @JoinColumn()
   notification: Notification;
 
   // 1               1/7.30min  * 10 = 1.36

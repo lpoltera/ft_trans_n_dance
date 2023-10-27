@@ -14,13 +14,14 @@ export class Oauth2Strategy extends PassportStrategy(Strategy, 'school42') {
 		tokenURL: 'https://api.intra.42.fr/oauth/token',
 		clientID: process.env.CLIENT_ID,
 		clientSecret: process.env.CLIENT_SECRET,
+		redirect_uri: 'http://localhost:8000/signup',
 		callbackURL: 'http://localhost:8000/api/auth/school42/callback',
 		// scope: 'public',
 		// response_type: '1234',
 	});
   }
   async validate(accessToken: string, refreshToken: string, profile: any) {
-	  console.log("********* profile : ", profile, "****************");
+	  console.log("********* profile : ", accessToken, " ****************");
 	// const { id, username } = profile;
 
 	// let uauth = await this.uauthRepository.findOne({ where: { school42Id: id } });
