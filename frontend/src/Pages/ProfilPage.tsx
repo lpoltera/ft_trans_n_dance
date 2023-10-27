@@ -62,7 +62,7 @@ const ProfilPage = () => {
     fetchCurrent();
     fetchUser();
     fetchFriend();
-  }, [currentUser, friends, current]); // Or [] if effect doesn't need props or state
+  }, [idURL]); // Or [] if effect doesn't need props or state
 
   const Parties = [
     {

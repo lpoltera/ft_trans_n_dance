@@ -104,7 +104,7 @@ export class FriendsService {
     });
 
     const friendValidateOK = friendValidate.map(item => item.friendId != userId ? item.friendId : item.userId);
-    friendValidateOK.unshift(userId);
+    friendValidateOK.unshift(userId); // équivalent de pushback mais pas placé en première place placé selon ordre de l'id
 
     const userFriends = await this.userDB.find({
       where: {

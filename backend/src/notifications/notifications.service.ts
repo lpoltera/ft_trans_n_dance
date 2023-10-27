@@ -14,9 +14,9 @@ export class NotificationsService {
   async create(receiver: string) {
     try {
       const notifi = this.notifsDB.create({
-        sender: 'tito',
+        sender: 'raph',
         receiver: receiver,
-        message: "Tito t'envoie un message à définir",
+        message: "Fonction à supprimer",
         status: 'pending',
       });
       await this.notifsDB.save(notifi);
@@ -28,8 +28,14 @@ export class NotificationsService {
   //     return 'This action adds a new notification';
   //   }
 
-  findAll() {
-    return `This action returns all notifications`;
+  async findAll(username: string) {
+	const userNotifs = await this.notifsDB.find({where: {receiver: username}})
+
+	if (!userNotifs)
+		return "Tu n'as aucune notification";
+	
+		const userNotifsMsg = userNotifs.map(item => item.message);
+	return userNotifsMsg;
   }
 
   findOne(id: number) {
@@ -41,6 +47,6 @@ export class NotificationsService {
   }
 
   remove(id: number) {
-    return `This action removes a #${id} notification`;
+	  return this.notifsDB.delete({id});
   }
 }

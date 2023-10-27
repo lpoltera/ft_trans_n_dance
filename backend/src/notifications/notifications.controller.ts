@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Session } from '@nestjs/common';
 import { NotificationsService } from './notifications.service';
 import { CreateNotificationDto } from './dto/create-notification.dto';
 import { UpdateNotificationDto } from './dto/update-notification.dto';
@@ -15,9 +15,10 @@ export class NotificationsController {
     return this.notificationsService.create(receiver);
   }
 
-  @Get()
-  findAll() {
-    return this.notificationsService.findAll();
+  @Get('/my')
+  findAll(@Session() session: Record<string, any>) {
+	const username = session.user.username;
+    return this.notificationsService.findAll(username);
   }
 
   @Get(':id')

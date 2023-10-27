@@ -11,7 +11,7 @@ export class MatchsHistoryService {
   constructor(
     @InjectRepository(MatchsHistory)
     private readonly MatchDB: Repository<MatchsHistory>,
-	@InjectRepository(Notification)
+    @InjectRepository(Notification)
     private readonly notifsDB: Repository<Notification>,
   ) {}
   async create(MatchsHistoryDto: CreateMatchsHistoryDto, name_p1: string) {
@@ -33,7 +33,7 @@ export class MatchsHistoryService {
         receiver: MatchsHistoryDto.name_p2,
         message: `${name_p1} t'invite à le rejoindre pour faire une partie`,
         status: 'pending',
-		game: match,
+        game: match,
       });
       await this.notifsDB.save(notif);
       return 'Game and notification created!';
@@ -72,7 +72,17 @@ export class MatchsHistoryService {
     if (gameToUpdate) {
       gameToUpdate.status = statusToUpdate;
       this.MatchDB.save(gameToUpdate);
-
+	if (gameToUpdate.status === "accepted") {
+		this.notifsDB.delete(gameid);
+		//envoi notification au créateur de la game pour l'informer de l'acceptation 
+	}
+	if (gameToUpdate.status === "declined") {
+		this.notifsDB.delete(gameid);
+		const id = gameid;
+		this.MatchDB.delete({id});
+		//envoi notification au créateur de la game pour l'informer du refus 
+	}
+		
       return `This action updates a #${gameid} matchsHistory to ${statusToUpdate}`;
     }
   }
