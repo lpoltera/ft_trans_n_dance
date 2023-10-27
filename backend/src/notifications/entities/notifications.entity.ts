@@ -1,3 +1,4 @@
+import { Friendship } from "../../friends/entities/friends.entity";
 import { MatchsHistory } from "../../matchs-history/entities/matchs-history.entity";
 import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 
@@ -23,4 +24,7 @@ export class Notification {
 	@JoinColumn()
 	game: MatchsHistory;
 
+	@OneToOne(() => Friendship)
+	@JoinColumn()
+	friend: Friendship;
 }

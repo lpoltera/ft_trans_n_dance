@@ -12,21 +12,21 @@ export class FriendsController {
   // create(@Body() createFriendDto: CreateFriendDto) {
   //   return this.friendsService.create(createFriendDto);
   // }
-  @Post('add/:friendId')
+  @Post('add/:friendName')
   async addFriend(
-    @Param('friendId') friendId: number,
+    @Param('friendName') friendName: string,
     @Session() sessionUser: Record<string, any>
   ) {
-    const currentUserId = sessionUser.user.id
-    return await this.friendsService.addFriend(currentUserId,friendId);
+    const currentUserName = sessionUser.user.username;
+    return await this.friendsService.addFriend(currentUserName,friendName);
   }
-  @Get("all/:userId")
+  @Get("all/:userName")
   async findAll(
-    @Param('userId') userId: number
+    @Param('userName') userName: string
     // @Session() sessionUser: Record<string, any>
   ) {
     // const currentUserId = sessionUser.user.id
-    return await this.friendsService.findAll(userId);
+    return await this.friendsService.findAll(userName);
   }
 
   // @Get(':id')
@@ -34,14 +34,14 @@ export class FriendsController {
   //   return this.friendsService.findOne(+id);
   // }
 
-  @Patch(':friendId')
+  @Patch(':friendName')
   async update(
-    @Param('friendId') friendId: number, @Body() StatusToUpdate: UpdateFriendDto,
+    @Param('friendName') friendName: string, @Body() StatusToUpdate: UpdateFriendDto,
     @Session() sessionUser: Record<string, any>) 
     {
-    const currentUserId = sessionUser.user.id;
+    const currentUserName = sessionUser.user.username
     const statusValue = StatusToUpdate.status.valueOf();
-    return await this.friendsService.update(currentUserId, friendId, statusValue);
+    return await this.friendsService.update(currentUserName, friendName, statusValue);
   }
 
   // @Delete(':id')

@@ -3,29 +3,33 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import { Friendship } from './entities/friends.entity';
 import { User } from '../user/entities/user.entity';
+import { Notification } from '../notifications/entities/notifications.entity';
 
 @Injectable()
 export class FriendsService {
   constructor(
     @InjectRepository(User) private readonly userDB: Repository<User>,
-    @InjectRepository(Friendship) private readonly friendRepository: Repository<Friendship>,
+    @InjectRepository(Friendship)
+    private readonly friendRepository: Repository<Friendship>,
+    @InjectRepository(Notification)
+    private readonly notifsDB: Repository<Notification>,
   ) {}
 
   // create(createFriendDto: CreateFriendDto) {
   //   return 'This action adds a new friend';
   // }
 
-  async addFriend(userId: number, friendUserId: number) {
+  async addFriend(userName: string, friendName: string) {
     const friend = await this.friendRepository.findOne({
       where: [
         {
-          user: { id: userId },
-          friend: { id: friendUserId },
+          user: { username: userName },
+          friend: { username: friendName },
           status: 'valider',
         },
         {
-          user: { id: friendUserId },
-          friend: { id: userId },
+          user: { username: friendName },
+          friend: { username: userName },
           status: 'valider',
         },
       ],
@@ -37,8 +41,8 @@ export class FriendsService {
     const already_ask = await this.friendRepository.findOne({
       where: [
         {
-          user: { id: userId },
-          friend: { id: friendUserId },
+          user: { username: userName },
+          friend: { username: friendName },
           status: 'pending',
         },
       ],
@@ -50,27 +54,31 @@ export class FriendsService {
     }
     const Friend_Not_confirmed = await this.friendRepository.findOne({
       where: {
-        user: { id: friendUserId },
-        friend: { id: userId },
+        user: { username: friendName },
+        friend: { username: userName },
         status: 'pending',
       },
     });
     if (Friend_Not_confirmed) {
       Friend_Not_confirmed.status = 'valider';
-      this.friendRepository.save(Friend_Not_confirmed);
+      await this.friendRepository.save(Friend_Not_confirmed);
+
+	  const id = Friend_Not_confirmed.id;
+      const msgToDelete = await this.notifsDB.findOne({where: {friend: {id : id}}})
+	  await this.notifsDB.delete(msgToDelete);
       return "Demande d'ami validé";
     }
 
     const blockedFriend = await this.friendRepository.findOne({
       where: [
         {
-          user: { id: userId },
-          friend: { id: friendUserId },
+          user: { username: userName },
+          friend: { username: friendName },
           status: 'bloquer',
         },
         {
-          user: { id: friendUserId },
-          friend: { id: userId },
+          user: { username: friendName },
+          friend: { username: userName },
           status: 'bloquer',
         },
       ],
@@ -82,33 +90,45 @@ export class FriendsService {
     }
 
     const newFriend = new Friendship();
-    newFriend.userId = userId;
-    newFriend.friendId = friendUserId;
+    newFriend.userName = userName;
+    newFriend.friendName = friendName;
     newFriend.status = 'pending';
-    this.friendRepository.save(newFriend);
+    await this.friendRepository.save(newFriend);
+
+    const notif = this.notifsDB.create({
+      sender: userName,
+      receiver: friendName,
+      message: `${userName} veut être ton ami`,
+      status: 'pending',
+      friend: newFriend,
+    });
+    await this.notifsDB.save(notif);
+
     return "Demande d'ami envoyé";
   }
 
-  async findAll(userId: number) {
+  async findAll(userName: string) {
     const friendValidate = await this.friendRepository.find({
       where: [
         {
-          user: { id: userId },
+          user: { username: userName },
           status: 'valider',
         },
         {
-          friend: { id: userId },
+          friend: { username: userName },
           status: 'valider',
         },
       ],
     });
 
-    const friendValidateOK = friendValidate.map(item => item.friendId != userId ? item.friendId : item.userId);
-    friendValidateOK.unshift(userId); // équivalent de pushback mais pas placé en première place placé selon ordre de l'id
+    const friendValidateOK = friendValidate.map((item) =>
+      item.friendName != userName ? item.friendName : item.userName,
+    );
+    friendValidateOK.unshift(userName); // équivalent de pushback mais pas placé en première place placé selon ordre de l'id
 
     const userFriends = await this.userDB.find({
       where: {
-        id: In(friendValidateOK),
+        username: In(friendValidateOK),
       },
     });
     return userFriends;
@@ -118,28 +138,33 @@ export class FriendsService {
   //   return `This action returns a #${id} friend`;
   // }
 
-  
-  async update(userId: number, friendUserId: number, statusToUpdate: string) {
+  async update(userName: string, friendName: string, statusToUpdate: string) {
     const friendToUpdate = await this.friendRepository.findOne({
       where: [
         {
-          user: { id: userId },
-          friend: { id: friendUserId },
+          user: { username: userName },
+          friend: { username: friendName },
         },
         {
-          user: { id: friendUserId },
-          friend: { id: userId },
+          user: { username: friendName },
+          friend: { username: userName },
         },
       ],
     });
     if (friendToUpdate) {
       friendToUpdate.status = statusToUpdate;
       this.friendRepository.save(friendToUpdate);
-      return `The relation between #${userId} and #${friendUserId} has been updated to ${statusToUpdate}`;
+	  if (friendToUpdate.status === "valider") {
+		const id = friendToUpdate.id;
+		const msgToDelete = await this.notifsDB.findOne({where: {friend: {id : id}}})
+		await this.notifsDB.delete(msgToDelete);
+        //envoi notification au sender que la demande a ete acceptée
+	  }
+      return `The relation between #${userName} and #${friendName} has been updated to ${statusToUpdate}`;
     }
   }
+  
   removeAll() {
-    this.friendRepository.clear();
-    return 'All friends removed';
+    return this.friendRepository.clear();
   }
 }

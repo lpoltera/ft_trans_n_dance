@@ -1,5 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn, UpdateDateColumn, OneToOne } from 'typeorm';
 import { User } from '../../user/entities/user.entity';
+import { Notification } from '../../notifications/entities/notifications.entity';
 
 @Entity()
 export class Friendship {
@@ -7,17 +8,17 @@ export class Friendship {
   id: number;
 
   @Column()
-  userId: number;
+  userName: string;
 
   @Column()
-  friendId: number;
+  friendName: string;
   
   @ManyToOne(() => User, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'userId' })
+  @JoinColumn({ name: 'userName', referencedColumnName: 'username' })
   user: User;
   
   @ManyToOne(() => User, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'friendId' })
+  @JoinColumn({ name: 'friendName', referencedColumnName: 'username' })
   friend: User;
   
   @CreateDateColumn()
@@ -28,6 +29,9 @@ export class Friendship {
 
   @Column()
   status: string;
+
+  @OneToOne(() => Notification)
+  notification: Notification;
   // ..
 }
 
