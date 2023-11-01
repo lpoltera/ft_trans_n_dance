@@ -13,6 +13,11 @@ interface User {
   username: string;
   avatar: string;
   status: string;
+  win: number;
+  loss: number;
+  draw: number;
+  totalXP: number;
+  totalGame: number;
 }
 
 const ProfilPage = () => {
@@ -20,100 +25,93 @@ const ProfilPage = () => {
   const [friends, setAllFriends] = useState<User[] | null>(null);
 //   const [current, setCurrent] = useState<string | null>(null);
 
-  const Stats = [
-    { title: "Score", score: 2300 },
-    { title: "Parties jouées", score: 125 },
-    { title: "Victoires", score: 100 },
-    { title: "Défaites", score: 20 },
-    { title: "Matchs nuls", score: 5 },
-  ];
 
-  const url = window.location.href; // Obtient l'URL actuelle
-  const urlSegments = url.split("/"); // Divise l'URL en segments
-  let idURL: string | any = urlSegments[urlSegments.length - 1];
+const url = window.location.href; // Obtient l'URL actuelle
+const urlSegments = url.split("/"); // Divise l'URL en segments
+let idURL: string | any = urlSegments[urlSegments.length - 1];
 
 
-  useEffect(() => {
-	async function fetchCurrent() {
-	  try {
-		const response = await axios.get<string>("/api/my-name");
-		if (idURL === "profil") idURL = response.data;
-		console.log("idURL = ", idURL);
-		return idURL;
+useEffect(() => {
+  async function fetchCurrent() {
+    try {
+      const response = await axios.get<string>("/api/my-name");
+      if (idURL === "profil") idURL = response.data;
+      console.log("idURL = ", idURL);
+      return idURL;
 	  } catch (err) {
-		console.error(err);
-		return null;
+      console.error(err);
+      return null;
 	  }
 	}
   
 	async function fetchUserAndFriend() {
-	  const name = await fetchCurrent();
+    const name = await fetchCurrent();
 	  console.log("name in fetchUserAndFriend =", name);
 	  if (name) {
-		try {
-		  const [userResponse, friendResponse] = await Promise.all([
-			axios.get<User>("/api/" + name),
-			axios.get<User[]>("/api/friends/all/" + name),
+      try {
+        const [userResponse, friendResponse] = await Promise.all([
+          axios.get<User>("/api/" + name),
+          axios.get<User[]>("/api/friends/all/" + name),
 		  ]);
 		  setCurrentUser(userResponse.data);
 		  setAllFriends(friendResponse.data);
 		} catch (err) {
-		  console.error(err);
+      console.error(err);
 		}
-	  }
-	}
-  
-	fetchUserAndFriend();
-  }, []);
-  
+  }
+}
+
+fetchUserAndFriend();
+}, []);
+
 
 //   useEffect(() => {
-// 	async function fetchCurrent() {
-// 		await axios
-// 		  .get<string>("/api/my-name")
+  // 	async function fetchCurrent() {
+    // 		await axios
+    // 		  .get<string>("/api/my-name")
 // 		  .then((response) => {
-// 			if (idURL === "profil") idURL = response.data;
-// 			console.log("idURL = ", idURL);
-// 			return idURL; // tito
-// 		})
-// 		  .catch((err) => {
-// 			console.error(err);
-// 		  });
-// 	  }
-//     async function fetchUser() {
-// 		const name1 = await fetchCurrent();
-// 		console.log("name in fetchUser =", name1);
-//       await axios
-//         .get<User>("/api/" + name1) // api/undefined
-//         .then((response) => setCurrentUser(response.data))
-//         .catch((err) => {
-//           console.error(err);
-//         });
-// 		return currentUser?.id;
-//     }
-//     async function fetchFriend() {
-// 		const name2 = await fetchCurrent();
-// 		console.log("name in fetchFriend =", name2);
-//       await axios
-//         .get<User[]>("/api/friends/all/" + name2)
-//         .then((response) => setAllFriends(response.data))
-//         .catch((err) => {
-//           console.error(err);
-//         });
-//     }
-//     // fetchCurrent();
-//     fetchUser();
-//     fetchFriend();
-//   }, [idURL]);
-
-  const Parties = [
-    {
-      id: 1,
-      player1: "rricol",
-      player2: "lpoltera",
-      score: "5-1",
-      date: "11-02-23",
-    },
+  // 			if (idURL === "profil") idURL = response.data;
+  // 			console.log("idURL = ", idURL);
+  // 			return idURL; // tito
+  // 		})
+  // 		  .catch((err) => {
+    // 			console.error(err);
+    // 		  });
+    // 	  }
+    //     async function fetchUser() {
+      // 		const name1 = await fetchCurrent();
+      // 		console.log("name in fetchUser =", name1);
+      //       await axios
+      //         .get<User>("/api/" + name1) // api/undefined
+      //         .then((response) => setCurrentUser(response.data))
+      //         .catch((err) => {
+        //           console.error(err);
+        //         });
+        // 		return currentUser?.id;
+        //     }
+        //     async function fetchFriend() {
+          // 		const name2 = await fetchCurrent();
+          // 		console.log("name in fetchFriend =", name2);
+          //       await axios
+          //         .get<User[]>("/api/friends/all/" + name2)
+          //         .then((response) => setAllFriends(response.data))
+          //         .catch((err) => {
+            //           console.error(err);
+            //         });
+            //     }
+            //     // fetchCurrent();
+            //     fetchUser();
+            //     fetchFriend();
+            //   }, [idURL]);
+            
+            const Parties = [
+              {
+                id: 1,
+                player1: "rricol",
+                player2: "lpoltera",
+                score: "5-1",
+                date: "11-02-23",
+              },
     {
       id: 2,
       player1: "rricol",
@@ -129,6 +127,15 @@ const ProfilPage = () => {
       date: "8-01-23",
     },
   ];
+
+
+  const Stats = [
+    { title: "Score", score: currentUser?.totalXP },
+    { title: "Parties jouées", score: currentUser?.totalGame},
+    { title: "Victoires", score: currentUser?.win },
+    { title: "Défaites", score: currentUser?.loss },
+    { title: "Matchs nuls", score: currentUser?.draw },
+  ];
   return (
     <>
       <Navbar />
@@ -140,7 +147,7 @@ const ProfilPage = () => {
                 src={currentUser?.avatar}
                 alt=""
                 className="w-16 h-16 rounded-full mr-2"
-              />
+                />
               <h1 className="text-3xl leading-none">{currentUser?.username}</h1>
               <button
                 type="button"
@@ -155,7 +162,7 @@ const ProfilPage = () => {
             className="grid grid-flow-col grid-cols-6 gap-4"
           >
             {Stats.map((stat, index) => (
-              <StatBloc key={index} title={stat.title} score={stat.score} />
+              <StatBloc key={index} title={stat.title} score={!stat.score ? 0 : stat.score} />
             ))}
           </div>
           <div

@@ -19,9 +19,9 @@ export class UserService {
         const {avatar, password} = newUser
         let av = avatar
         if (!av)
-        av = "default_img"
+        av = "src/assets/avatar-cat.png"
         const hash = await bcrypt.hash(password, 10)
-        const user = this.userDB.create({...newUser,password: hash, avatar: av, connected: "déconnecté"}) //friends: []
+        const user = this.userDB.create({...newUser,password: hash, avatar: av, connected: "déconnecté", win: 0, loss: 0, draw: 0, totalXP: 0, totalGame: 0})
         await this.userDB.save(user)
         return "User Created!"
     } catch (error) {

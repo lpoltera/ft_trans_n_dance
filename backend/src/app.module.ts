@@ -13,7 +13,6 @@ import { Notification } from './notifications/entities/notifications.entity';
 import { Uauth } from './auth/entities/uauth.entity';
 import { AuthModule } from './auth/auth.module';
 
-
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -23,15 +22,15 @@ import { AuthModule } from './auth/auth.module';
       username: process.env.BACKEND_USER,
       password: process.env.BACKEND_PASSWORD,
       database: process.env.POSTGRES_DB,
-      synchronize: true, // Pour le développement, à éviter en production
-      entities: [User, Friendship, MatchsHistory, Notification, Uauth], // Vous ajouterez vos entités ici
+      synchronize: true, // TODO Pour le développement, à éviter en production
+      entities: [User, Friendship, MatchsHistory, Notification, Uauth],
       logging: true,
     }),
     UserModule,
     FriendsModule,
     MatchsHistoryModule,
     NotificationsModule,
-	AuthModule,
+    AuthModule,
     // SessionModule
   ],
   controllers: [AppController],

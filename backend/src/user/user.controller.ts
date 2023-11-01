@@ -26,6 +26,7 @@ export class UserController {
     return { message: 'Login successful'};
   }
   
+  @UseInterceptors(ClassSerializerInterceptor)
   @Get("/all")
   // @UseGuards(SessionGuard) // TODO
   async findAll(@Req() request: Request, @Session() session : Record<string, any>) {
@@ -45,6 +46,8 @@ export class UserController {
     else
       return false;
   }
+  
+  @UseInterceptors(ClassSerializerInterceptor)
   @Get("/user")
   // @UseGuards(SessionGuard) // TODO
   async getUsername(@Req() request: Request, @Session() session : Record<string, any>) {

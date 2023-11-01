@@ -9,7 +9,6 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(new ValidationPipe());
 
-  // Configuration de la session avec connect-pg-simple
   app.use(
     session({
       store: new (connectPgSimple(session))({
@@ -28,7 +27,8 @@ async function bootstrap() {
       saveUninitialized: false,
       cookie: {
         maxAge: 30 * 24 * 60 * 60 * 1000, // 30 jours
-        sameSite: 'lax', // Configuration sameSite: 'none'
+        sameSite: 'lax', // TODO for google chrome
+        // TODO secure: true (for https) 
       },
     }),
   );

@@ -1,9 +1,6 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany, ManyToMany, JoinTable, JoinColumn } from 'typeorm';
 import { Exclude } from 'class-transformer';
-import { ClassTransformer } from 'class-transformer';
-import { defaultIfEmpty } from 'rxjs';
-import { RelationCountMetadata } from 'typeorm/metadata/RelationCountMetadata';
-import { Friendship } from "../../friends/entities/friends.entity"
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Friendship } from "../../friends/entities/friends.entity";
 import { MatchsHistory } from '../../matchs-history/entities/matchs-history.entity';
 
 @Entity()
@@ -15,20 +12,14 @@ export class User {
   username: string;
 
   @Column()
+  @Exclude()
   password: string;
 
-  // @Column({unique : true})
-  // @Exclude()
-  // email: string;
-
   @Column()
-  @Exclude()
-  avatar: string; //path to image ?
+  avatar: string;
   
   @OneToMany(() => Friendship, friendship => friendship.user,{ cascade: true })
   friends: Friendship[];
-  // @OneToMany( ? => ?)
-  // historyMatch: string;
   
   @OneToMany(() => MatchsHistory, matchs => matchs.user_p1)
   matchsHistory: MatchsHistory[];
@@ -36,7 +27,20 @@ export class User {
   @Column()
   connected: string;
 
-  // @Column()
+  @Column()
+  win: number;
+  
+  @Column()
+  loss: number;
+
+  @Column()
+  draw: number;
+
+  @Column()
+  totalXP: number;
+
+  @Column()
+  totalGame: number;
   // scoresTotal: number;
 
 
@@ -50,9 +54,3 @@ export class User {
 // 1               1/7.30min  * 10 = 1.36
 // 1               1/2.30min  * 10 = 4.34
 
-
-// historyMatch
-//     Score(my)   Score(adv)  id(adv) date v/d
-
-//         0            5         #15      defaite
-//         7            5         #15      victoire
