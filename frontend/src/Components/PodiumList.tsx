@@ -1,5 +1,5 @@
 import PodiumUserRow from "./PodiumUserRow";
-import avatar from "../assets/avatar-1.png";
+import avatar from "../assets/avatar-cat.png";
 
 const PodiumList = () => {
   const Users = [

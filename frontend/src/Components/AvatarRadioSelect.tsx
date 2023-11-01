@@ -1,14 +1,16 @@
 import { useState } from "react";
-import avatar from "../assets/avatar-1.png";
+import avatar1 from "../assets/avatar-cat.png";
+import avatar2 from "../assets/avatar-lion.jpg";
+import avatar3 from "../assets/avatar-sheep.png";
 
 const AvatarRadioSelect = () => {
   const Avatars = [
-    { id: "avatar-1", path: avatar },
-    { id: "avatar-2", path: avatar },
-    { id: "avatar-3", path: avatar },
+    { id: "avatar-1", path: avatar1 },
+    { id: "avatar-2", path: avatar2 },
+    { id: "avatar-3", path: avatar3 },
   ];
   const [selectedAvatar, setSelectedAvatar] = useState<string | null>(
-    "avatar-1"
+    "avatar-cat"
   );
 
   // Fonction pour gérer le changement de l'avatar sélectionné
