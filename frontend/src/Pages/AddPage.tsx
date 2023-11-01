@@ -13,8 +13,8 @@ const AddPage: React.FC = () => {
   const [users, setAllUser] = useState<User[] | null>(null);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
 
-  const handleClick = (id: string) => {
-    axios.post("/api/friends/add/" + id).catch(() => {});
+  const handleClick = (username: string) => {
+    axios.post("/api/friends/add/" + username).catch(() => {});
   };
 
   useEffect(() => {
@@ -48,7 +48,7 @@ const AddPage: React.FC = () => {
                   connected: {user.connected} <br />
                   <button
                     type="button"
-                    onClick={() => handleClick("" + user.id)}
+                    onClick={() => handleClick("" + user.username)}
                   >
                     {" "}
                     Ajouter {user.username}

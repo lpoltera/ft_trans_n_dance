@@ -48,7 +48,13 @@ export class UserController {
   @Get("/user")
   // @UseGuards(SessionGuard) // TODO
   async getUsername(@Req() request: Request, @Session() session : Record<string, any>) {
-    return await session.user
+    return await session.user;
+  }
+
+  @Get("/my-name")
+  // @UseGuards(SessionGuard) // TODO
+  async getMyName(@Req() request: Request, @Session() session : Record<string, any>) {
+    return await session.user.username;
   }
 
   @Get(':username')

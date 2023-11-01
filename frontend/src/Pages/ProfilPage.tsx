@@ -18,7 +18,7 @@ interface User {
 const ProfilPage = () => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [friends, setAllFriends] = useState<User[] | null>(null);
-  const [current, setCurrent] = useState<User | null>(null);
+//   const [current, setCurrent] = useState<string | null>(null);
 
   const Stats = [
     { title: "Score", score: 2300 },
@@ -30,39 +30,81 @@ const ProfilPage = () => {
 
   const url = window.location.href; // Obtient l'URL actuelle
   const urlSegments = url.split("/"); // Divise l'URL en segments
-  let idURL: string | undefined = urlSegments[urlSegments.length - 1];
+  let idURL: string | any = urlSegments[urlSegments.length - 1];
+
 
   useEffect(() => {
-    async function fetchCurrent() {
-      await axios
-        .get<User>("/api/user")
-        .then((response) => setCurrent(response.data))
-        .catch((err) => {
-          console.error(err);
-        });
-    }
-    async function fetchUser() {
-      if (idURL === "profil") idURL = current?.username;
-	  console.log("username = ", idURL);
-      await axios
-        .get<User>("/api/" + idURL)
-        .then((response) => setCurrentUser(response.data))
-        .catch((err) => {
-          console.error(err);
-        });
-    }
-    async function fetchFriend() {
-      await axios
-        .get<User[]>("/api/friends/all/" + currentUser?.id)
-        .then((response) => setAllFriends(response.data))
-        .catch((err) => {
-          console.error(err);
-        });
-    }
-    fetchCurrent();
-    fetchUser();
-    fetchFriend();
-  }, [idURL]); // Or [] if effect doesn't need props or state
+	async function fetchCurrent() {
+	  try {
+		const response = await axios.get<string>("/api/my-name");
+		if (idURL === "profil") idURL = response.data;
+		console.log("idURL = ", idURL);
+		return idURL;
+	  } catch (err) {
+		console.error(err);
+		return null;
+	  }
+	}
+  
+	async function fetchUserAndFriend() {
+	  const name = await fetchCurrent();
+	  console.log("name in fetchUserAndFriend =", name);
+	  if (name) {
+		try {
+		  const [userResponse, friendResponse] = await Promise.all([
+			axios.get<User>("/api/" + name),
+			axios.get<User[]>("/api/friends/all/" + name),
+		  ]);
+		  setCurrentUser(userResponse.data);
+		  setAllFriends(friendResponse.data);
+		} catch (err) {
+		  console.error(err);
+		}
+	  }
+	}
+  
+	fetchUserAndFriend();
+  }, []);
+  
+
+//   useEffect(() => {
+// 	async function fetchCurrent() {
+// 		await axios
+// 		  .get<string>("/api/my-name")
+// 		  .then((response) => {
+// 			if (idURL === "profil") idURL = response.data;
+// 			console.log("idURL = ", idURL);
+// 			return idURL; // tito
+// 		})
+// 		  .catch((err) => {
+// 			console.error(err);
+// 		  });
+// 	  }
+//     async function fetchUser() {
+// 		const name1 = await fetchCurrent();
+// 		console.log("name in fetchUser =", name1);
+//       await axios
+//         .get<User>("/api/" + name1) // api/undefined
+//         .then((response) => setCurrentUser(response.data))
+//         .catch((err) => {
+//           console.error(err);
+//         });
+// 		return currentUser?.id;
+//     }
+//     async function fetchFriend() {
+// 		const name2 = await fetchCurrent();
+// 		console.log("name in fetchFriend =", name2);
+//       await axios
+//         .get<User[]>("/api/friends/all/" + name2)
+//         .then((response) => setAllFriends(response.data))
+//         .catch((err) => {
+//           console.error(err);
+//         });
+//     }
+//     // fetchCurrent();
+//     fetchUser();
+//     fetchFriend();
+//   }, [idURL]);
 
   const Parties = [
     {
