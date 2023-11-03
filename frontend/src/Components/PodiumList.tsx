@@ -15,7 +15,7 @@ const PodiumList = () => {
 	useEffect(() => {
 		axios.get<User[]>("/api/leaderboard")
 		.then((response) => setPodiumUser(response.data))
-	})
+	}, []);
 //   const Users = [
 //     {
 //       id: 1,

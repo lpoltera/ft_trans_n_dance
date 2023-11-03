@@ -42,7 +42,7 @@ const ProfilPage = () => {
     async function fetchCurrent() {
       try {
         const response = await axios.get<string>("/api/my-name");
-        if (idURL === "profil") idURL = response.data;
+        if (idURL === "profil" || idURL === "" ) idURL = response.data;
         console.log("idURL = ", idURL);
         return idURL;
       } catch (err) {
@@ -111,7 +111,7 @@ const ProfilPage = () => {
           <div id="section-title" className="flex shrink py-10">
             <div className="flex items-center gap-2">
               <img
-                src={currentUser?.avatar}
+                src={currentUser?.avatar} 
                 alt=""
                 className="w-16 h-16 rounded-full mr-2"
               />

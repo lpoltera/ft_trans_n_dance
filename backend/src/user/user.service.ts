@@ -23,7 +23,7 @@ export class UserService {
 		log = "johndoe";
         let av = avatar
         if (!av)
-        av = "src/assets/avatar-cat.png"
+        av = "/src/assets/avatar-cat.png"
         const hash = await bcrypt.hash(password, 10)
         const user = this.userDB.create({...newUser,password: hash, avatar: av, connected: "déconnecté", win: 0, loss: 0, draw: 0, totalXP: 0, totalGame: 0, login42: log})
         await this.userDB.save(user)
