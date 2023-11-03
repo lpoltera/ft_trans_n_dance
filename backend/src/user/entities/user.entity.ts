@@ -17,6 +17,9 @@ export class User {
 
   @Column()
   avatar: string;
+
+  @Column()
+  login42: string;
   
   @OneToMany(() => Friendship, friendship => friendship.user,{ cascade: true })
   friends: Friendship[];

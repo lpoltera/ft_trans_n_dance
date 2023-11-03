@@ -5,7 +5,7 @@ import {
 import { ChangeEvent, useState } from "react";
 import AvatarRadioSelect from "./AvatarRadioSelect";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { redirect, useNavigate } from "react-router-dom";
 
 const FormSignin = () => {
   const navigate = useNavigate();
@@ -40,6 +40,7 @@ const FormSignin = () => {
         }
       });
   };
+
   const onChangeForm = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.name === "username") {
       setUser({ ...user, username: e.target.value });
@@ -49,18 +50,25 @@ const FormSignin = () => {
       setUser({ ...user, avatar: e.target.value });
     }
   };
-  const [logginSuccess, setLogginSuccess] = useState(false);
+
+  const [logginSuccess, setLogginSuccess] = useState(true);
+  
+//   const auth42 = () => {
+// 	window.location.href = "/api/auth/school42";
+//   }
+
   return (
     <>
       <form className="min-w-fit w-96 flex flex-col" name="loginForm">
-        <div>
+        {/* <div>
           <h1 className="text-xl">INSCRIPTION</h1>
         </div>
         <div className="flex flex-col gap-2 border border-x-0 border-t-0 border-gray-400 py-4">
           <button
             type="button"
             className="py-4 px-6 border border-white flex flex-row justify-between items-center rounded-md"
-            onClick={() => setLogginSuccess(!logginSuccess)}
+			onClick={() => setLogginSuccess(!logginSuccess)}
+            //  onClick={() => auth42()}
           >
             <span>Se connecter via 42</span>
             {logginSuccess ? (
@@ -73,16 +81,17 @@ const FormSignin = () => {
               </span>
             )}
           </button>
-        </div>
-        {logginSuccess && (
+        </div> */}
+        {/* {logginSuccess && ( */}
+		{(
           <>
-            <div className="flex flex-col gap-6 border border-x-0 border-t-0 border-gray-400 py-4">
+            {/* <div className="flex flex-col gap-6 border border-x-0 border-t-0 border-gray-400 py-4">
               <input
                 type="text"
-                name="pseudo"
+                name="username"
                 className="border border-white px-3 py-2 bg-transparent text-white rounded-md"
                 placeholder="Pseudo"
-              />
+              /> */}
               <div className="flex flex-row gap-4">
                 <AvatarRadioSelect></AvatarRadioSelect>
               </div>
@@ -104,11 +113,12 @@ const FormSignin = () => {
                   value={user.password}
                 />
               </div>
-            </div>
+            {/* </div> */}
           </>
         )}
         <div className="flex flex-row mt-4 justify-between items-center">
-          {logginSuccess && (
+          {/* {logginSuccess && ( */}
+		  {(
             <button
               type="button"
               onClick={() => createUser()}

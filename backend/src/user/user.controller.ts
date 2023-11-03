@@ -12,8 +12,8 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post("/signup")
-   async create(@Body() createUserDto: CreateUserDto) {
-    return await this.userService.create(createUserDto);
+   async create(@Body() createUserDto: CreateUserDto, @Session() session : Record<string, any>) {
+    return await this.userService.create(createUserDto, session);
   }
 
   @UseInterceptors(ClassSerializerInterceptor)
@@ -35,8 +35,11 @@ export class UserController {
 
   @Post("/logout")
   async logout(@Session() session : Record<string, any>) {
-	await session.destroy(() => {});
-	return await this.userService.logout(session.user.username); 
+	if (session.user) {
+		const username = await session.user.username;
+		await session.destroy(() => {});
+		return await this.userService.logout(username); 
+	}
   }
  
   @Get("/connected")

@@ -29,6 +29,12 @@ const LandingPage = () => {
             >
               S'inscrire
             </button>
+			<button
+              className="py-2 px-4 rounded-md border border-white"
+              onClick={() => (window.location.href = "/api/auth/school42")}
+            >
+              Se connecter via 42
+            </button>
           </div>
         </div>
       </PageLayout>

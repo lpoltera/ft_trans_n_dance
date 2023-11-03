@@ -14,15 +14,21 @@ export class UserService {
   constructor(
     @InjectRepository(User) private readonly userDB: Repository<User>, 
     ) {}
-    async create(newUser: CreateUserDto) {
+
+    async create(newUser: CreateUserDto, session : Record<string, any>) {
       try {
         const {avatar, password} = newUser
+		let log: string = session.login42;
+		if (!log)
+		log = "johndoe";
         let av = avatar
         if (!av)
         av = "src/assets/avatar-cat.png"
         const hash = await bcrypt.hash(password, 10)
-        const user = this.userDB.create({...newUser,password: hash, avatar: av, connected: "déconnecté", win: 0, loss: 0, draw: 0, totalXP: 0, totalGame: 0})
+        const user = this.userDB.create({...newUser,password: hash, avatar: av, connected: "déconnecté", win: 0, loss: 0, draw: 0, totalXP: 0, totalGame: 0, login42: log})
         await this.userDB.save(user)
+        session.user = user;
+        session.connected = "connecté";
         return "User Created!"
     } catch (error) {
         throw new ConflictException(error.message)
@@ -43,6 +49,7 @@ export class UserService {
 
   async logout(username: string) {
 	const user = await this.userDB.findOne({where : {username : username}});
+  if (user)
 	user.connected = "déconnecté";
 	return await this.userDB.save(user);
   }
