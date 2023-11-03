@@ -57,6 +57,11 @@ export class UserController {
     return await session.user;
   }
 
+  @Get("/leaderboard")
+  async getpodium() {
+	return await this.userService.getpodium();
+  }
+
   @Get("/my-name")
   // @UseGuards(SessionGuard) // TODO
   async getMyName(@Req() request: Request, @Session() session : Record<string, any>) {
@@ -78,4 +83,5 @@ export class UserController {
   async remove(@Param('id') id: string) {
     return await this.userService.remove(+id);
   }
+
 }

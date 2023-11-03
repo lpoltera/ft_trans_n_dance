@@ -16,4 +16,6 @@ export class CreateUserDto {
   readonly password: string;
 
   readonly avatar?: string;
+
+  readonly totalXP?: number; // pour faire des tests
 }

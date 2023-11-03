@@ -1,8 +1,8 @@
 interface User {
   id: number;
-  pseudo: string;
-  status: string;
-  score: number;
+  username: string;
+  connected: string;
+  totalXP: number;
   avatar: string;
 }
 interface Props {
@@ -12,7 +12,7 @@ interface Props {
 const PodiumUserRow = ({ user }: Props) => {
   return (
     <a
-      href={"/profil/" + user.pseudo}
+      href={"/profil/" + user.username}
       key={user.id}
       className="flex justify-between py-4 px-4 border border-white hover:bg-neutral-800 rounded-md"
     >
@@ -23,12 +23,12 @@ const PodiumUserRow = ({ user }: Props) => {
           className="w-12 h-12 rounded-full object-cover"
         />
         <div className="flex flex-col justify-start">
-          <div className="text-xl">{user.pseudo}</div>
-          <div className="text-sm text-gray-400">{user.status}</div>
+          <div className="text-xl">{user.username}</div>
+          <div className="text-sm text-gray-400">{user.connected}</div>
         </div>
       </div>
       <div className="text-xl flex justify-end items-center">
-        {user.score} pts
+        {user.totalXP} pts
       </div>
     </a>
   );

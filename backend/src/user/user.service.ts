@@ -74,10 +74,28 @@ export class UserService {
     if (userUpdate.avatar) {
       user.avatar = userUpdate.avatar;
     }
+    if(userUpdate.totalXP) {
+      user.totalXP = userUpdate.totalXP;
+    } 
     return await this.userDB.save(user);
   }
 
   async remove(id: number) {
     return await this.userDB.delete({id});
+  }
+
+  async getpodium() {
+    const users = await this.userDB.find();
+    if (users) {
+      users.sort((a: any, b: any) => b.totalXP - a.totalXP);
+  
+      const podium = users.slice(0, 3);
+  
+      return podium;
+    }
+    else
+      return "erreur podium";
+
+
   }
 }
