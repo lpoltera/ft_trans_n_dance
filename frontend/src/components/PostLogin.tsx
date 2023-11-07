@@ -3,10 +3,10 @@ import { ChangeEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const PostLogin = () => {
-  	const navigate = useNavigate();
-  	const [login, setLogin] = useState({
-    	username: "",
-    	password: "",
+  const navigate = useNavigate();
+  const [login, setLogin] = useState({
+    username: "",
+    password: "",
   });
   const loginUser = async () => {
     await axios
@@ -39,11 +39,6 @@ const PostLogin = () => {
       setLogin({ ...login, password: e.target.value });
     }
   };
-
-  const oauthLogin = () => {
-	window.location.href = "/api/auth/school42";
-  }
-
   return (
     <div>
       <div>
@@ -73,11 +68,6 @@ const PostLogin = () => {
                   placeholder="Password"
                 />
               </div>
-			  <div>
-				<button type="button" onClick={() => oauthLogin()}>
-					Login 42
-				</button>
-			  </div>
             </div>
             <button type="button" onClick={() => loginUser()}>
               Login
