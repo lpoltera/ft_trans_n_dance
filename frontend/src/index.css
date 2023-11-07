@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+#root {
+    min-height: 100vh;
+}
+
+button[tooltip-data]:hover:before {
+    content: attr(tooltip-data);
+    padding: .25rem .4rem;
+    background-color: black;
+    border-radius: 2px;
+    color: white;
+    font-size: .65rem;
+    position: absolute;
+    bottom: auto;
+    left:auto;
+    right:120%;
+    text-wrap: nowrap;
+    transform: translateY(-2px);
+    line-height: 1;
+}
