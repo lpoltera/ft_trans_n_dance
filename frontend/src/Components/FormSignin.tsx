@@ -12,7 +12,7 @@ const FormSignin = () => {
 		username: "",
 		password: "",
 		avatar: "",
-		twoFaEnable: "",
+		twoFaEnable: false,
 	});
 
 	useEffect(() => {
@@ -37,12 +37,12 @@ const FormSignin = () => {
 					username: "",
 					password: "",
 					avatar: "",
-					twoFaEnable: "",
+					twoFaEnable: false,
 				});
 				console.log(response);
 				console.log(`User Created + tfa: ${user.twoFaEnable}`);
 
-				if (user.twoFaEnable === "true" || user.twoFaEnable === "t")
+				if (user.twoFaEnable)
 					navigate("/twofa-verify");
 				else {
 					navigate("/accueil");
@@ -65,8 +65,13 @@ const FormSignin = () => {
 			setUser({ ...user, password: e.target.value });
 		} else if (e.target.name === "avatar") {
 			setUser({ ...user, avatar: e.target.value });
-		} else if (e.target.name === "twoFaEnable") {
-			setUser({ ...user, twoFaEnable: e.target.value });
+		}
+	};
+
+	const onChangeCheckbox = (e: ChangeEvent<HTMLInputElement>) => {
+		const check = e.target.type === "checkbox" ? e.target.checked : true
+		if (e.target.name === "twoFaEnable") {
+			setUser({ ...user, twoFaEnable: check });
 		}
 	};
 
@@ -90,7 +95,7 @@ const FormSignin = () => {
 								className="border border-white px-3 py-2 bg-transparent text-white rounded-md"
 								placeholder="Pseudo"
 								onChange={(e) => onChangeForm(e)}
-								value={user.username}
+								// value={user.username}
 							/>
 							<input
 								type="password"
@@ -98,18 +103,18 @@ const FormSignin = () => {
 								className="border border-white px-3 py-2 bg-transparent text-white rounded-md"
 								placeholder="Mot de passe"
 								onChange={(e) => onChangeForm(e)}
-								value={user.password}
+								// value={user.password}
 							/>
 							<div className="flex gap-3 items-center py-6">
 								<input
-									type="radio"
+									type="checkbox"
 									id="twoFaEnable"
 									name="twoFaEnable"
-									onChange={(e) => onChangeForm(e)}
+									onChange={(e) => onChangeCheckbox(e)}
 									// onChange={handleTwoFaChange}
-									value="true"
+									// value="true"
 								/>
-								<label htmlFor="twoFaEnable">
+								<label htmlFor="twoFaEnable" className="ml-2">
 									Activer la double authentification
 								</label>
 							</div>
