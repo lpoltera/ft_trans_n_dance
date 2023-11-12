@@ -23,14 +23,10 @@ export class UserService {
 
   async create(newUser: CreateUserDto, session: Record<string, any>) {
     try {
-      const { avatar, password, twoFaEnable } = newUser;
-      console.log('NEW USER = ', avatar, password, twoFaEnable);
+      let { avatar, password, twoFaEnable } = newUser;
+      console.log('NEW USER = ', avatar, twoFaEnable); // delete password
       let log: string = session.login42;
       if (!log) log = 'johndoe';
-      let twoFA: boolean = twoFaEnable;
-      if (!twoFA) twoFA = false;
-      else twoFA = true;
-      console.log('twoFA in backend =', twoFA);
       let av = avatar;
       if (!av) av = '/src/assets/avatar-cat.png';
       if (!session.secret) session.secret = '';
@@ -46,12 +42,14 @@ export class UserService {
         totalXP: 0,
         totalGame: 0,
         login42: log,
-        twoFaEnable: twoFA,
+        twoFaEnable: twoFaEnable,
         secret2fa: session.secret,
       });
-      if (user.twoFaEnable === false) {
+
+      if (twoFaEnable.toString() === 'false') {
         user.connected = 'connecté';
         session.connected = true;
+        console.log('twoFaEnable is false')
       }
       await this.userDB.save(user);
       session.user = user;
@@ -103,9 +101,9 @@ export class UserService {
 
     if (isValid) {
       console.log('Authentication succeeded');
-      session.user = user;
+      // session.user = user;
       session.connected = true;
-      session.connected = 'connecté';
+      user.connected = 'connecté';
       return 'Authentication succeeded';
     } else {
       throw new Error('Authentication à foirée');
