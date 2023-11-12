@@ -7,7 +7,6 @@ import AvatarRadioSelect from "./AvatarRadioSelect";
 const FormSignin = () => {
 	const navigate = useNavigate();
 	const [qrLink, setQrLink] = useState<string | undefined>(undefined);
-	// const [twoFaEnabled, setTwoFaEnabled] = useState(false);
 	const [user, setUser] = useState({
 		username: "",
 		password: "",
@@ -39,7 +38,7 @@ const FormSignin = () => {
 					avatar: "",
 					twoFaEnable: false,
 				});
-				console.log(response);
+				console.log('response : ' + response);
 				console.log(`User Created + tfa: ${user.twoFaEnable}`);
 
 				if (user.twoFaEnable)
@@ -61,6 +60,7 @@ const FormSignin = () => {
 	const onChangeForm = (e: ChangeEvent<HTMLInputElement>) => {
 		if (e.target.name === "username") {
 			setUser({ ...user, username: e.target.value });
+			console.log('username state : ' + user.username)
 		} else if (e.target.name === "password") {
 			setUser({ ...user, password: e.target.value });
 		} else if (e.target.name === "avatar") {
@@ -70,15 +70,9 @@ const FormSignin = () => {
 
 	const onChangeCheckbox = (e: ChangeEvent<HTMLInputElement>) => {
 		const check = e.target.type === "checkbox" ? e.target.checked : true
-		if (e.target.name === "twoFaEnable") {
 			setUser({ ...user, twoFaEnable: check });
-		}
-	};
 
-	// const handleTwoFaChange = (e: any) => {
-	// 	setTwoFaEnabled(e.target.checked);
-	// 	setUser({ ...user, twoFaEnable: e.target.value });
-	// };
+	};
 
 	return (
 		<>
@@ -95,7 +89,6 @@ const FormSignin = () => {
 								className="border border-white px-3 py-2 bg-transparent text-white rounded-md"
 								placeholder="Pseudo"
 								onChange={(e) => onChangeForm(e)}
-								// value={user.username}
 							/>
 							<input
 								type="password"
@@ -103,7 +96,6 @@ const FormSignin = () => {
 								className="border border-white px-3 py-2 bg-transparent text-white rounded-md"
 								placeholder="Mot de passe"
 								onChange={(e) => onChangeForm(e)}
-								// value={user.password}
 							/>
 							<div className="flex gap-3 items-center py-6">
 								<input
@@ -111,8 +103,6 @@ const FormSignin = () => {
 									id="twoFaEnable"
 									name="twoFaEnable"
 									onChange={(e) => onChangeCheckbox(e)}
-									// onChange={handleTwoFaChange}
-									// value="true"
 								/>
 								<label htmlFor="twoFaEnable" className="ml-2">
 									Activer la double authentification
