@@ -49,11 +49,12 @@ export class UserService {
         twoFaEnable: twoFA,
         secret2fa: session.secret,
       });
-      await this.userDB.save(user);
-      if (twoFaEnable === false) {
-        session.user = user;
-        session.connected = 'connecté';
+      if (user.twoFaEnable === false) {
+        user.connected = 'connecté';
+        session.connected = true;
       }
+      await this.userDB.save(user);
+      session.user = user;
       return 'User Created!';
     } catch (error) {
       throw new ConflictException(error.message);
