@@ -27,13 +27,13 @@ export class UserService {
       console.log('NEW USER = ', avatar, password, twoFaEnable);
       let log: string = session.login42;
       if (!log) log = 'johndoe';
-
       let twoFA: boolean = twoFaEnable;
       if (!twoFA) twoFA = false;
       else twoFA = true;
       console.log('twoFA in backend =', twoFA);
       let av = avatar;
       if (!av) av = '/src/assets/avatar-cat.png';
+      if (!session.secret) session.secret = '';
       const hash = await bcrypt.hash(password, 10);
       const user = this.userDB.create({
         ...newUser,
@@ -47,18 +47,20 @@ export class UserService {
         totalGame: 0,
         login42: log,
         twoFaEnable: twoFA,
-        secret2fa: '',
+        secret2fa: session.secret,
       });
       await this.userDB.save(user);
-      session.user = user;
-      session.connected = 'connecté';
+      if (twoFaEnable === false) {
+        session.user = user;
+        session.connected = 'connecté';
+      }
       return 'User Created!';
     } catch (error) {
       throw new ConflictException(error.message);
     }
   }
 
-  async login(login: loginDto) {
+  async login(login: loginDto, session: Record<string, any>) {
     const { username, password } = login;
     const user = await this.userDB.findOne({ where: { username: username } });
     if (!user)
@@ -66,37 +68,45 @@ export class UserService {
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch)
       throw new UnauthorizedException('Username not found or invalid password');
+    session.user = user;
     user.connected = 'connecté';
+    if (user.twoFaEnable === false) {
+      session.connected = true;
+    }
     return await this.userDB.save(user);
   }
 
-  async generateQrCode(username: string) {
-    const user = await this.userDB.findOne({ where: { username: username } });
+  async generateQrCode(secret: string, login42: string) {
+    // const user = await this.userDB.findOne({ where: { username: username } });
+
+    //login42 dans session remplace user.username plus besoin de user
+    //secret dans session plus besoin de user
 
     // if (!user.secret2fa) {
-      const secret = speakeasy.generateSecret();
-      console.log(`secret in generate = ${secret}`);
-      user.secret2fa = secret.base32;
-      console.log(`user.secret2fa = ${user.secret2fa}`);
+    //   const secret = speakeasy.generateSecret(); // créée dasn auth.controller
+    //   console.log(`\nsecret in generate = ${secret.base32}\n`);
+    //   user.secret2fa = secret.base32; // stocké dans create
+    //   console.log(`user.secret2fa = ${user.secret2fa}`);
 
-      await this.userDB.save(user);
+    //   await this.userDB.save(user);
 
-      const otpauthURL = speakeasy.otpauthURL({
-        secret: secret.base32,
-        label: 'Pong42',
-        encoding: 'base32',
-        issuer: user.username,
-      });
+    const otpauthURL = speakeasy.otpauthURL({
+      secret: secret,
+      label: 'Pong42',
+      encoding: 'base32',
+      issuer: login42,
+    });
 
-      const QrCode = await this.optService.generateQrCode(otpauthURL);
-      return QrCode;
+    const QrCode = await this.optService.generateQrCode(otpauthURL); // à garder
+    return QrCode; // à garder
     // }
-    return;
+    // return;
   }
 
-  async twofaCheck(username: string, token: any) {
+  async twofaCheck(username: string, token: any, session: Record<string, any>) {
     const user = await this.userDB.findOne({ where: { username: username } });
     const userSecret = user.secret2fa;
+    console.log(`code google = ${token}`);
     console.log(`userSecret = ${userSecret}`);
 
     const isValid = speakeasy.totp.verify({
@@ -107,6 +117,9 @@ export class UserService {
 
     if (isValid) {
       console.log('Authentication succeeded');
+      session.user = user;
+      session.connected = true;
+      session.connected = 'connecté';
       return 'Authentication succeeded';
     } else {
       throw new Error('Authentication à foirée');

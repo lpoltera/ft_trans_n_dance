@@ -26,26 +26,32 @@ export class AuthController {
   }
 
   @Get('school42/callback')
-  async callback(@Query('code') code: string, @Query('state') state: string, @Res() res: any, @Session() session : Record<string, any>) {
-	// Vérifiez si l'état correspond à ce que vous avez envoyé pour prévenir les attaques CSRF
-	if (state !== 'a_very_long_random_string_which_must_be_unguessable') {
-	  // Les états ne correspondent pas; processus doit être interrompu
-	  return 'State mismatch; request may be compromised.';
-	}
-	
-	const accessToken = await this.authService.getAccessToken(code);
-	const user42login = await this.authService.getUserLogin(accessToken);
+  async callback(
+    @Query('code') code: string,
+    @Query('state') state: string,
+    @Res() res: any,
+    @Session() session: Record<string, any>,
+  ) {
+    // Vérifiez si l'état correspond à ce que vous avez envoyé pour prévenir les attaques CSRF
+    if (state !== 'a_very_long_random_string_which_must_be_unguessable') {
+      // Les états ne correspondent pas; processus doit être interrompu
+      return 'State mismatch; request may be compromised.';
+    }
 
-	console.log("USER INFO : ", user42login);
-	
-	// L'utilisateur existe déjà dans la table userDB
-	// comparaison login42 (userInfo) vs login42 userDB
-  	const exist = await this.authService.login(user42login, session)
-	if (exist === true) {
-		res.redirect('http://localhost:8000/accueil');
-	}
-	else {
-		res.redirect('http://localhost:8000/signin');
-	}
+    const accessToken = await this.authService.getAccessToken(code);
+    const user42login = await this.authService.getUserLogin(accessToken);
+
+    console.log('USER INFO : ', user42login);
+
+    const exist = await this.authService.login(user42login, session);
+    if (exist === 'new') {
+      // create secret stocké dans session.secret
+
+      res.redirect('http://localhost:8000/signin');
+    } else if (exist === '2faNO') {
+      res.redirect('http://localhost:8000/accueil');
+    } else if (exist === '2faYES') {
+      res.redirect('http://localhost:8000/twofa-verify');
+    }
   }
 }

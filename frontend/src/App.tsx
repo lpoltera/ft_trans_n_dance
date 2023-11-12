@@ -14,94 +14,94 @@ import AddPage from "./Pages/AddPage";
 import TfaPage from "./Pages/TfaPage";
 
 function App() {
-  return (
-    <>
-      <BrowserRouter>
-        <Routes>
-          <Route
-            path="/"
-            element={
-              <PublicRoute>
-                <LandingPage />
-              </PublicRoute>
-            }
-          ></Route>
-          <Route
-            path="/login"
-            element={
-              <PublicRoute>
-                <LoginPage />
-              </PublicRoute>
-            }
-          ></Route>
-          <Route
-            path="/signin"
-            element={
-              <PublicRoute>
-                <SigninPage />
-              </PublicRoute>
-            }
-          ></Route>
-          <Route
-            path="/accueil"
-            element={
-              <PrivateRoute>
-                <HomePage />
-              </PrivateRoute>
-            }
-          ></Route>
-          <Route
-            path="/profil/*"
-            element={
-              <PrivateRoute>
-                <ProfilPage />
-              </PrivateRoute>
-            }
-          ></Route>
-          <Route
-            path="/game"
-            element={
-              <PrivateRoute>
-                <PongGamePage />
-              </PrivateRoute>
-            }
-          ></Route>
-          <Route
-            path="/chat"
-            element={
-              <PrivateRoute>
-                <ChatPage />
-              </PrivateRoute>
-            }
-          ></Route>
-          <Route
-            path="logout"
-            element={
-              <PrivateRoute>
-                <LogoutPage />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/add"
-            element={
-              <PrivateRoute>
-                <AddPage />
-              </PrivateRoute>
-            }
-          />
-        <Route
-            path="/twofa-verify"
-            element={
-              <PrivateRoute>
-                <TfaPage />
-              </PrivateRoute>
-            }
-            ></Route>
-            </Routes>
-      </BrowserRouter>
-    </>
-  );
+	return (
+		<>
+			<BrowserRouter>
+				<Routes>
+					<Route
+						path="/"
+						element={
+							<PublicRoute>
+								<LandingPage />
+							</PublicRoute>
+						}
+					></Route>
+					<Route
+						path="/login"
+						element={
+							<PublicRoute>
+								<LoginPage />
+							</PublicRoute>
+						}
+					></Route>
+					<Route
+						path="/signin"
+						element={
+							<PublicRoute>
+								<SigninPage />
+							</PublicRoute>
+						}
+					></Route>
+					<Route
+						path="/accueil"
+						element={
+							<PrivateRoute>
+								<HomePage />
+							</PrivateRoute>
+						}
+					></Route>
+					<Route
+						path="/profil/*"
+						element={
+							<PrivateRoute>
+								<ProfilPage />
+							</PrivateRoute>
+						}
+					></Route>
+					<Route
+						path="/game"
+						element={
+							<PrivateRoute>
+								<PongGamePage />
+							</PrivateRoute>
+						}
+					></Route>
+					<Route
+						path="/chat"
+						element={
+							<PrivateRoute>
+								<ChatPage />
+							</PrivateRoute>
+						}
+					></Route>
+					<Route
+						path="logout"
+						element={
+							<PrivateRoute>
+								<LogoutPage />
+							</PrivateRoute>
+						}
+					/>
+					<Route
+						path="/add"
+						element={
+							<PrivateRoute>
+								<AddPage />
+							</PrivateRoute>
+						}
+					/>
+					<Route
+						path="/twofa-verify"
+						element={
+							// <PrivateRoute>
+							<TfaPage />
+							// </PrivateRoute>
+						}
+					></Route>
+				</Routes>
+			</BrowserRouter>
+		</>
+	);
 }
 
 export default App;
