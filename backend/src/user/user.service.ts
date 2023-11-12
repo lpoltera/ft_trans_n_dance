@@ -12,7 +12,6 @@ import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
 import * as speakeasy from 'speakeasy';
-import { authenticator } from 'otplib';
 import { QrCodeService } from '../config/otp.service';
 
 @Injectable()
@@ -74,7 +73,7 @@ export class UserService {
   async generateQrCode(username: string) {
     const user = await this.userDB.findOne({ where: { username: username } });
 
-    if (!user.secret2fa) {
+    // if (!user.secret2fa) {
       const secret = speakeasy.generateSecret();
       console.log(`secret in generate = ${secret}`);
       user.secret2fa = secret.base32;
@@ -91,7 +90,7 @@ export class UserService {
 
       const QrCode = await this.optService.generateQrCode(otpauthURL);
       return QrCode;
-    }
+    // }
     return;
   }
 
