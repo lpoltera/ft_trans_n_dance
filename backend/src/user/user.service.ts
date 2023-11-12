@@ -77,19 +77,6 @@ export class UserService {
   }
 
   async generateQrCode(secret: string, login42: string) {
-    // const user = await this.userDB.findOne({ where: { username: username } });
-
-    //login42 dans session remplace user.username plus besoin de user
-    //secret dans session plus besoin de user
-
-    // if (!user.secret2fa) {
-    //   const secret = speakeasy.generateSecret(); // créée dasn auth.controller
-    //   console.log(`\nsecret in generate = ${secret.base32}\n`);
-    //   user.secret2fa = secret.base32; // stocké dans create
-    //   console.log(`user.secret2fa = ${user.secret2fa}`);
-
-    //   await this.userDB.save(user);
-
     const otpauthURL = speakeasy.otpauthURL({
       secret: secret,
       label: 'Pong42',
@@ -97,10 +84,8 @@ export class UserService {
       issuer: login42,
     });
 
-    const QrCode = await this.optService.generateQrCode(otpauthURL); // à garder
-    return QrCode; // à garder
-    // }
-    // return;
+    const QrCode = await this.optService.generateQrCode(otpauthURL);
+    return QrCode;
   }
 
   async twofaCheck(username: string, token: any, session: Record<string, any>) {
