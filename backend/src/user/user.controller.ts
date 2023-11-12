@@ -41,12 +41,12 @@ export class UserController {
     @Body() loginDto: loginDto,
     @Session() session: Record<string, any>,
   ) {
-    const user = await this.userService.login(loginDto);
-    session.user = user;
-    session.connected = true;
+    const user = await this.userService.login(loginDto, session);
+    // session.user = user;			=> move to user.service login
+    // session.connected = true;	=> move to user.service login
     const response = {
       message: 'Login successful',
-      session: session.user, // Incluez la session dans la réponse
+      user: user.twoFaEnable, // before : session: session.user,
     };
 
     return response;
@@ -54,12 +54,23 @@ export class UserController {
 
   @Get('/qrcode')
   async generateQrCode(@Session() session: Record<string, any>) {
-    return await this.userService.generateQrCode(session.user.username);
+    if (!session.login42) {
+      session.login42 = 'johndoe';
+      session.secret = 'NQYCCXKGKITDAJJJIBHTS2CQLIXDM6B7KJUESSLQPJNEM6KCJVTQ';
+    } //	dev mode (sans passer par API 42)
+    return await this.userService.generateQrCode(
+      session.secret,
+      session.login42,
+    );
   }
 
   @Post('/twofacheck')
   async twoFaCheck(@Session() session: Record<string, any>, @Body() { token }) {
-    return await this.userService.twofaCheck(session.user.username, token);
+    return await this.userService.twofaCheck(
+      session.user.username,
+      token,
+      session,
+    );
   }
 
   @UseInterceptors(ClassSerializerInterceptor)

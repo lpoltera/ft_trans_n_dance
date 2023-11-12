@@ -4,6 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../user/entities/user.entity';
 import { Repository } from 'typeorm';
+import * as speakeasy from 'speakeasy';
 
 @Injectable()
 export class AuthService {
@@ -38,26 +39,29 @@ export class AuthService {
     return data.login;
   }
 
-  async login(user42name: string, session : Record<string, any>) {
-	const user = await this.userDB.findOne({where : {login42 : user42name}})
+  async login(user42name: string, session: Record<string, any>) {
+    const user = await this.userDB.findOne({ where: { login42: user42name } });
 
     if (!user) {
-		session.login42 = user42name;
-		// créer un nouvel utilisateur avec le user42name dand userDB
-		// connected
-		console.log("utilisateur n'exite pas")
-		return false;
-	}
-	else {
-		session.user = user
-		session.connected = true
-		session.login42 = user42name;
-		user.connected = "connecté";
-		this.userDB.save(user)
-		console.log("utilisateur exite pas")
-		return true;
-	}
+      session.login42 = user42name;
+      const secret = speakeasy.generateSecret();
+      session.secret = secret.base32;
 
-
+      console.log("utilisateur n'existe pas");
+      return 'new'; //false
+    } else if (user.twoFaEnable === false) {
+      // check if user.twoFAEnable === true or false
+      session.user = user;
+      session.connected = true;
+      session.login42 = user42name;
+      user.connected = 'connecté';
+      this.userDB.save(user);
+      console.log('utilisateur exite pas');
+      return '2faNO';
+    } else {
+      session.user = user;
+      session.login42 = user42name;
+      return '2faYES';
+    }
   }
 }
