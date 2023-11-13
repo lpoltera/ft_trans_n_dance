@@ -12,6 +12,7 @@ import { NotificationsModule } from './notifications/notifications.module';
 import { Notification } from './notifications/entities/notifications.entity';
 import { Uauth } from './auth/entities/uauth.entity';
 import { AuthModule } from './auth/auth.module';
+import { ChatModule } from './chat/chat.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { AuthModule } from './auth/auth.module';
     MatchsHistoryModule,
     NotificationsModule,
     AuthModule,
+    ChatModule,
     // SessionModule
   ],
   controllers: [AppController],
