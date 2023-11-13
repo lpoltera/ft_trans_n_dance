@@ -25,6 +25,13 @@ export class UserService {
     try {
       let { avatar, password, twoFaEnable } = newUser;
       console.log('NEW USER = ', avatar, twoFaEnable); // delete password
+      let twoFa: boolean;
+      if (twoFaEnable === 'false') {
+        twoFa = false;
+      } else {
+        twoFa = true;
+      }
+
       let log: string = session.login42;
       if (!log) log = 'johndoe';
       let av = avatar;
@@ -42,16 +49,18 @@ export class UserService {
         totalXP: 0,
         totalGame: 0,
         login42: log,
-        twoFaEnable: twoFaEnable,
+        twoFaEnable: twoFa,
         secret2fa: session.secret,
       });
 
       if (twoFaEnable.toString() === 'false') {
         user.connected = 'connecté';
         session.connected = true;
-        console.log('twoFaEnable is false')
+        console.log('twoFaEnable is false');
       }
       await this.userDB.save(user);
+      console.log(`twoFaEnable = ${twoFaEnable}`);
+      console.log(`user.twoFaEnable = ${user.twoFaEnable}`);
       session.user = user;
       return 'User Created!';
     } catch (error) {
@@ -104,6 +113,7 @@ export class UserService {
       // session.user = user;
       session.connected = true;
       user.connected = 'connecté';
+      this.userDB.save(user);
       return 'Authentication succeeded';
     } else {
       throw new Error('Authentication à foirée');

@@ -11,7 +11,7 @@ export class CreateUserDto {
   @IsStrongPassword({}, { message: 'Invalid password\n' })
   readonly password: string;
 
-  readonly twoFaEnable?: boolean;
+  readonly twoFaEnable?: string;
 
   readonly avatar?: string;
 

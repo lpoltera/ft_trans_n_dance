@@ -65,14 +65,18 @@ const FormSignin = () => {
 			setUser({ ...user, password: e.target.value });
 		} else if (e.target.name === "avatar") {
 			setUser({ ...user, avatar: e.target.value });
+		} else if (e.target.name === "twoFaEnable") {
+			setUser({ ...user, twoFaEnable: e.target.checked });
 		}
 	};
 
-	const onChangeCheckbox = (e: ChangeEvent<HTMLInputElement>) => {
-		const check = e.target.type === "checkbox" ? e.target.checked : true
-			setUser({ ...user, twoFaEnable: check });
-
-	};
+	// const onChangeCheckbox = (e: ChangeEvent<HTMLInputElement>) => {
+	// 	console.log(`target.checked = ${e.target.checked}`)
+	// 	// console.log(`target.value = ${e.target.value}`)
+	// 	// console.log(`value check = ${check}`)
+	// 	setUser({ ...user, twoFaEnable: e.target.checked });
+	// 	console.log(`twoFaEnable: = ${user.twoFaEnable}`)
+	// };
 
 	return (
 		<>
@@ -102,7 +106,7 @@ const FormSignin = () => {
 									type="checkbox"
 									id="twoFaEnable"
 									name="twoFaEnable"
-									onChange={(e) => onChangeCheckbox(e)}
+									onChange={(e) => onChangeForm(e)}
 								/>
 								<label htmlFor="twoFaEnable" className="ml-2">
 									Activer la double authentification
