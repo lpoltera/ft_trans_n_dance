@@ -13,6 +13,7 @@ import { Notification } from './notifications/entities/notifications.entity';
 import { Uauth } from './auth/entities/uauth.entity';
 import { AuthModule } from './auth/auth.module';
 import { ChatModule } from './chat/chat.module';
+import { Chat } from './chat/entities/chat.entity';
 
 @Module({
   imports: [
@@ -24,7 +25,7 @@ import { ChatModule } from './chat/chat.module';
       password: process.env.BACKEND_PASSWORD,
       database: process.env.POSTGRES_DB,
       synchronize: true, // TODO Pour le développement, à éviter en production
-      entities: [User, Friendship, MatchsHistory, Notification, Uauth],
+      entities: [User, Friendship, MatchsHistory, Notification, Uauth, Chat],
       logging: true,
     }),
     UserModule,

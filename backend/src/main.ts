@@ -1,13 +1,19 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import { NestExpressApplication } from '@nestjs/platform-express';
 import * as connectPgSimple from 'connect-pg-simple';
 import * as session from 'express-session';
 import { AppModule } from './app.module';
 import Pool = require('pg-pool');
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.useGlobalPipes(new ValidationPipe());
+
+  app.enableCors({
+    origin: '*', // TODO precaution
+    credentials: true,
+  });
 
   app.use(
     session({
@@ -28,7 +34,7 @@ async function bootstrap() {
       cookie: {
         maxAge: 30 * 24 * 60 * 60 * 1000, // 30 jours
         sameSite: 'lax', // TODO for google chrome
-        // TODO secure: true (for https) 
+        // TODO secure: true (for https)
       },
     }),
   );

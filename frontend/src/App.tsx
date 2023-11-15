@@ -1,16 +1,16 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
-import LandingPage from "./Pages/LandingPage";
-import LoginPage from "./Pages/LoginPage";
-import SigninPage from "./Pages/SigninPage";
-import HomePage from "./Pages/HomePage";
-import ProfilPage from "./Pages/ProfilPage";
-import PongGamePage from "./Pages/PongGamePage";
-import ChatPage from "./Pages/ChatPage";
 import PrivateRoute from "./Components/PrivateRoute";
 import PublicRoute from "./Components/PublicRoute";
-import LogoutPage from "./Pages/LogoutPage";
 import AddPage from "./Pages/AddPage";
+import ChatPage from "./Pages/ChatPage";
+import HomePage from "./Pages/HomePage";
+import LandingPage from "./Pages/LandingPage";
+import LoginPage from "./Pages/LoginPage";
+import LogoutPage from "./Pages/LogoutPage";
+import PongGamePage from "./Pages/PongGamePage";
+import ProfilPage from "./Pages/ProfilPage";
+import SigninPage from "./Pages/SigninPage";
 import TfaPage from "./Pages/TfaPage";
 
 function App() {
@@ -66,14 +66,14 @@ function App() {
 							</PrivateRoute>
 						}
 					></Route>
-					<Route
+					{/* <Route
 						path="/chat"
 						element={
 							<PrivateRoute>
 								<ChatPage />
 							</PrivateRoute>
 						}
-					></Route>
+					></Route> */}
 					<Route
 						path="logout"
 						element={
@@ -88,6 +88,14 @@ function App() {
 							<PrivateRoute>
 								<AddPage />
 							</PrivateRoute>
+						}
+					/>
+					<Route
+						path="/chat"
+						element={
+							// <PrivateRoute>
+								<ChatPage />
+							// </PrivateRoute>
 						}
 					/>
 					<Route
