@@ -10,7 +10,6 @@ import { MatchsHistoryModule } from './matchs-history/matchs-history.module';
 import { MatchsHistory } from './matchs-history/entities/matchs-history.entity';
 import { NotificationsModule } from './notifications/notifications.module';
 import { Notification } from './notifications/entities/notifications.entity';
-import { Uauth } from './auth/entities/uauth.entity';
 import { AuthModule } from './auth/auth.module';
 import { ChatModule } from './chat/chat.module';
 import { Chat } from './chat/entities/chat.entity';
@@ -25,7 +24,7 @@ import { Chat } from './chat/entities/chat.entity';
       password: process.env.BACKEND_PASSWORD,
       database: process.env.POSTGRES_DB,
       synchronize: true, // TODO Pour le développement, à éviter en production
-      entities: [User, Friendship, MatchsHistory, Notification, Uauth, Chat],
+      entities: [User, Friendship, MatchsHistory, Notification, Chat],
       logging: true,
     }),
     UserModule,
