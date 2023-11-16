@@ -7,8 +7,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { User } from '../user/entities/user.entity';
 
 @Module({
-	imports: [HttpModule, ConfigModule, TypeOrmModule.forFeature([User])],
-	controllers: [AuthController],
-	providers: [AuthService, ConfigService],
+  imports: [HttpModule, ConfigModule, TypeOrmModule.forFeature([User])],
+  controllers: [AuthController],
+  providers: [AuthService, ConfigService],
 })
 export class AuthModule {}

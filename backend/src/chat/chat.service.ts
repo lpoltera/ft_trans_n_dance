@@ -13,8 +13,26 @@ export class ChatService {
     return await this.chatDB.save(createChat);
   }
 
-  async findAll(): Promise<Chat[]> {
-    return await this.chatDB.find();
+  async findAll(sender: string, receiver: string): Promise<Chat[]> {
+    // const receiverName: any = receiver;
+    // const senderName: any = sender;
+    console.log('Receiver in findAll = ', sender);
+    console.log('Sender in findAll = ', receiver);
+
+    const room = await this.chatDB.find({
+      where: [
+        {
+          sender: sender,
+          receiver: receiver,
+        },
+        {
+          sender: receiver,
+          receiver: sender,
+        },
+      ],
+    });
+
+    return room;
   }
 
   // findOne(id: number) {

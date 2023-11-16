@@ -12,6 +12,7 @@ import { ChatService } from './chat.service';
 import { CreateChatDto } from './dto/create-chat.dto';
 import { UpdateChatDto } from './dto/update-chat.dto';
 import { Chat } from './entities/chat.entity';
+import { Session } from '@nestjs/common';
 
 @WebSocketGateway()
 export class ChatGateway {
@@ -21,14 +22,14 @@ export class ChatGateway {
   @WebSocketServer() server: Server;
 
   @SubscribeMessage('sendMessage')
-  async create(client: Socket, @MessageBody() createChat: Chat) {
-    await this.chatService.create(createChat);
-    this.server.emit('recMessage', createChat);
+  async create(@MessageBody() message: Chat) {
+    await this.chatService.create(message);
+    this.server.emit('recMessage', message);
   }
 
   @SubscribeMessage('findAllChat')
-  findAll() {
-    return this.chatService.findAll();
+  findAll(sender: string, receiver: string) {
+    return this.chatService.findAll(sender, receiver);
   }
 
   afterInit(server: Server) {
@@ -38,6 +39,7 @@ export class ChatGateway {
 
   handleDisconnect(client: Socket) {
     console.log(`Disconnected: ${client.id}`);
+    client.disconnect();
     //Do stuffs
   }
 

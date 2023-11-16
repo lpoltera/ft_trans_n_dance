@@ -7,32 +7,60 @@ interface ChatMessage {
   text: string;
 }
 
-const Chat = () => {
+interface User {
+  id?: number;
+  username: string;
+  status: string;
+  avatar: string;
+}
+
+interface Props {
+  ami: User;
+}
+
+const Chat = ({ ami }: Props) => {
   const [socket, setSocket] = useState<any>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [newMessage, setNewMessage] = useState("");
-  const [sender, setSender] = useState("");
+  const [currentUser, setCurrentUser] = useState<string>("");
 
   useEffect(() => {
     // Création de la connexion Socket.IO lors du montage du composant
     const newSocket = io("http://localhost:8000");
     setSocket(newSocket);
 
-    const fetchMessages = async () => {
+    async function fetchCurrent() {
       try {
-        const response = await axios.get("http://localhost:8000/api/chat/all");
-        setMessages(response.data);
+        const response = await axios.get<string>("/api/my-name");
+        console.log(`response ligne 36 Chat.tsx = ${response.data}`);
+        setCurrentUser(response.data);
+        return response.data;
       } catch (error) {
-        console.error("Error fetching messages:", error);
+        console.error("Error fetching my name", error);
       }
-    };
+    }
+
+    async function fetchMessages() {
+      const name = await fetchCurrent();
+      if (name) {
+        try {
+          console.log(`my name = ${name}`);
+          console.log(`ami name = ${ami.username}`);
+          const response = await axios.get(
+            "/api/chat/all/" + name + "/" + ami.username
+          );
+          setMessages(response.data);
+        } catch (error) {
+          console.error("Error fetching messages:", error);
+        }
+      }
+    }
     fetchMessages();
 
-    // Nettoyage de la connexion lors du démontage du composant
     return () => {
-      newSocket.disconnect();
+      if (newSocket) newSocket.disconnect();
     };
-  }, []); // Dépendance vide pour s'assurer que cela n'est exécuté qu'une fois lors du montage
+  }, [ami]); // Dépendance vide pour s'assurer que cela n'est exécuté qu'une fois lors du montage
 
   useEffect(() => {
     if (!socket) {
@@ -54,7 +82,11 @@ const Chat = () => {
 
   const handleSendMessage = () => {
     if (socket) {
-      socket.emit("sendMessage", { sender, text: newMessage });
+      socket.emit("sendMessage", {
+        sender: currentUser,
+        receiver: ami.username,
+        text: newMessage,
+      });
       setNewMessage("");
     }
   };
@@ -69,13 +101,13 @@ const Chat = () => {
         ))}
       </ul>
       <div>
-        <input
+        {/* <input
           type="text"
           className="border border-white px-3 py-2 bg-transparent text-black rounded-md"
           value={sender}
           onChange={(e) => setSender(e.target.value)}
           placeholder="Your name"
-        />
+        /> */}
         <input
           type="text"
           className="border border-white px-3 py-2 bg-transparent text-black rounded-md"
