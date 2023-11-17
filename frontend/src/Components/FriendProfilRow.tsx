@@ -15,6 +15,10 @@ interface Props {
   ami: Ami;
 }
 
+const navigateToChat = () => {
+  window.location.href = "/chat";
+};
+
 const FriendProfilRow = ({ ami }: Props) => {
   return (
     <>
@@ -43,6 +47,7 @@ const FriendProfilRow = ({ ami }: Props) => {
           <button
             type="button"
             className="w-6 h-6 opacity-50 hover:opacity-100"
+            onClick={navigateToChat}
           >
             <ChatBubbleBottomCenterTextIcon />
           </button>

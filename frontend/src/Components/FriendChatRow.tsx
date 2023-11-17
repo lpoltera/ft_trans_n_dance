@@ -3,24 +3,24 @@ import {
 	NoSymbolIcon,
 	UserMinusIcon,
   } from "@heroicons/react/24/outline";
-  
+
   interface User {
 	id?: number;
 	username: string;
 	status: string;
 	avatar: string;
   }
-  
+
   interface Props {
 	ami: User;
 	handleChatButtonClick: (ami: User) => void;
   }
-  
+
   const FriendProfilRow = ({ ami, handleChatButtonClick }: Props) => {
- 
+
 	return (
 	  <>
-		<div className="flex justify-between items-center pr-4 hover:bg-neutral-800 rounded-md">
+		<div className="flex justify-between items-center pr-4 hover:bg-neutral-800 rounded-md cursor-pointer" onClick={() => handleChatButtonClick(ami)}>
 		  <a href='#' className="py-4 px-4">
 			<div className="flex justify-center gap-4">
 			  <img
@@ -60,5 +60,5 @@ import {
 	  </>
 	);
   };
-  
+
   export default FriendProfilRow;
