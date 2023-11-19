@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Session } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Session,
+} from '@nestjs/common';
 import { FriendsService } from './friends.service';
 import { CreateFriendDto } from './dto/create-friend.dto';
 import { UpdateFriendDto } from './dto/update-friend.dto';
@@ -15,14 +24,14 @@ export class FriendsController {
   @Post('add/:friendName')
   async addFriend(
     @Param('friendName') friendName: string,
-    @Session() sessionUser: Record<string, any>
+    @Session() sessionUser: Record<string, any>,
   ) {
     const currentUserName = sessionUser.user.username;
-    return await this.friendsService.addFriend(currentUserName,friendName);
+    return await this.friendsService.addFriend(currentUserName, friendName);
   }
-  @Get("all/:userName")
+  @Get('all/:userName')
   async findAll(
-    @Param('userName') userName: string
+    @Param('userName') userName: string,
     // @Session() sessionUser: Record<string, any>
   ) {
     // const currentUserId = sessionUser.user.id
@@ -33,15 +42,24 @@ export class FriendsController {
   // findOne(@Param('id') id: string) {
   //   return this.friendsService.findOne(+id);
   // }
+  @Get('blocked/:userName')
+  async findBlocked(@Param('userName') username: string) {
+    return await this.friendsService.findBlocked(username);
+  }
 
   @Patch(':friendName')
   async update(
-    @Param('friendName') friendName: string, @Body() StatusToUpdate: UpdateFriendDto,
-    @Session() sessionUser: Record<string, any>) 
-    {
-    const currentUserName = sessionUser.user.username
+    @Param('friendName') friendName: string,
+    @Body() StatusToUpdate: UpdateFriendDto,
+    @Session() sessionUser: Record<string, any>,
+  ) {
+    const currentUserName = sessionUser.user.username;
     const statusValue = StatusToUpdate.status.valueOf();
-    return await this.friendsService.update(currentUserName, friendName, statusValue);
+    return await this.friendsService.update(
+      currentUserName,
+      friendName,
+      statusValue,
+    );
   }
 
   // @Delete(':id')
@@ -49,8 +67,8 @@ export class FriendsController {
   //   return this.friendsService.remove(+id);
   // }
 
-    @Delete('delete_all')
-    removeAll() {
+  @Delete('delete_all')
+  removeAll() {
     return this.friendsService.removeAll();
   }
 }

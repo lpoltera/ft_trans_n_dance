@@ -63,9 +63,11 @@ export class FriendsService {
       Friend_Not_confirmed.status = 'valider';
       await this.friendRepository.save(Friend_Not_confirmed);
 
-	  const id = Friend_Not_confirmed.id;
-      const msgToDelete = await this.notifsDB.findOne({where: {friend: {id : id}}})
-	  await this.notifsDB.delete(msgToDelete);
+      const id = Friend_Not_confirmed.id;
+      const msgToDelete = await this.notifsDB.findOne({
+        where: { friend: { id: id } },
+      });
+      await this.notifsDB.delete(msgToDelete);
       return "Demande d'ami validé";
     }
 
@@ -134,6 +136,32 @@ export class FriendsService {
     return userFriends;
   }
 
+  async findBlocked(username: string) {
+    const blockedValidate = await this.friendRepository.find({
+      where: [
+        {
+          user: { username: username },
+          status: 'blocked',
+        },
+        {
+          friend: { username: username },
+          status: 'blocked',
+        },
+      ],
+    });
+    const blockedValidateOK = blockedValidate.map((item) =>
+      item.friendName != username ? item.friendName : item.userName,
+    );
+    blockedValidateOK.unshift(username); // équivalent de pushback mais pas placé en première place placé selon ordre de l'id
+
+    const userFriends = await this.userDB.find({
+      where: {
+        username: In(blockedValidateOK),
+      },
+    });
+    return userFriends;
+  }
+
   // findOne(id: number) {
   //   return `This action returns a #${id} friend`;
   // }
@@ -152,18 +180,24 @@ export class FriendsService {
       ],
     });
     if (friendToUpdate) {
+      const previous_status = friendToUpdate.status;
       friendToUpdate.status = statusToUpdate;
       this.friendRepository.save(friendToUpdate);
-	  if (friendToUpdate.status === "valider") {
-		const id = friendToUpdate.id;
-		const msgToDelete = await this.notifsDB.findOne({where: {friend: {id : id}}})
-		await this.notifsDB.delete(msgToDelete);
+      if (
+        friendToUpdate.status === 'valider' &&
+        previous_status === 'pending'
+      ) {
+        const id = friendToUpdate.id;
+        const msgToDelete = await this.notifsDB.findOne({
+          where: { friend: { id: id } },
+        });
+        await this.notifsDB.delete(msgToDelete);
         //envoi notification au sender que la demande a ete acceptée
-	  }
+      }
       return `The relation between #${userName} and #${friendName} has been updated to ${statusToUpdate}`;
     }
   }
-  
+
   removeAll() {
     return this.friendRepository.clear();
   }
