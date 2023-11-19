@@ -43,7 +43,7 @@ const Navbar = () => {
 
   return (
     <>
-      <div className="fixed top-0 right-0 left-0 flex items-center justify-between pl-6 pr-4 h-16">
+      <div className="fixed bg-cyan-900 top-0 right-0 left-0 flex items-center justify-between pl-6 pr-4 h-16">
         <a href="/accueil" id="logoLink" className="text-white text-lg">
           PONG<sup>42</sup>
         </a>
