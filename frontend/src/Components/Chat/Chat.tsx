@@ -13,7 +13,7 @@ interface ChatMessage {
 interface User {
 	id?: number;
 	username: string;
-	status: string;
+	connected: string;
 	avatar: string;
 }
 

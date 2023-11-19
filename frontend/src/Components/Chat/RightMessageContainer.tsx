@@ -3,7 +3,7 @@ import './Chat.css';
 interface User {
 	id?: number;
 	username: string;
-	status: string;
+	connected: string;
 	avatar: string;
 }
 

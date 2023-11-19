@@ -10,7 +10,7 @@ import axios from "axios";
 interface User {
 	id?: number;
 	username: string;
-	status: string;
+	connected: string;
 	avatar: string;
 }
 
@@ -39,23 +39,25 @@ const FriendChatListItem = ({ ami, handleChatButtonClick }: Props) => {
 						src={ami.avatar}
 						alt="user'avatar profile"
 						className="w-12 h-12 rounded-full object-cover"
-					/>
-					<div className="user-list__item__infos">
-						<div className="text-xl">{ami.username}</div>
-						<div className="text-sm text-gray-400">{ami.status}</div>
-						<button
-							type="button"
-							className="w-6 h-6 opacity-50 hover:opacity-100"
-							onClick={() => changeFriendshipStatus()}
+						/>
+						<div className="user-list__item__infos">
+							<div className="text-xl">{ami.username}</div>
+							<div className="text-sm text-gray-400">{ami.connected}</div>
+						</div>
+				</div>
+				<div className="user-list__item__infos__icons">
+					<button
+						type="button"
+						className="w-6 h-6 opacity-50 hover:opacity-100"
+						onClick={() => changeFriendshipStatus()}
 						>
-							<NoSymbolIcon />
-						</button>
-						<button
-							type="button"
-							className="w-6 h-6 opacity-50 hover:opacity-100">
-							<UserIcon />
-						</button>
-					</div>
+						<NoSymbolIcon />
+					</button>
+					<button
+						type="button"
+						className="w-6 h-6 opacity-50 hover:opacity-100">
+						<UserIcon />
+					</button>
 				</div>
 			</button>
 		</>

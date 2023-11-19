@@ -27,19 +27,25 @@ main {
 .user-list__item__avatar {
 	display: flex;
 	align-items: center;
+	width: 100%; /* du parent */
 	/* ajouter un padding si besoin */
 }
 
 .user-list__item__infos {
 	display: flex;
-	justify-content: space-between;
+	align-items: flex-start;
+	justify-content: flex-start;
+	flex-direction: column;
+	padding-left: 15px;
 	width: 100%; /* du parent */
-	margin-left: 10px;
-	gap: 15px;
+
 }
 
-.user-list__item__infos > p {
-	margin: 0px;
+.user-list__item__infos__icons {
+	display: flex;
+	align-items: center;
+	gap: 5px;
+	padding-right: 20px;
 }
 
 .chat-container {
@@ -121,16 +127,16 @@ main {
 	left: 0;
 }
 
-.sending-form>* {
+.sending-form > * {
 	border-radius: 5px;
 }
 
-.sending-form>input {
+.sending-form  >input {
 	width: 100%;
 	height: 40px;
 	padding-left: 10px;
 }
 
-.sending-form>button {
+.sending-form > button {
 	width: 100px;
 }
