@@ -1,7 +1,7 @@
 import {
   ChatBubbleBottomCenterTextIcon,
   NoSymbolIcon,
-  UserMinusIcon,
+  UserIcon,
 } from "@heroicons/react/24/outline";
 
 interface Ami {
@@ -55,7 +55,7 @@ const FriendProfilRow = ({ ami }: Props) => {
             type="button"
             className="w-6 h-6 opacity-50 hover:opacity-100"
           >
-            <UserMinusIcon />
+            <UserIcon />
           </button>
         </div>
       </div>

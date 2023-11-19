@@ -705,6 +705,8 @@ select {
   --tw-backdrop-sepia:  ;
 }
 
+
+
 .pointer-events-none {
   pointer-events: none;
 }
@@ -837,6 +839,14 @@ select {
 
 .h-full {
   height: 100%;
+}
+
+.h-screen {
+  height: 100vh;
+}
+
+.h-max {
+  height: max-content;
 }
 
 .min-h-screen {

@@ -1,88 +1,89 @@
-import FooterMain from "../Components/FooterMain";
-import Navbar from "../Components/Navbar";
-import PageLayout from "../Components/PageLayout";
-import Chat from "../Components/Chat";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import FriendChatRow from "../Components/FriendChatRow";
+import Navbar from "../Components/Navbar";
+import PageLayout from "../Components/PageLayout";
+import Chat from "../Components/Chat/Chat";
+import FriendChatListItem from "../Components/Chat/FriendChatListItem";
+import FooterMain from "../Components/FooterMain";
+import '../Components/Chat/Chat.css';
 
 interface User {
-  id?: number;
-  username: string;
-  avatar: string;
-  status: string;
+	id?: number;
+	username: string;
+	avatar: string;
+	status: string;
 }
 
 const ChatPage = () => {
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [friends, setAllFriends] = useState<User[] | null>(null);
-  const [selectedFriend, setSelectedFriend] = useState<User | null>(null);
+	const [currentUser, setCurrentUser] = useState<User | null>(null);
+	const [friends, setAllFriends] = useState<User[] | null>(null);
+	const [selectedFriend, setSelectedFriend] = useState<User | null>(null);
 
-  const handleChatButtonClick = (ami: User) => {
-    setSelectedFriend((prevFriend) => (prevFriend === ami ? null : ami));
-  };
+	const handleChatButtonClick = (ami: User) => {
+		setSelectedFriend((prevFriend) => (prevFriend === ami ? null : ami));
+	};
 
-  useEffect(() => {
-    async function fetchCurrent() {
-      try {
-        const response = await axios.get<string>("/api/my-name");
-        console.log(`response ligne 29 ChatPage = ${response.data}`)
-        return response.data;
-      } catch (err) {
-        console.error(err);
-        return null;
-      }
-    }
+	useEffect(() => {
+		async function fetchCurrent() {
+			try {
+				const response = await axios.get<string>("/api/my-name");
+				console.log(`response ligne 29 ChatPage = ${response.data}`)
+				return response.data;
+			} catch (err) {
+				console.error(err);
+				return null;
+			}
+		}
 
-    async function fetchUserAndFriend() {
-      const name = await fetchCurrent();
-      if (name) {
-        try {
-          const [userResponse, friendResponse] = await Promise.all([
-            axios.get<User>("/api/" + name),
-            axios.get<User[]>("/api/friends/all/" + name),
-          ]);
-          setCurrentUser(userResponse.data);
-          setAllFriends(friendResponse.data);
-        } catch (err) {
-          console.error(err);
-        }
-      }
-    }
-    fetchUserAndFriend();
-  }, []);
+		async function fetchUserAndFriend() {
+			const name = await fetchCurrent();
+			if (name) {
+				try {
+					const [userResponse, friendResponse] = await Promise.all([
+						axios.get<User>("/api/" + name),
+						axios.get<User[]>("/api/friends/all/" + name),
+					]);
+					setCurrentUser(userResponse.data);
+					setAllFriends(friendResponse.data);
+				} catch (err) {
+					console.error(err);
+				}
+			}
+		}
+		fetchUserAndFriend();
+	}, []);
 
-  return (
-    <>
-      <Navbar />
-      <PageLayout>
-        <div className="h-full overflow-auto">
-          <h2 className="text-xl mb-4">Amis</h2>
-          <div className="grid grid-flow-row gap-2">
-            {friends?.map(
-              (ami, index) =>
-                currentUser?.username !== ami.username && (
-                  <FriendChatRow
-                    key={index}
-                    ami={ami}
-                    handleChatButtonClick={handleChatButtonClick}
-                  />
-                )
-            )}
-          </div>
-        </div>
-        <div className="w-full h-full grow flex flex-col items-center justify-center gap-12 pb-12">
-          {selectedFriend && (
-            <div className="w-full h-full grow flex flex-col items-center justify-center gap-12 pb-12">
-              {/* Affichez le composant Chat pour l'ami sélectionné */}
-              <Chat ami={selectedFriend}></Chat>
-            </div>
-          )}
-        </div>
-      </PageLayout>
-      <FooterMain />
-    </>
-  );
+	return (
+		<>
+			<Navbar />
+			<PageLayout>
+				<h2 className="text-xl mb-4">Amis</h2>
+				<main>
+					<div className="panel user-list ">
+						{friends?.map(
+							(ami, index) =>
+								currentUser?.username !== ami.username && (
+									<FriendChatListItem
+										key={index}
+										ami={ami}
+										handleChatButtonClick={handleChatButtonClick}
+									/>
+								)
+						)}
+					</div>
+
+					<div className="panel chat-container">
+						{selectedFriend && (
+							<div>
+								<Chat ami={selectedFriend}></Chat>
+							</div>
+						)}
+					</div>
+				</main>
+			</PageLayout>
+			<FooterMain />
+		</>
+	);
 };
 
 export default ChatPage;

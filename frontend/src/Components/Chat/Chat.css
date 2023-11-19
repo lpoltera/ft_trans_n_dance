@@ -1,0 +1,136 @@
+/* Remove before flight */
+img {
+	height: 50px;
+	border-radius: 50%;
+}
+
+main {
+	display: flex;
+}
+
+.panel {
+	padding: 10px;
+}
+
+.user-list {
+	min-width: 250px;
+	max-width: 350px;
+}
+
+.user-list__item {
+	display: flex;
+	width: 100%;
+	height: 75px;
+	padding-left: 10px;
+}
+
+.user-list__item__avatar {
+	display: flex;
+	align-items: center;
+	/* ajouter un padding si besoin */
+}
+
+.user-list__item__infos {
+	display: flex;
+	justify-content: space-between;
+	width: 100%; /* du parent */
+	margin-left: 10px;
+	gap: 15px;
+}
+
+.user-list__item__infos > p {
+	margin: 0px;
+}
+
+.chat-container {
+	min-width: 600px;
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	/* justify-content: flex-end; */
+	overflow-y: auto;
+	max-height: 750px;
+	border: solid ;
+	border-radius: 10px;
+	padding: 30px;
+}
+
+.messages-container {
+	height: 100%;
+}
+
+/* Message */
+
+.message-container {
+	display: flex;
+	margin: 10px;
+}
+
+.message-right{
+	justify-content: flex-end;
+}
+
+.span-left {
+	width: 80%;
+}
+
+.span-right {
+	width: 0%;
+}
+
+.span-content {
+	border-radius: 4px;
+	padding: 10px;
+	display: flex;
+	flex-direction: row-reverse;
+	gap: 10px;
+	align-items: center;
+	background: linear-gradient(#00B4DB, #0083B0);
+}
+
+.message-container__avatar {
+	height: 50px;
+	border-radius: 50%;
+}
+
+/*
+	Si le message est à gauche = destinataire
+*/
+
+.message-left > .span-left {
+	width: 0%;
+}
+
+.message-left > .span-right {
+	width: 80%;
+}
+
+.message-left > .span-content {
+	flex-direction: row;
+}
+
+/*
+	input et bouton d'envoi
+*/
+.sending-form {
+	display: flex;
+	height: 40px;
+	width: 100%;
+	position: relative;
+	bottom: 0;
+	left: 0;
+}
+
+.sending-form>* {
+	border-radius: 5px;
+}
+
+.sending-form>input {
+	width: 100%;
+	height: 40px;
+	padding-left: 10px;
+}
+
+.sending-form>button {
+	width: 100px;
+}
