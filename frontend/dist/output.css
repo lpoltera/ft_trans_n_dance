@@ -853,6 +853,10 @@ select {
   min-height: 100vh;
 }
 
+.w-tier {
+  width: 33.333333%;
+}
+
 .w-10 {
   width: 2.5rem;
 }
