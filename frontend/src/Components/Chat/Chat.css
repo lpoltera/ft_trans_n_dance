@@ -8,10 +8,6 @@ main {
 	display: flex;
 }
 
-.highlighted {
-	background-color: green; /* You can adjust the color as needed */
-}
-
 .panel {
 	padding: 10px;
 }
@@ -27,10 +23,6 @@ main {
 	height: 70px;
 	padding-left: 10px;
 	align-items: center;
-}
-
-button > user-list__item:active {
-	color: red;
 }
 
 .user-list__item__avatar {
@@ -58,29 +50,25 @@ button > user-list__item:active {
 }
 
 .chat-container {
+	background-color: #18566c;
+	box-shadow: 10px 5px 5px #13455a;
 	display: flex;
 	flex-direction: column;
 	min-width: 600px;
 	width: 100%;
 	max-height: 80vh;
 	min-height: 80vh;
-	/* justify-content: flex-end; */
 	overflow-y: auto;
-	border: solid ;
 	border-radius: 10px;
 	padding: 30px;
-	position: relative;
 }
 
 /*
-	a besoin de .chat-container à position relative
-	pour toujours avoir ce bloc en bas du parent même avec zéro messages
+	bon ça fait un grand vide quand on a assez de message
+	mais je n'ai pas trouvé mieux pour pouvoir garder le overflow-y
 */
 .messages-container {
-	width: 97%;
-	position: absolute;
-	bottom: 0px;
-	padding: 30px;
+	margin-top: 450px;
 }
 
 /* Message */
@@ -109,7 +97,7 @@ button > user-list__item:active {
 	flex-direction: row-reverse;
 	gap: 10px;
 	align-items: center;
-	background: linear-gradient(#164e63, #1e6c89);
+	background: linear-gradient(#18566c, #1e6c89);
 }
 
 .message-container__avatar {
@@ -139,9 +127,6 @@ button > user-list__item:active {
 .sending-form {
 	display: flex;
 	width: 100%;
-	position: relative;
-	bottom: 0;
-	left: 0;
 }
 
 .sending-form > * {
