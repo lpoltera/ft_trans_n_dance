@@ -19,8 +19,8 @@ interface Props {
 	handleChatButtonClick: (ami: User) => void;
 }
 
-const FriendChatListItem = ({ ami, handleChatButtonClick }: Props) => {
 
+const FriendChatListItem = ({ ami, handleChatButtonClick }: Props) => {
 
 	const changeFriendshipStatus = async () => {
 		const isConfirmed = window.confirm('Êtes-vous sûr de vouloir bloquer cet utilisateur?');

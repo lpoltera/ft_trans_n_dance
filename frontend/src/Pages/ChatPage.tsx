@@ -21,6 +21,7 @@ const ChatPage = () => {
 
 	const handleChatButtonClick = (ami: User) => {
 		setSelectedFriend((prevFriend) => (prevFriend === ami ? null : ami));
+		
 	};
 
 	useEffect(() => {
