@@ -1,20 +1,28 @@
-import { CheckIcon, UserMinusIcon } from "@heroicons/react/24/outline";
+import {
+  InformationCircleIcon,
+  UserPlusIcon,
+} from "@heroicons/react/24/outline";
 import axios from "axios";
 
-interface Ami {
-  id?: number;
+interface User {
   username: string;
-  connected: string;
   avatar: string;
+  connected: string;
+  win: number;
+  loss: number;
+  draw: number;
+  totalXP: number;
+  totalGame: number;
 }
 
 interface Props {
-  ami: Ami;
+  ami: User;
+  handleStatsButtonClick: (ami: User) => void;
 }
 
-const FriendProfilRow = ({ ami }: Props) => {
+const InfosUsersRow = ({ ami, handleStatsButtonClick }: Props) => {
   const changeFriendshipStatus = async () => {
-    await axios.patch("api/friends/" + ami.username, { status: "valider" });
+    await axios.patch("api/friends/" + ami.username, { status: "pending" });
     window.location.reload();
   };
 
@@ -38,16 +46,17 @@ const FriendProfilRow = ({ ami }: Props) => {
         <div className="grid grid-flow-col grid-cols-3 gap-2">
           <button
             type="button"
-            className="w-6 h-6 opacity-50 hover:opacity-100"
+            className="w-6 h-6 opacity-100 hover:opacity-100"
             onClick={() => changeFriendshipStatus()}
           >
-            <CheckIcon />
+            <UserPlusIcon />
           </button>
           <button
             type="button"
-            className="w-6 h-6 opacity-50 hover:opacity-100"
+            className="w-6 h-6 opacity-100 hover:opacity-100"
+            onClick={() => handleStatsButtonClick(ami)}
           >
-            <UserMinusIcon />
+            <InformationCircleIcon />
           </button>
         </div>
       </div>
@@ -55,4 +64,4 @@ const FriendProfilRow = ({ ami }: Props) => {
   );
 };
 
-export default FriendProfilRow;
+export default InfosUsersRow;

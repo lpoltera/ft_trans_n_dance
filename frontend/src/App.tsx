@@ -12,6 +12,7 @@ import PongGamePage from "./Pages/PongGamePage";
 import ProfilPage from "./Pages/ProfilPage";
 import SigninPage from "./Pages/SigninPage";
 import TfaPage from "./Pages/TfaPage";
+import UsersPage from "./Pages/UsersPage";
 
 function App() {
 	return (
@@ -66,14 +67,6 @@ function App() {
 							</PrivateRoute>
 						}
 					></Route>
-					{/* <Route
-						path="/chat"
-						element={
-							<PrivateRoute>
-								<ChatPage />
-							</PrivateRoute>
-						}
-					></Route> */}
 					<Route
 						path="logout"
 						element={
@@ -96,6 +89,14 @@ function App() {
 							// <PrivateRoute>
 								<ChatPage />
 							// </PrivateRoute>
+						}
+					/>
+					<Route
+						path="/users"
+						element={
+							<PrivateRoute>
+								<UsersPage/>
+							</PrivateRoute>
 						}
 					/>
 					<Route
