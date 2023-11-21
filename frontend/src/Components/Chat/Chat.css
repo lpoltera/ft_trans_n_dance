@@ -25,6 +25,10 @@ main {
 	align-items: center;
 }
 
+.bg-green {
+	background-color: aquamarine;
+}
+
 .user-list__item__avatar {
 	display: flex;
 	align-items: center;
@@ -51,7 +55,7 @@ main {
 
 .chat-container {
 	background-color: #18566c;
-	box-shadow: 10px 5px 5px #13455a;
+	box-shadow: 10px 10px 5px #13455a;
 	display: flex;
 	flex-direction: column;
 	min-width: 600px;
