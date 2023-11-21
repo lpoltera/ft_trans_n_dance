@@ -18,12 +18,12 @@ const ChatPage = () => {
 	const [currentUser, setCurrentUser] = useState<User | null>(null);
 	const [friends, setAllFriends] = useState<User[] | null>(null);
 	const [selectedFriend, setSelectedFriend] = useState<User | null>(null);
-	const [buttonStates, setButtonStates] = useState<{ [key: string]: boolean }>({});
+	const [arrIsSelected, setArrIsSelected] = useState<{ [key: string]: boolean }>({});
 
 
 	const handleChatButtonClick = (ami: User) => {
 		setSelectedFriend((prevFriend) => (prevFriend === ami ? null : ami));
-		setButtonStates((prev) => ({
+		setArrIsSelected((prev) => ({
 			...Object.fromEntries(Object.keys(prev).map((key) => [key, false])),
 			[ami.username]: true,
 		}));
@@ -73,7 +73,7 @@ const ChatPage = () => {
 										key={index}
 										ami={ami}
 										handleChatButtonClick={handleChatButtonClick}
-										buttonStates={buttonStates}
+										arrIsSelected={arrIsSelected}
 									/>
 								)
 						)}

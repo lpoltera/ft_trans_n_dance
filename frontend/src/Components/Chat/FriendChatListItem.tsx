@@ -13,10 +13,10 @@ interface User {
 interface Props {
 	ami: User;
 	handleChatButtonClick: (ami: User) => void;
-	buttonStates: { [key: string]: boolean };
+	arrIsSelected: { [key: string]: boolean };
 }
 
-const FriendChatListItem = ({ ami, handleChatButtonClick, buttonStates}: Props) => {
+const FriendChatListItem = ({ ami, handleChatButtonClick, arrIsSelected}: Props) => {
 	const [isBlocked, setIsBlocked] = useState(false);
 
 	const changeFriendshipStatus = async () => {
@@ -35,7 +35,7 @@ const FriendChatListItem = ({ ami, handleChatButtonClick, buttonStates}: Props) 
 		{!isBlocked && (
 			<button
 				className={`user-list__item hover:bg-neutral-800 rounded-md ${
-					buttonStates[ami.username] ? 'bg-green' : ''
+					arrIsSelected[ami.username] ? 'bg-green' : ''
 				}`}
 				onClick={() => {
 					handleChatButtonClick(ami);
