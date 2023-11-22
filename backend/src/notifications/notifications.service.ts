@@ -11,15 +11,15 @@ export class NotificationsService {
     @InjectRepository(Notification)
     private notifsDB: Repository<Notification>,
   ) {}
-  async create(receiver: string) {
+  async create(notif: Notification) {
     try {
-      const notifi = this.notifsDB.create({
-        sender: 'raph',
-        receiver: receiver,
-        message: "Fonction à supprimer",
+      const notification = this.notifsDB.create({
+        sender: notif.sender,
+        receiver: notif.receiver,
+        message: notif.message,
         status: 'pending',
       });
-      await this.notifsDB.save(notifi);
+      await this.notifsDB.save(notification);
     } catch (error) {
       throw new ConflictException('erreur lors de la création', error.message);
     }
@@ -29,13 +29,14 @@ export class NotificationsService {
   //   }
 
   async findAll(username: string) {
-	const userNotifs = await this.notifsDB.find({where: {receiver: username}})
+    const userNotifs = await this.notifsDB.find({
+      where: { receiver: username },
+    });
 
-	if (!userNotifs)
-		return "Tu n'as aucune notification";
-	
-		const userNotifsMsg = userNotifs.map(item => item.message);
-	return userNotifsMsg;
+    if (!userNotifs) return "Tu n'as aucune notification";
+
+    const userNotifsMsg = userNotifs.map((item) => item.message);
+    return userNotifsMsg;
   }
 
   findOne(id: number) {
@@ -47,6 +48,6 @@ export class NotificationsService {
   }
 
   remove(id: number) {
-	  return this.notifsDB.delete({id});
+    return this.notifsDB.delete({ id });
   }
 }

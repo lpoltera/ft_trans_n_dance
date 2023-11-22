@@ -12,12 +12,17 @@ import { ChatService } from './chat.service';
 import { CreateChatDto } from './dto/create-chat.dto';
 import { UpdateChatDto } from './dto/update-chat.dto';
 import { Chat } from './entities/chat.entity';
+import { Notification } from '../notifications/entities/notifications.entity';
 import { Session } from '@nestjs/common';
+import { NotificationsService } from '../notifications/notifications.service';
 
 @WebSocketGateway()
 export class ChatGateway {
   // implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
-  constructor(private readonly chatService: ChatService) {}
+  constructor(
+    private readonly chatService: ChatService,
+    private readonly NotifsService: NotificationsService,
+  ) {}
 
   @WebSocketServer() server: Server;
 
@@ -27,9 +32,11 @@ export class ChatGateway {
     this.server.emit('recMessage', message);
   }
 
-  @SubscribeMessage('findAllChat')
-  findAll(sender: string, receiver: string) {
-    return this.chatService.findAll(sender, receiver);
+  @SubscribeMessage('sendNotifs')
+  async createNotif(client: Socket, @MessageBody() notif: Notification) {
+    console.log('sendNotifs called');
+    await this.NotifsService.create(notif);
+    this.server.emit('myNotifs', notif);
   }
 
   afterInit(server: Server) {
@@ -47,6 +54,7 @@ export class ChatGateway {
     console.log(`Connected ${client.id}`);
     //Do stuffs
   }
+
   // @SubscribeMessage('findOneChat')
   // findOne(@MessageBody() id: number) {
   //   return this.chatService.findOne(id);

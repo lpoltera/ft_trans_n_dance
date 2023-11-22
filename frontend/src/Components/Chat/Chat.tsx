@@ -1,11 +1,13 @@
 import axios from "axios";
-import { useEffect, useState, useRef} from "react";
+import { useEffect, useState, useRef } from "react";
 import io from "socket.io-client";
-import RightMessageContainer from './RightMessageContainer'
-import LeftMessageContainer from './LeftMessageContainer'
-import './Chat.css';
+import RightMessageContainer from "./RightMessageContainer";
+import LeftMessageContainer from "./LeftMessageContainer";
+import "./Chat.css";
+// import newSocket from "../socket";
 
 interface ChatMessage {
+	receiver: string;
 	sender: string;
 	text: string;
 }
@@ -25,50 +27,48 @@ const Chat = ({ ami }: Props) => {
 	const [socket, setSocket] = useState<any>(null);
 	const [messages, setMessages] = useState<ChatMessage[]>([]);
 	const [newMessage, setNewMessage] = useState("");
-	const [currentUser, setCurrentUser] = useState<string>("");
+	const [currentUser, setCurrentUser] = useState<string | undefined>("");
 	const messagesEndRef = useRef<any>(null);
 	const scrollToBottom = () => {
 		messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
-	  };
-	  useEffect(scrollToBottom, [messages]);
+	};
+
+	useEffect(scrollToBottom, [messages]);
 
 	useEffect(() => {
-	  // Création de la connexion Socket.IO lors du montage du composant
-	  const newSocket = io("http://localhost:8000");
-	  setSocket(newSocket);
+		// Création de la connexion Socket.IO lors du montage du composant
+		const newSocket = io("http://localhost:8000");
+		setSocket(newSocket);
 
-	  async function fetchCurrent() {
-		try {
-		  const response = await axios.get<string>("/api/my-name");
-		  console.log(`response ligne 36 Chat.tsx = ${response.data}`);
-		  setCurrentUser(response.data);
-		  return response.data;
-		} catch (error) {
-		  console.error("Error fetching my name", error);
+		async function fetchCurrent() {
+			try {
+				const response = await axios.get<string>("/api/my-name");
+				setCurrentUser(response.data);
+				return response.data;
+			} catch (error) {
+				console.error("Error fetching my name", error);
+			}
 		}
-	  }
 
-	  async function fetchMessages() {
-		const name = await fetchCurrent();
-		if (name) {
-		  try {
-			console.log(`my name = ${name}`);
-			console.log(`ami name = ${ami.username}`);
-			const response = await axios.get(
-			  "/api/chat/all/" + name + "/" + ami.username
-			);
-			setMessages(response.data);
-		  } catch (error) {
-			console.error("Error fetching messages:", error);
-		  }
+		async function fetchMessages() {
+			const name = await fetchCurrent();
+			if (name) {
+				try {
+					const response = await axios.get(
+						"/api/chat/all/" + name + "/" + ami.username
+					);
+					setMessages(response.data);
+				} catch (error) {
+					console.error("Error fetching messages:", error);
+				}
+			}
 		}
-	  }
-	  fetchMessages();
+		fetchMessages();
 
-	  return () => {
-		if (newSocket) newSocket.disconnect();
-	  };
-	}, [ami]); // Dépendance vide pour s'assurer que cela n'est exécuté qu'une fois lors du montage
+		return () => {
+			if (newSocket) newSocket.disconnect();
+		};
+	}, [ami, currentUser]);
 
 	useEffect(() => {
 		if (!socket) {
@@ -77,19 +77,30 @@ const Chat = ({ ami }: Props) => {
 		}
 
 		// Logique pour gérer les événements de la connexion Socket.IO
+
 		socket.on("recMessage", (message: ChatMessage) => {
-			// Gérer le message reçu depuis le serveur Socket.IO
-			setMessages((prevMessages) => [...prevMessages, message]);
+			console.log(`message received : ${message.text}`);
+			console.log(`message sent by : ${message.sender}`);
+			console.log(`message sent to : ${message.receiver}`);
+			console.log(`current name  : ${currentUser}`);
+			console.log(`Friend name  : ${ami.username}`);
+			if (
+				(message.sender === ami.username && message.receiver === currentUser) ||
+				(message.sender === currentUser && message.receiver === ami.username)
+			) {
+				// Gérer le message reçu depuis le serveur Socket.IO
+				setMessages((prevMessages) => [...prevMessages, message]);
+			}
 		});
 
 		// Nettoyage des événements lors du démontage du composant
 		return () => {
-		socket.off("recMessage");
+			socket.off("recMessage");
 		};
 	}, [socket]);
 
 	const handleSendMessage = (e: React.KeyboardEvent<HTMLInputElement>) => {
-		if (e.key == 'Enter') {
+		if (e.key == "Enter") {
 			if (socket) {
 				socket.emit("sendMessage", {
 					sender: currentUser,
@@ -99,7 +110,7 @@ const Chat = ({ ami }: Props) => {
 				setNewMessage("");
 			}
 		}
-	}
+	};
 
 	return (
 		<div>
@@ -109,11 +120,11 @@ const Chat = ({ ami }: Props) => {
 						<li key={index}>
 							{message.sender === currentUser ? (
 								<RightMessageContainer ami={ami} message={message} />
-								) : (
+							) : (
 								<LeftMessageContainer ami={ami} message={message} />
-								)}
-						{/* <strong>{message.sender}:</strong> {message.text} */}
-					</li>
+							)}
+							{/* <strong>{message.sender}:</strong> {message.text} */}
+						</li>
 					))}
 				</ul>
 				<div ref={messagesEndRef} />
@@ -133,4 +144,3 @@ const Chat = ({ ami }: Props) => {
 };
 
 export default Chat;
-

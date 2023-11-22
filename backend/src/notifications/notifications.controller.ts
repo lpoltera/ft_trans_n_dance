@@ -1,23 +1,31 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Session } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Session,
+} from '@nestjs/common';
 import { NotificationsService } from './notifications.service';
 import { CreateNotificationDto } from './dto/create-notification.dto';
 import { UpdateNotificationDto } from './dto/update-notification.dto';
+import { Notification } from './entities/notifications.entity';
 
 @Controller('api/notifications')
 export class NotificationsController {
   constructor(private readonly notificationsService: NotificationsService) {}
 
-
-//   (@Body() createUserDto: CreateUserDto)
+  //   (@Body() createUserDto: CreateUserDto)
   @Post('/create')
-  create(@Body() CreateNotification: CreateNotificationDto) {
-	const receiver = CreateNotification.receiver.valueOf();
-    return this.notificationsService.create(receiver);
+  create(@Body() Notifs: Notification) {
+    return this.notificationsService.create(Notifs);
   }
 
   @Get('/my')
   findAll(@Session() session: Record<string, any>) {
-	const username = session.user.username;
+    const username = session.user.username;
     return this.notificationsService.findAll(username);
   }
 
@@ -27,7 +35,10 @@ export class NotificationsController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateNotificationDto: UpdateNotificationDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateNotificationDto: UpdateNotificationDto,
+  ) {
     return this.notificationsService.update(+id, updateNotificationDto);
   }
 

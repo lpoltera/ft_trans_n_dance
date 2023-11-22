@@ -13,6 +13,7 @@ import ProfilPage from "./Pages/ProfilPage";
 import SigninPage from "./Pages/SigninPage";
 import TfaPage from "./Pages/TfaPage";
 import UsersPage from "./Pages/UsersPage";
+import { ToastContainer } from "react-toastify";
 
 function App() {
 	return (
@@ -87,7 +88,7 @@ function App() {
 						path="/chat"
 						element={
 							// <PrivateRoute>
-								<ChatPage />
+							<ChatPage />
 							// </PrivateRoute>
 						}
 					/>
@@ -95,7 +96,7 @@ function App() {
 						path="/users"
 						element={
 							<PrivateRoute>
-								<UsersPage/>
+								<UsersPage />
 							</PrivateRoute>
 						}
 					/>
@@ -109,6 +110,11 @@ function App() {
 					></Route>
 				</Routes>
 			</BrowserRouter>
+			<ToastContainer
+				position="bottom-right"
+				closeOnClick
+				theme="dark"
+			/>
 		</>
 	);
 }
