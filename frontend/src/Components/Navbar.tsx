@@ -116,12 +116,6 @@ const Navbar = () => {
 					</MenuDropdown>
 				</nav>
 				<Modal visibility={notifModal}>Test</Modal>
-				<button id="openModal">Open the modal</button>
-
-				<dialog id="modal" className="modal">
-					<button id="closeModal" className="modal-close-btn">Close</button>
-					<p>...</p>
-				</dialog>
 			</div>
 		</>
 	);
