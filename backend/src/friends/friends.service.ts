@@ -100,7 +100,7 @@ export class FriendsService {
     const notif = this.notifsDB.create({
       sender: userName,
       receiver: friendName,
-      message: `${userName} veut être ton ami`,
+      message: `Tu as reçu une demande d'ami de ${userName}`,
       status: 'pending',
       friend: newFriend,
     });
@@ -184,8 +184,8 @@ export class FriendsService {
       friendToUpdate.status = statusToUpdate;
       this.friendRepository.save(friendToUpdate);
       if (
-        friendToUpdate.status === 'valider' &&
-        previous_status === 'pending'
+        friendToUpdate.status === 'valider' ||
+        (friendToUpdate.status === 'refuser' && previous_status === 'pending')
       ) {
         const id = friendToUpdate.id;
         const msgToDelete = await this.notifsDB.findOne({

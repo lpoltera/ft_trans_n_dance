@@ -31,12 +31,13 @@ export class NotificationsService {
   async findAll(username: string) {
     const userNotifs = await this.notifsDB.find({
       where: { receiver: username },
+      relations: ['game', 'friend'],
     });
 
-    if (!userNotifs) return "Tu n'as aucune notification";
+    if (!userNotifs) return null;
 
-    const userNotifsMsg = userNotifs.map((item) => item.message);
-    return userNotifsMsg;
+    // const userNotifsMsg = userNotifs.map((item) => item.message);
+    return userNotifs;
   }
 
   findOne(id: number) {

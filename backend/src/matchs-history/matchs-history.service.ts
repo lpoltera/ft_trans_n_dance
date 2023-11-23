@@ -72,17 +72,19 @@ export class MatchsHistoryService {
     if (gameToUpdate) {
       gameToUpdate.status = statusToUpdate;
       this.MatchDB.save(gameToUpdate);
-	if (gameToUpdate.status === "accepted") {
-		this.notifsDB.delete(gameid);
-		//envoi notification au créateur de la game pour l'informer de l'acceptation 
-	}
-	if (gameToUpdate.status === "declined") {
-		this.notifsDB.delete(gameid);
-		const id = gameid;
-		this.MatchDB.delete({id});
-		//envoi notification au créateur de la game pour l'informer du refus 
-	}
-		
+      if (gameToUpdate.status === 'valider') {
+        //envoi notification au créateur de la game pour l'informer de l'acceptation
+      }
+      if (gameToUpdate.status === 'refuser') {
+        const id = gameid;
+        this.MatchDB.delete({ id });
+        //envoi notification au créateur de la game pour l'informer du refus
+      }
+      const msgToDelete = await this.notifsDB.findOne({
+        where: { game: { id: gameid } },
+      });
+      await this.notifsDB.delete(msgToDelete);
+
       return `This action updates a #${gameid} matchsHistory to ${statusToUpdate}`;
     }
   }

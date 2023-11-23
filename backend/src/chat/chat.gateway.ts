@@ -12,16 +12,18 @@ import { ChatService } from './chat.service';
 import { CreateChatDto } from './dto/create-chat.dto';
 import { UpdateChatDto } from './dto/update-chat.dto';
 import { Chat } from './entities/chat.entity';
+
+// import { Session } from '@nestjs/common';
 import { Notification } from '../notifications/entities/notifications.entity';
-import { Session } from '@nestjs/common';
-import { NotificationsService } from '../notifications/notifications.service';
+// import { NotificationsService } from '../notifications/notifications.service';
+import { FriendsService } from '../friends/friends.service';
 
 @WebSocketGateway()
 export class ChatGateway {
   // implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
   constructor(
     private readonly chatService: ChatService,
-    private readonly NotifsService: NotificationsService,
+    private readonly FriendsService: FriendsService,
   ) {}
 
   @WebSocketServer() server: Server;
@@ -32,12 +34,19 @@ export class ChatGateway {
     this.server.emit('recMessage', message);
   }
 
-  @SubscribeMessage('sendNotifs')
+  @SubscribeMessage('sendFriendNotif') // sendFriendNotif
   async createNotif(client: Socket, @MessageBody() notif: Notification) {
     console.log('sendNotifs called');
-    await this.NotifsService.create(notif);
+    await this.FriendsService.addFriend(notif.sender, notif.receiver);
     this.server.emit('myNotifs', notif);
   }
+
+  // @SubscribeMessage('sendGameNotifs')
+  // async createNotif(client: Socket, @MessageBody() notif: Notification) {
+  //   console.log('sendNotifs called');
+  //   await this.NotifsService.create(notif); // game service
+  //   this.server.emit('myNotifs', notif);
+  // }
 
   afterInit(server: Server) {
     console.log(server);
