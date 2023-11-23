@@ -65,7 +65,7 @@ const ChatPage = () => {
 			<PageLayout>
 				<h2 className="text-xl mb-4">Amis</h2>
 				<main>
-					<div className="panel user-list w-tier">
+					<div className="panel user-list w-1/3">
 						{friends?.map(
 							(ami, index) =>
 								currentUser?.username !== ami.username && (
