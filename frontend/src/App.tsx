@@ -16,107 +16,111 @@ import UsersPage from "./Pages/UsersPage";
 import { ToastContainer } from "react-toastify";
 
 function App() {
-	return (
-		<>
-			<BrowserRouter>
-				<Routes>
-					<Route
-						path="/"
-						element={
-							<PublicRoute>
-								<LandingPage />
-							</PublicRoute>
-						}
-					></Route>
-					<Route
-						path="/login"
-						element={
-							<PublicRoute>
-								<LoginPage />
-							</PublicRoute>
-						}
-					></Route>
-					<Route
-						path="/signin"
-						element={
-							<PublicRoute>
-								<SigninPage />
-							</PublicRoute>
-						}
-					></Route>
-					<Route
-						path="/accueil"
-						element={
-							<PrivateRoute>
-								<HomePage />
-							</PrivateRoute>
-						}
-					></Route>
-					<Route
-						path="/profil/*"
-						element={
-							<PrivateRoute>
-								<ProfilPage />
-							</PrivateRoute>
-						}
-					></Route>
-					<Route
-						path="/game"
-						element={
-							<PrivateRoute>
-								<PongGamePage />
-							</PrivateRoute>
-						}
-					></Route>
-					<Route
-						path="logout"
-						element={
-							<PrivateRoute>
-								<LogoutPage />
-							</PrivateRoute>
-						}
-					/>
-					<Route
-						path="/add"
-						element={
-							<PrivateRoute>
-								<AddPage />
-							</PrivateRoute>
-						}
-					/>
-					<Route
-						path="/chat"
-						element={
-							// <PrivateRoute>
-							<ChatPage />
-							// </PrivateRoute>
-						}
-					/>
-					<Route
-						path="/users"
-						element={
-							<PrivateRoute>
-								<UsersPage />
-							</PrivateRoute>
-						}
-					/>
-					<Route
-						path="/twofa-verify"
-						element={
-							// <PrivateRoute>
-							<TfaPage />
-							// </PrivateRoute>
-						}
-					></Route>
-				</Routes>
-			</BrowserRouter>
-			<ToastContainer
-				position="bottom-right"
-				closeOnClick
-				theme="dark"
-			/>
-		</>
-	);
+  return (
+    <>
+      <BrowserRouter>
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <PublicRoute>
+                <LandingPage />
+              </PublicRoute>
+            }
+          ></Route>
+          <Route
+            path="/login"
+            element={
+              <PublicRoute>
+                <LoginPage />
+              </PublicRoute>
+            }
+          ></Route>
+          <Route
+            path="/signin"
+            element={
+              <PublicRoute>
+                <SigninPage />
+              </PublicRoute>
+            }
+          ></Route>
+          <Route
+            path="/accueil"
+            element={
+              <PrivateRoute>
+                <HomePage />
+              </PrivateRoute>
+            }
+          ></Route>
+          <Route
+            path="/accueil"
+            element={
+              <PrivateRoute>
+                <PongGamePage />
+              </PrivateRoute>
+            }
+          ></Route>
+          <Route
+            path="/profil/*"
+            element={
+              <PrivateRoute>
+                <ProfilPage />
+              </PrivateRoute>
+            }
+          ></Route>
+          <Route
+            path="/game"
+            element={
+              <PrivateRoute>
+                <PongGamePage />
+              </PrivateRoute>
+            }
+          ></Route>
+          <Route
+            path="logout"
+            element={
+              <PrivateRoute>
+                <LogoutPage />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/add"
+            element={
+              <PrivateRoute>
+                <AddPage />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/chat"
+            element={
+              // <PrivateRoute>
+              <ChatPage />
+              // </PrivateRoute>
+            }
+          />
+          <Route
+            path="/users"
+            element={
+              <PrivateRoute>
+                <UsersPage />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/twofa-verify"
+            element={
+              // <PrivateRoute>
+              <TfaPage />
+              // </PrivateRoute>
+            }
+          ></Route>
+        </Routes>
+      </BrowserRouter>
+      <ToastContainer position="bottom-right" closeOnClick theme="dark" />
+    </>
+  );
 }
 
 export default App;
