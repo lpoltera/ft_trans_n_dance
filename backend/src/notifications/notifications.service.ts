@@ -1,9 +1,9 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { ConflictException, Injectable } from '@nestjs/common';
-import { CreateNotificationDto } from './dto/create-notification.dto';
-import { UpdateNotificationDto } from './dto/update-notification.dto';
-import { Notification } from './entities/notifications.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { UpdateNotificationDto } from './dto/update-notification.dto';
+import { Notification } from './entities/notifications.entity';
 
 @Injectable()
 export class NotificationsService {

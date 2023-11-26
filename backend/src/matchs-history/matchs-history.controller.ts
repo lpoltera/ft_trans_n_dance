@@ -1,17 +1,15 @@
 import {
+  Body,
   Controller,
   Get,
-  Post,
-  Body,
-  Patch,
   Param,
-  Delete,
+  Patch,
+  Post,
   Session,
 } from '@nestjs/common';
-import { MatchsHistoryService } from './matchs-history.service';
 import { CreateMatchsHistoryDto } from './dto/create-matchs-history.dto';
 import { UpdateMatchsHistoryDto } from './dto/update-matchs-history.dto';
-import { countReset } from 'console';
+import { MatchsHistoryService } from './matchs-history.service';
 
 @Controller('api/game')
 export class MatchsHistoryController {

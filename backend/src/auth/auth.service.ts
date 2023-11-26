@@ -1,10 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import axios from 'axios';
+/* eslint-disable prettier/prettier */
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from '../user/entities/user.entity';
-import { Repository } from 'typeorm';
+import axios from 'axios';
 import * as speakeasy from 'speakeasy';
+import { Repository } from 'typeorm';
+import { User } from '../user/entities/user.entity';
 
 @Injectable()
 export class AuthService {
