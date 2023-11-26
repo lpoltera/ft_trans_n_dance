@@ -3,11 +3,8 @@ import {
   UserPlusIcon,
 } from "@heroicons/react/24/outline";
 import { useEffect, useState } from "react";
-import { io } from "socket.io-client";
-import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import axios from "axios";
-
+import { io, Socket } from "socket.io-client";
 interface User {
   username: string;
   avatar: string;
@@ -32,7 +29,7 @@ const InfosUsersRow = ({
   currentUser,
   displayToast,
 }: Props) => {
-  const [socket, setSocket] = useState<any>(null);
+  const [socket, setSocket] = useState<Socket | null>(null);
 
   useEffect(() => {
     const newSocket = io("http://localhost:8000");

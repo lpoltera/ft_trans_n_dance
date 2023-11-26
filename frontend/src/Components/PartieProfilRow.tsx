@@ -1,11 +1,11 @@
 interface Partie {
-	id: number;
-	name_p1: string;
-	name_p2: string;
-	score_p1: number;
-	score_p2: number;
-	updated_at: string;
-  }
+  id: number;
+  name_p1: string;
+  name_p2: string;
+  score_p1: number;
+  score_p2: number;
+  updated_at: string;
+}
 
 interface Props {
   partie: Partie;
@@ -20,8 +20,12 @@ const PartieProfilRow = ({ partie }: Props) => {
           <span className="mx-2"> - </span>
           <div>{partie.name_p2}</div>
         </div>
-        <div className="text-md text-center">{partie.score_p1 + "-" + partie.score_p2}</div>
-        <div className="text-md text-right">{partie.updated_at.substring(0, 10)}</div>
+        <div className="text-md text-center">
+          {partie.score_p1 + "-" + partie.score_p2}
+        </div>
+        <div className="text-md text-right">
+          {partie.updated_at.substring(0, 10)}
+        </div>
       </div>
     </>
   );

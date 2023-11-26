@@ -8,13 +8,13 @@ import {
   UserCircleIcon,
   UserGroupIcon,
 } from "@heroicons/react/24/outline";
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
+import { io, Socket } from "socket.io-client";
 import ButtonIcon from "./ButtonIcon";
 import MenuDropdown from "./MenuDropdown";
-import { useEffect, useState } from "react";
 import NotificationPanel from "./NotificationPanel";
-import { io } from "socket.io-client";
-import axios from "axios";
-import { ToastContainer, toast } from "react-toastify";
 
 interface Notifs {
   sender: string;
@@ -32,7 +32,7 @@ const Navbar = () => {
   const [unreadNotif, setUnreadNotif] = useState(false);
   const [unreadChat, setUnreadChat] = useState(false);
   const [notifModal, setNotifModal] = useState(false);
-  const [socket, setSocket] = useState<any>(null);
+  const [socket, setSocket] = useState<Socket | null>(null);
   const [currentUserName, setcurrentUserName] = useState<string>("");
 
   useEffect(() => {
@@ -76,7 +76,7 @@ const Navbar = () => {
     return () => {
       socket.off("myNotifs");
     };
-  }, [socket]);
+  }, [currentUserName, socket]);
 
   const profilLinks = [
     { title: "Profil", href: "/profil" },

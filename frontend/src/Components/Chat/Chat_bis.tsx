@@ -1,76 +1,77 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import axios from "axios";
 import { useEffect, useState } from "react";
-import io from "socket.io-client";
-import styles from './Chat.module.css';
+import { io, Socket } from "socket.io-client";
+import styles from "./Chat.module.css";
 
 interface ChatMessage {
-	sender: string;
-	text: string;
+  sender: string;
+  text: string;
 }
 
 const Chat = () => {
-	const [socket, setSocket] = useState<any>(null);
-	const [messages, setMessages] = useState<ChatMessage[]>([]);
-	const [newMessage, setNewMessage] = useState("");
-	const [sender, setSender] = useState("");
+  const [socket, setSocket] = useState<Socket | null>(null);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [newMessage, setNewMessage] = useState("");
+  const [sender, setSender] = useState("");
 
-	useEffect(() => {
-		// Création de la connexion Socket.IO lors du montage du composant
-		const newSocket = io("http://localhost:8000");
-		setSocket(newSocket);
+  useEffect(() => {
+    // Création de la connexion Socket.IO lors du montage du composant
+    const newSocket = io("http://localhost:8000");
+    setSocket(newSocket);
 
-		const fetchMessages = async () => {
-			try {
-				const response = await axios.get("http://localhost:8000/api/chat/all");
-				setMessages(response.data);
-			} catch (error) {
-				console.error("Error fetching messages:", error);
-			}
-		};
-		fetchMessages();
+    const fetchMessages = async () => {
+      try {
+        const response = await axios.get("http://localhost:8000/api/chat/all");
+        setMessages(response.data);
+      } catch (error) {
+        console.error("Error fetching messages:", error);
+      }
+    };
+    fetchMessages();
 
-		// Nettoyage de la connexion lors du démontage du composant
-		return () => {
-			newSocket.disconnect();
-		};
-	}, []); // Dépendance vide pour s'assurer que cela n'est exécuté qu'une fois lors du montage
+    // Nettoyage de la connexion lors du démontage du composant
+    return () => {
+      newSocket.disconnect();
+    };
+  }, []); // Dépendance vide pour s'assurer que cela n'est exécuté qu'une fois lors du montage
 
-	useEffect(() => {
-		if (!socket) {
-			console.log("socket :", socket);
-			return;
-		}
+  useEffect(() => {
+    if (!socket) {
+      console.log("socket :", socket);
+      return;
+    }
 
-		// Logique pour gérer les événements de la connexion Socket.IO
-		socket.on("recMessage", (message: ChatMessage) => {
-			// Gérer le message reçu depuis le serveur Socket.IO
-			setMessages((prevMessages) => [...prevMessages, message]);
-		});
+    // Logique pour gérer les événements de la connexion Socket.IO
+    socket.on("recMessage", (message: ChatMessage) => {
+      // Gérer le message reçu depuis le serveur Socket.IO
+      setMessages((prevMessages) => [...prevMessages, message]);
+    });
 
-		// Nettoyage des événements lors du démontage du composant
-		return () => {
-			socket.off("recMessage");
-		};
-	}, [socket]);
+    // Nettoyage des événements lors du démontage du composant
+    return () => {
+      socket.off("recMessage");
+    };
+  }, [socket]);
 
-	const handleSendMessage = () => {
-		if (socket) {
-			socket.emit("sendMessage", { sender, text: newMessage });
-			setNewMessage("");
-		}
-	};
+  const handleSendMessage = () => {
+    if (socket) {
+      socket.emit("sendMessage", { sender, text: newMessage });
+      setNewMessage("");
+    }
+  };
 
-	return (
-		<div>
-			<div className={styles.container}>
-				<div className={styles['left-chat']}>
-					<p>Je suis à gauche</p>
-				</div>
-				<div className={styles['right-chat']}>
-					<p>Je suis à droite</p>
-				</div>
-			</div>
-			{/* <ul>
+  return (
+    <div>
+      <div className={styles.container}>
+        <div className={styles["left-chat"]}>
+          <p>Je suis à gauche</p>
+        </div>
+        <div className={styles["right-chat"]}>
+          <p>Je suis à droite</p>
+        </div>
+      </div>
+      {/* <ul>
 				{messages.map((message, index) => (
 					<li key={index}>
 						<strong>{message.sender}:</strong> {message.text}
@@ -94,8 +95,8 @@ const Chat = () => {
 				/>
 				<button onClick={handleSendMessage}>Send</button>
 			</div> */}
-		</div>
-	);
+    </div>
+  );
 };
 
 export default Chat;

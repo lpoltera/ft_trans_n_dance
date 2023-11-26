@@ -1,12 +1,19 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+
+interface PlayerProps {
+  username: string;
+  isAi: boolean;
+}
 
 interface Props {
   difficulty: number;
   withPowerUps: boolean;
   victoryCondition: {
-    type: "points" | "time";
+    type: "points" | "time" | "1972";
     value: number;
   };
+  player1: PlayerProps;
+  player2: PlayerProps;
 }
 
 interface Ball {
@@ -29,191 +36,270 @@ interface Paddle {
   speed: number;
 }
 
-const PongGame = ({ difficulty }: Props) => {
+const PongGame = ({
+  difficulty,
+  player1,
+  player2,
+  victoryCondition,
+}: Props) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const ballRef = useRef<Ball>({} as Ball);
-  const playerPaddleRef = useRef<Paddle>({} as Paddle);
-  const aiPaddleRef = useRef<Paddle>({} as Paddle);
+  const ballRef = useRef<Ball>({
+    x: 0,
+    y: 0,
+    radius: 5,
+    speed: 1,
+    velocityX: 0,
+    velocityY: 0,
+    color: "WHITE",
+  });
+  const player1PaddleRef = useRef<Paddle>({
+    width: 10,
+    height: 50,
+    x: 100,
+    y: 0,
+    color: "WHITE",
+    score: 0,
+    speed: 0,
+  });
+  const player2PaddleRef = useRef<Paddle>({
+    width: 10,
+    height: 50,
+    x: 0,
+    y: 0,
+    color: "WHITE",
+    score: 0,
+    speed: 0,
+  });
+  const [displayedTimer, setDisplayedTimer] = useState(0);
+  const isPaused = useRef(true);
+  const setIsPaused = (value: boolean) => {
+    isPaused.current = value;
+  };
+  const timer = useRef(0);
+  const setTimer = (value: number) => {
+    timer.current = value;
+  };
 
   useEffect(() => {
     const canvas = canvasRef.current;
     const context = canvas?.getContext("2d");
 
     if (context && canvas) {
-      ballRef.current = {
-        x: canvas.width / 2,
-        y: canvas.height / 2,
-        radius: 5,
-        speed: 0.5 * difficulty,
-        velocityX: 1,
-        velocityY: 1,
-        color: "WHITE",
-      };
+      player2PaddleRef.current.x = canvas.width - 100 - 10;
+      ballRef.current.x = canvas.width / 2;
+      ballRef.current.y = canvas.height / 2;
+      ballRef.current.speed = 5 + difficulty;
+      ballRef.current.velocityX =
+        ballRef.current.speed * (Math.random() < 0.5 ? -1 : 1);
+      ballRef.current.velocityY =
+        ballRef.current.speed * (Math.random() < 0.5 ? -1 : 1);
 
-      playerPaddleRef.current = {
-        width: 10,
-        height: 80,
-        x: canvas.width - 20,
-        y: canvas.height / 2 - 40,
-        color: "WHITE",
-        score: 0,
-        speed: 0,
-      };
+      player1PaddleRef.current.y =
+        canvas.height / 2 - player1PaddleRef.current.height / 2;
+      player2PaddleRef.current.y =
+        canvas.height / 2 - player2PaddleRef.current.height / 2;
 
-      aiPaddleRef.current = {
-        width: 10,
-        height: 80,
-        x: 10,
-        y: canvas.height / 2 - 40,
-        color: "WHITE",
-        score: 0,
-        speed: 0,
-      };
-
-      const handlePlayerMovementDown = (event: KeyboardEvent) => {
-        const moveSpeed = 10;
+      const handleMovement = (event: KeyboardEvent) => {
+        const moveSpeed = 15;
         if (event.key === "ArrowUp") {
-          playerPaddleRef.current.speed = -moveSpeed;
+          player2PaddleRef.current.speed = -moveSpeed;
         } else if (event.key === "ArrowDown") {
-          playerPaddleRef.current.speed = moveSpeed;
+          player2PaddleRef.current.speed = moveSpeed;
+        } else if (event.key === "q") {
+          player1PaddleRef.current.speed = -moveSpeed;
+        } else if (event.key === "a") {
+          player1PaddleRef.current.speed = moveSpeed;
+        } else if (event.key === " ") {
+          setIsPaused(!isPaused.current);
         }
       };
 
-      const handlePlayerMovementUp = (event: KeyboardEvent) => {
+      const handleMovementUp = (event: KeyboardEvent) => {
         if (event.key === "ArrowUp" || event.key === "ArrowDown") {
-          playerPaddleRef.current.speed = 0;
+          player2PaddleRef.current.speed = 0;
+        } else if (event.key === "q" || event.key === "a") {
+          player1PaddleRef.current.speed = 0;
         }
       };
 
-      document.addEventListener("keydown", handlePlayerMovementDown);
-      document.addEventListener("keyup", handlePlayerMovementUp);
+      const endGame = () => {
+        document.removeEventListener("keydown", handleMovement);
+        document.removeEventListener("keyup", handleMovementUp);
+        clearInterval(interval);
+        ballRef.current.velocityX = 0;
+        ballRef.current.velocityY = 0;
+        ballRef.current.color = "black";
+        // TODO: Display winner
+        return;
+      };
 
-      const resetBall = () => {
-        ballRef.current.x = canvas.width / 2;
+      document.addEventListener("keydown", handleMovement);
+      document.addEventListener("keyup", handleMovementUp);
+
+      const interval = setInterval(() => {
+        if (!isPaused.current) {
+          setTimer(timer.current + 1);
+          setDisplayedTimer(timer.current);
+        }
+      }, 1000);
+
+      const checkVictoryCondition = () => {
+        if (
+          victoryCondition.type === "time" &&
+          timer.current >= victoryCondition.value
+        ) {
+          clearInterval(interval);
+          endGame();
+        } else if (
+          victoryCondition.type === "1972" &&
+          (player1PaddleRef.current.score >= 11 ||
+            player2PaddleRef.current.score >= 11) &&
+          Math.abs(
+            player1PaddleRef.current.score - player2PaddleRef.current.score
+          ) >= 2
+        ) {
+          clearInterval(interval);
+          endGame();
+        } else if (
+          victoryCondition.type === "points" &&
+          (player1PaddleRef.current.score >= victoryCondition.value ||
+            player2PaddleRef.current.score >= victoryCondition.value)
+        ) {
+          clearInterval(interval);
+          endGame();
+        }
+      };
+
+      const checkPaddleCollision = (paddle: Paddle, ball: Ball) => {
+        if (
+          ball.x + ball.radius > paddle.x &&
+          ball.x - ball.radius < paddle.x + paddle.width &&
+          ball.y + ball.radius > paddle.y &&
+          ball.y - ball.radius < paddle.y + paddle.height
+        ) {
+          const paddleCenter = paddle.y + paddle.height / 2;
+          const distanceFromPaddleCenter = ball.y - paddleCenter;
+          const bounceAngle =
+            (distanceFromPaddleCenter / (paddle.height / 2)) * (Math.PI / 4); // The bounce angle never exceeds 45 degrees
+
+          // Recalculate velocityX and velocityY to maintain constant speed
+          ball.velocityX =
+            -Math.sign(ball.velocityX) * ball.speed * Math.cos(bounceAngle);
+          ball.velocityY = ball.speed * Math.sin(bounceAngle);
+
+          // Increase ball speed after each hit
+          ball.speed += 0.1;
+        }
+      };
+
+      const resetBall = (playerScored: number) => {
         ballRef.current.y = canvas.height / 2;
-        const randomHorizontalDirection = Math.random() < 0.5 ? -1 : 1;
-        const randomVerticalDirection = Math.random() < 0.5 ? -1 : 1;
+        const angle = (Math.random() * Math.PI) / 4 - Math.PI / 8; // Random angle between -22.5 and 22.5 degrees
+
+        // Serve the ball from the middle of the player's "field" who scored
+        ballRef.current.x =
+          playerScored === 1 ? canvas.width / 4 : (canvas.width / 4) * 3;
+
+        const velocityX =
+          playerScored === 1 ? Math.cos(angle) : -Math.cos(angle); // Positive for player 1, negative for player 2
+        const velocityY = Math.sin(angle);
+        const magnitude = Math.sqrt(
+          velocityX * velocityX + velocityY * velocityY
+        );
+
+        // Normalize the velocity vector and scale it by the desired speed
         ballRef.current.velocityX =
-          randomHorizontalDirection * (2 + Math.random() * difficulty);
+          (velocityX / magnitude) * ballRef.current.speed;
         ballRef.current.velocityY =
-          randomVerticalDirection * (2 + Math.random() * difficulty);
+          (velocityY / magnitude) * ballRef.current.speed;
+      };
+
+      const aiPlayer = () => {
+        if (player2.isAi) {
+          // Make the AI paddle follow the ball
+          player2PaddleRef.current.y =
+            ballRef.current.y - player2PaddleRef.current.height / 2;
+        }
       };
 
       const gameLoop = () => {
-        ballRef.current.x += ballRef.current.velocityX;
-        ballRef.current.y += ballRef.current.velocityY;
-
-        playerPaddleRef.current.y += playerPaddleRef.current.speed;
-        // Assurez-vous que le paddle ne sort pas du canvas
-        playerPaddleRef.current.y = Math.max(playerPaddleRef.current.y, 0);
-        playerPaddleRef.current.y = Math.min(
-          playerPaddleRef.current.y,
-          canvas.height - playerPaddleRef.current.height
-        );
-
-        if (
-          ballRef.current.x + ballRef.current.radius < 0 ||
-          ballRef.current.x - ballRef.current.radius > canvas.width
-        ) {
-          resetBall();
+        if (!canvasRef.current) {
+          return;
         }
-
-        if (
-          ballRef.current.y - ballRef.current.radius < 0 ||
-          ballRef.current.y + ballRef.current.radius > canvas.height
-        ) {
-          ballRef.current.velocityY = -ballRef.current.velocityY;
+        const context = canvas.getContext("2d");
+        if (!context) {
+          return;
         }
+        if (isPaused.current) {
+          context.clearRect(0, 0, canvas.width, canvas.height);
+          drawPauseScreen(context, canvas);
+        } else {
+          ballRef.current.x += ballRef.current.velocityX;
+          ballRef.current.y += ballRef.current.velocityY;
 
-        if (
-          ballRef.current.x + ballRef.current.radius >
-            playerPaddleRef.current.x &&
-          ballRef.current.x - ballRef.current.radius <
-            playerPaddleRef.current.x + playerPaddleRef.current.width &&
-          ballRef.current.y + ballRef.current.radius >
-            playerPaddleRef.current.y &&
-          ballRef.current.y - ballRef.current.radius <
-            playerPaddleRef.current.y + playerPaddleRef.current.height
-        ) {
-          const paddleCenter =
-            playerPaddleRef.current.y + playerPaddleRef.current.height / 2;
-          let distanceFromPaddleCenter = ballRef.current.y - paddleCenter;
-          const maxBounceAngle = playerPaddleRef.current.height / 3; // Limiter l'angle de rebond
-          distanceFromPaddleCenter = Math.max(
-            -maxBounceAngle,
-            Math.min(maxBounceAngle, distanceFromPaddleCenter)
+          player1PaddleRef.current.y += player1PaddleRef.current.speed;
+          player2PaddleRef.current.y += player2PaddleRef.current.speed;
+
+          player1PaddleRef.current.y = Math.max(
+            30,
+            Math.min(
+              canvas.height - player1PaddleRef.current.height - 30,
+              player1PaddleRef.current.y
+            )
           );
 
-          const bounceAngle = distanceFromPaddleCenter / maxBounceAngle;
-          const originalSpeed = Math.sqrt(
-            ballRef.current.velocityX ** 2 + ballRef.current.velocityY ** 2
+          player2PaddleRef.current.y = Math.max(
+            30,
+            Math.min(
+              canvas.height - player2PaddleRef.current.height - 30,
+              player2PaddleRef.current.y
+            )
           );
-          ballRef.current.velocityY = bounceAngle * originalSpeed;
-          ballRef.current.velocityX = -ballRef.current.velocityX;
 
-          const newSpeed = Math.sqrt(
-            ballRef.current.velocityX ** 2 + ballRef.current.velocityY ** 2
-          );
-          ballRef.current.velocityX *= originalSpeed / newSpeed;
-          ballRef.current.velocityY *= originalSpeed / newSpeed;
+          if (
+            ballRef.current.y - ballRef.current.radius < 0 ||
+            ballRef.current.y + ballRef.current.radius > canvas.height
+          ) {
+            ballRef.current.velocityY = -ballRef.current.velocityY;
+          }
+
+          if (ballRef.current.x + ballRef.current.radius < 0) {
+            player2PaddleRef.current.score += 1;
+            resetBall(2);
+          } else if (
+            ballRef.current.x - ballRef.current.radius >
+            canvas.width
+          ) {
+            player1PaddleRef.current.score += 1;
+            resetBall(1);
+          }
+
+          checkPaddleCollision(player1PaddleRef.current, ballRef.current);
+          checkPaddleCollision(player2PaddleRef.current, ballRef.current);
+
+          context.clearRect(0, 0, canvas.width, canvas.height);
+          drawPaddle(context, player1PaddleRef.current);
+          drawPaddle(context, player2PaddleRef.current);
+          drawBall(context, ballRef.current);
+          drawDashedLine(context, canvas);
+          drawScore(context, canvas);
+
+          checkVictoryCondition();
+
+          aiPlayer();
         }
-
-        const aiPaddleCenter =
-          aiPaddleRef.current.y + aiPaddleRef.current.height / 2;
-        if (aiPaddleRef.current.y + 35 < ballRef.current.y) {
-          aiPaddleRef.current.y += 1;
-        } else if (aiPaddleCenter > ballRef.current.y + 35) {
-          aiPaddleRef.current.y -= 1;
-        }
-
-        if (
-          ballRef.current.x - ballRef.current.radius <
-            aiPaddleRef.current.x + aiPaddleRef.current.width &&
-          ballRef.current.x + ballRef.current.radius > aiPaddleRef.current.x &&
-          ballRef.current.y + ballRef.current.radius > aiPaddleRef.current.y &&
-          ballRef.current.y - ballRef.current.radius <
-            aiPaddleRef.current.y + aiPaddleRef.current.height
-        ) {
-          const paddleCenter =
-            aiPaddleRef.current.y + aiPaddleRef.current.height / 2;
-          let distanceFromPaddleCenter = ballRef.current.y - paddleCenter;
-          const maxBounceAngle = aiPaddleRef.current.height / 3; // Limiter l'angle de rebond
-          distanceFromPaddleCenter = Math.max(
-            -maxBounceAngle,
-            Math.min(maxBounceAngle, distanceFromPaddleCenter)
-          );
-
-          const bounceAngle = distanceFromPaddleCenter / maxBounceAngle;
-          const originalSpeed = Math.sqrt(
-            ballRef.current.velocityX ** 2 + ballRef.current.velocityY ** 2
-          );
-          ballRef.current.velocityY = bounceAngle * originalSpeed;
-          ballRef.current.velocityX = -ballRef.current.velocityX;
-
-          const newSpeed = Math.sqrt(
-            ballRef.current.velocityX ** 2 + ballRef.current.velocityY ** 2
-          );
-          ballRef.current.velocityX *= originalSpeed / newSpeed;
-          ballRef.current.velocityY *= originalSpeed / newSpeed;
-        }
-
-        context.clearRect(0, 0, canvas.width, canvas.height);
-        drawPaddle(context, playerPaddleRef.current);
-        drawPaddle(context, aiPaddleRef.current);
-        drawBall(context, ballRef.current);
-        drawScore(context, canvas);
-
         requestAnimationFrame(gameLoop);
       };
 
       gameLoop();
 
       return () => {
-        document.removeEventListener("keydown", handlePlayerMovementDown);
-        document.removeEventListener("keyup", handlePlayerMovementUp);
+        document.removeEventListener("keydown", handleMovement);
+        document.removeEventListener("keyup", handleMovementUp);
+        clearInterval(interval);
       };
     }
-  }, [difficulty]);
+  }, [difficulty, player1, player2, victoryCondition, isPaused]);
 
   const drawPaddle = (context: CanvasRenderingContext2D, paddle: Paddle) => {
     context.fillStyle = paddle.color;
@@ -228,31 +314,88 @@ const PongGame = ({ difficulty }: Props) => {
     context.fill();
   };
 
+  const drawDashedLine = (
+    context: CanvasRenderingContext2D,
+    canvas: HTMLCanvasElement
+  ) => {
+    context.beginPath();
+    context.setLineDash([15, 15]);
+    context.moveTo(canvas.width / 2, 0);
+    context.lineTo(canvas.width / 2, canvas.height);
+    context.strokeStyle = "WHITE";
+    context.stroke();
+  };
+
   const drawScore = (
     context: CanvasRenderingContext2D,
     canvas: HTMLCanvasElement
   ) => {
-    context.font = "30px Arial";
+    context.font = "80px 'courier new'";
     context.fillStyle = "WHITE";
-    context.fillText(`Player: ${playerPaddleRef.current.score}`, 50, 50);
-    context.fillText(
-      `AI: ${aiPaddleRef.current.score}`,
-      canvas.width - 150,
-      50
-    );
+
+    const player1Score = `${player1PaddleRef.current.score}`;
+    const player2Score = `${player2PaddleRef.current.score}`;
+
+    context.textAlign = "end";
+    context.fillText(player1Score, canvas.width / 2 - 50, 100);
+
+    context.textAlign = "start";
+    context.fillText(player2Score, canvas.width / 2 + 50, 100);
+  };
+
+  const drawPauseScreen = (
+    context: CanvasRenderingContext2D,
+    canvas: HTMLCanvasElement
+  ) => {
+    const message = "Press space to start";
+    const padding = 20;
+    const boxWidth = context.measureText(message).width + 2 * padding;
+    const boxHeight = 100; // Adjust as needed
+
+    const x = (canvas.width - boxWidth) / 2;
+    const y = (canvas.height - boxHeight) / 2;
+
+    // Draw the black background
+    context.fillStyle = "black";
+    context.fillRect(x, y, boxWidth, boxHeight);
+
+    // Draw the white border
+    context.setLineDash([]);
+    context.strokeStyle = "white";
+    context.lineWidth = 2;
+    context.strokeRect(x, y, boxWidth, boxHeight);
+
+    // Draw the text
+    context.fillStyle = "white";
+    context.font = "30px Arial"; // Adjust as needed
+    context.textAlign = "center";
+    context.textBaseline = "middle";
+    context.fillText(message, canvas.width / 2, canvas.height / 2);
   };
 
   return (
-    <canvas
-      ref={canvasRef}
-      width="1000"
-      height="600"
-      style={{
-        display: "block",
-        maxWidth: "1200px",
-        border: "1px dashed white",
-      }}
-    />
+    <div className="flex flex-col gap-2 items-center">
+      <div>
+        <canvas
+          ref={canvasRef}
+          width="1000"
+          height="750"
+          style={{
+            display: "block",
+            maxWidth: "1200px",
+            backgroundColor: "black",
+          }}
+          className="border-cyan-950 border"
+        />
+        <div className="flex flex-row justify-between w-full mt-4">
+          <div style={{ textAlign: "left" }}>{player1.username}</div>
+          <div style={{ textAlign: "center" }}>
+            Temps écoulé: {displayedTimer} secondes
+          </div>
+          <div style={{ textAlign: "right" }}>{player2.username}</div>
+        </div>
+      </div>
+    </div>
   );
 };
 

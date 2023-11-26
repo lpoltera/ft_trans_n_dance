@@ -53,7 +53,7 @@ function App() {
             }
           ></Route>
           <Route
-            path="/accueil"
+            path="/game"
             element={
               <PrivateRoute>
                 <PongGamePage />

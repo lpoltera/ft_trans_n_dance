@@ -1,10 +1,8 @@
 import axios from "axios";
 import { useEffect, useState, useRef } from "react";
-import io from "socket.io-client";
+import { io, Socket } from "socket.io-client";
 import RightMessageContainer from "./RightMessageContainer";
 import LeftMessageContainer from "./LeftMessageContainer";
-import "./Chat.css";
-// import newSocket from "../socket";
 
 interface ChatMessage {
   receiver: string;
@@ -24,13 +22,15 @@ interface Props {
 }
 
 const Chat = ({ ami }: Props) => {
-  const [socket, setSocket] = useState<any>(null);
+  const [socket, setSocket] = useState<Socket | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [newMessage, setNewMessage] = useState("");
   const [currentUser, setCurrentUser] = useState<string | undefined>("");
-  const messagesEndRef = useRef<any>(null);
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const scrollToBottom = () => {
-    messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
   };
 
   useEffect(scrollToBottom, [messages]);
@@ -97,7 +97,7 @@ const Chat = ({ ami }: Props) => {
     return () => {
       socket.off("recMessage");
     };
-  }, [socket]);
+  }, [socket, currentUser, ami.username]);
 
   const handleSendMessage = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key == "Enter") {
@@ -114,8 +114,8 @@ const Chat = ({ ami }: Props) => {
 
   return (
     <div>
-      <div className="messages-container">
-        <ul>
+      <div className="flex h-full">
+        <ul className="grow">
           {messages.map((message, index) => (
             <li key={index}>
               {message.sender === currentUser ? (
@@ -128,16 +128,16 @@ const Chat = ({ ami }: Props) => {
           ))}
         </ul>
         <div ref={messagesEndRef} />
-        <div className="sending-form">
-          <input
-            type="text"
-            className="border-white px-3 py-2 bg-transparent"
-            value={newMessage}
-            onChange={(e) => setNewMessage(e.target.value)}
-            onKeyDown={handleSendMessage}
-            placeholder="Ecrivez un message..."
-          />
-        </div>
+      </div>
+      <div className="shrink">
+        <input
+          type="text"
+          className="border-white px-3 py-2 bg-transparent"
+          value={newMessage}
+          onChange={(e) => setNewMessage(e.target.value)}
+          onKeyDown={handleSendMessage}
+          placeholder="Ecrivez un message..."
+        />
       </div>
     </div>
   );

@@ -12,7 +12,6 @@
 //   plugins: [require("@tailwindcss/forms")],
 // } satisfies Config;
 
-
 import type { Config } from "tailwindcss";
 import formsPlugin from "@tailwindcss/forms";
 

@@ -1,6 +1,6 @@
-import React from "react";
-import axios from "axios";
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { CheckIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import axios from "axios";
 
 interface Props {
   sender: string;
