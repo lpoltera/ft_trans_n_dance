@@ -44,7 +44,7 @@ const UsersPage = () => {
       }
     }
     fetchUserAndBlocked();
-  }, []);
+  }, [loading]);
 
   // const Stats = [
   //   { title: "Score", score: selectedUser?.totalXP },
