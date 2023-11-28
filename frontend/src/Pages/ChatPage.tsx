@@ -1,96 +1,73 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
-import Navbar from "../Components/Navbar";
-import PageLayout from "../Components/PageLayout";
 import Chat from "../Components/Chat/Chat";
 import FriendChatListItem from "../Components/Chat/FriendChatListItem";
 import FooterMain from "../Components/FooterMain";
-
-interface User {
-  id?: number;
-  username: string;
-  avatar: string;
-  connected: string;
-}
+import Navbar from "../Components/Navbar";
+import PageLayout from "../Components/PageLayout";
+import Tab from "../Components/Tab/Tab";
+import TabContainer from "../Components/Tab/TabContainer";
+import TabList from "../Components/Tab/TabList";
+import TabPanel from "../Components/Tab/TabPanel";
+import { useUserContext } from "../contexts/UserContext";
+import { User } from "../models/User";
 
 const ChatPage = () => {
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [friends, setAllFriends] = useState<User[] | null>(null);
-  const [selectedFriend, setSelectedFriend] = useState<User | null>(null);
-  const [arrIsSelected, setArrIsSelected] = useState<{
-    [key: string]: boolean;
-  }>({});
-
-  const handleChatButtonClick = (ami: User) => {
-    setSelectedFriend((prevFriend) => (prevFriend === ami ? null : ami));
-    setArrIsSelected((prev) => ({
-      ...Object.fromEntries(Object.keys(prev).map((key) => [key, false])),
-      [ami.username]: true,
-    }));
-  };
+  const [friends, setFriends] = useState<User[] | null>(null);
+  const { user, loading, fetchUserFriends } = useUserContext();
 
   useEffect(() => {
-    async function fetchCurrent() {
-      try {
-        const response = await axios.get<string>("/api/my-name");
-        console.log(`response ligne 29 ChatPage = ${response.data}`);
-        return response.data;
-      } catch (err) {
-        console.error(err);
-        return null;
-      }
-    }
-
-    async function fetchUserAndFriend() {
-      const name = await fetchCurrent();
-      if (name) {
-        try {
-          const [userResponse, friendResponse] = await Promise.all([
-            axios.get<User>("/api/" + name),
-            axios.get<User[]>("/api/friends/all/" + name),
-          ]);
-          setCurrentUser(userResponse.data);
-          setAllFriends(friendResponse.data);
-        } catch (err) {
-          console.error(err);
-        }
-      }
-    }
-    fetchUserAndFriend();
-  }, []);
+    if (loading) return;
+    const getFriends = async () => {
+      const userFriends = await fetchUserFriends();
+      setFriends(userFriends);
+    };
+    getFriends();
+  }, [loading]);
 
   return (
     <>
       <Navbar />
       <PageLayout>
-        <h1 className="text-xl mb-4">Conversations</h1>
-        <div className="h-full flex flex-row bg-cyan-950">
-          <div className="shrink p-10 w-48">
-            <h2>Amis</h2>
-            <div>
-              {friends
-                ? friends.map(
-                    (ami, index) =>
-                      currentUser?.username !== ami.username && (
-                        <FriendChatListItem
-                          key={index}
-                          ami={ami}
-                          handleChatButtonClick={handleChatButtonClick}
-                          arrIsSelected={arrIsSelected}
-                        />
+        <div className="w-full h-full max-h-full grow flex flex-col pb-12">
+          <h1 className="text-3xl mb-4 pl-1">Conversations</h1>
+          <TabContainer>
+            <div className="grow rounded-lg overflow-hidden max-h-full flex flex-row bg-cyan-950">
+              <TabList classCustom="shrink py-2 w-min-content overflow-auto flex-col">
+                <div className="w-full overflow-auto flex flex-col gap-0">
+                  {friends
+                    ? friends.map(
+                        (ami, index) =>
+                          user?.username !== ami.username && (
+                            <Tab index={index} key={index} classInactive=" ">
+                              <FriendChatListItem ami={ami} index={index} />
+                            </Tab>
+                          )
                       )
-                  )
-                : "Vous n'avez pas d'amis :("}
-            </div>
-          </div>
-
-          <div className="grow bg-red-600">
-            {selectedFriend && (
-              <div>
-                <Chat ami={selectedFriend}></Chat>
+                    : "Vous n'avez pas d'amis :("}
+                </div>
+              </TabList>
+              <div className="relative grow flex flex-col h-full">
+                <div className="absolute top-0 right-0 left-0 bottom-0 flex items-center justify-center text-white">
+                  <span className="text-2xl block absolute top-10 left-6">
+                    ← Sélectionnez une discussion
+                  </span>
+                </div>
+                {friends &&
+                  friends.map(
+                    (ami, index) =>
+                      user?.username !== ami.username && (
+                        <TabPanel
+                          index={index}
+                          key={index}
+                          customClass="grow bg-cyan-800 flex flex-col p-1 gap-2 relativ z-10"
+                        >
+                          <Chat ami={ami}></Chat>
+                        </TabPanel>
+                      )
+                  )}
               </div>
-            )}
-          </div>
+            </div>
+          </TabContainer>
         </div>
       </PageLayout>
       <FooterMain />

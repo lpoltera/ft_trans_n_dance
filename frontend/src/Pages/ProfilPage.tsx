@@ -1,68 +1,43 @@
 import { PencilSquareIcon } from "@heroicons/react/24/outline";
 import axios from "axios";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import FooterMain from "../Components/FooterMain";
 import FriendProfilRow from "../Components/FriendProfilRow";
 import Navbar from "../Components/Navbar";
 import PageLayout from "../Components/PageLayout";
 import PartieProfilRow from "../Components/PartieProfilRow";
 import StatBloc from "../Components/StatBloc";
-import BlockedProfilRow from "../Components/BlockedProfilRow";
 import Tab from "../Components/Tab/Tab";
 import TabContainer from "../Components/Tab/TabContainer";
 import TabList from "../Components/Tab/TabList";
 import TabPanel from "../Components/Tab/TabPanel";
-
-interface User {
-  //   id: number;
-  username: string;
-  avatar: string;
-  connected: string;
-  win: number;
-  loss: number;
-  draw: number;
-  totalXP: number;
-  totalGame: number;
-}
-
-interface Parties {
-  id: number;
-  name_p1: string;
-  name_p2: string;
-  score_p1: number;
-  score_p2: number;
-  updated_at: string;
-}
+import { useUserContext } from "../contexts/UserContext";
+import { Parties } from "../models/Game";
+import { User } from "../models/User";
+import { useNavigate } from "react-router-dom";
 
 const ProfilPage = () => {
+  const { user, loading } = useUserContext();
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [friends, setAllFriends] = useState<User[] | null>(null);
   const [Parties, setGames] = useState<Parties[] | null>(null);
-  const [blocked, setBlocked] = useState<User[] | null>(null);
+  //const [blocked, setBlocked] = useState<User[] | null>(null);
   const [IsMyProfile, setIsMyProfile] = useState(false);
+  const navigate = useNavigate();
 
   const url = window.location.href; // Obtient l'URL actuelle
   const urlSegments = url.split("/"); // Divise l'URL en segments
-  let idURL: string | any = urlSegments[urlSegments.length - 1];
+  let idURL: string | undefined = urlSegments[urlSegments.length - 1];
 
   useEffect(() => {
-    async function fetchCurrent() {
-      try {
-        const response = await axios.get<string>("/api/my-name");
-        if (idURL === "profil" || idURL === "") {
-          idURL = response.data;
-          setIsMyProfile(true);
-        }
-        console.log("idURL = ", idURL);
-        return idURL;
-      } catch (err) {
-        console.error(err);
-        return null;
-      }
+    if (loading) return;
+    console.log("user = ", user);
+    if (idURL === "profil" || idURL === "" || idURL === user?.username) {
+      setIsMyProfile(true);
+      idURL = user?.username;
     }
-
     async function fetchUserAndFriend() {
-      const name = await fetchCurrent();
+      const name = idURL;
       console.log("name in fetchUserAndFriend =", name);
       if (name) {
         try {
@@ -75,18 +50,27 @@ const ProfilPage = () => {
           setCurrentUser(userResponse.data);
           setAllFriends(friendResponse.data);
           setGames(gamesResponse.data);
-        } catch (err) {}
+        } catch (err) {
+          if (axios.isAxiosError(err) && err.response?.status === 404) {
+            // Handle 404 error;
+            navigate("/404");
+            return;
+          }
+          // Handle other errors
+          console.error("An error occurred while fetching the user");
+        }
       }
     }
     fetchUserAndFriend();
-  }, []);
+    console.log("currentUser = ", currentUser);
+  }, [loading, user, idURL]);
 
   const Stats = [
-    { title: "Score", score: currentUser?.totalXP },
-    { title: "Parties jouées", score: currentUser?.totalGame },
-    { title: "Victoires", score: currentUser?.win },
-    { title: "Défaites", score: currentUser?.loss },
-    { title: "Matchs nuls", score: currentUser?.draw },
+    { title: "Score", score: 0 },
+    { title: "Parties jouées", score: 0 },
+    { title: "Victoires", score: 0 },
+    { title: "Défaites", score: 0 },
+    { title: "Matchs nuls", score: 0 },
   ];
   return (
     <>
@@ -108,7 +92,7 @@ const ProfilPage = () => {
                   type="button"
                   className="w-5 h-5 mt-1 opacity-50 hover:opacity-100"
                 >
-                  <PencilSquareIcon />
+                  {IsMyProfile && <PencilSquareIcon />}
                 </button>
               </div>
             </div>
@@ -129,7 +113,7 @@ const ProfilPage = () => {
             <TabContainer>
               <TabList>
                 <Tab index={0}>Amis</Tab>
-                <Tab index={1}>Demandes</Tab>
+                {IsMyProfile && <Tab index={1}>Demandes</Tab>}
                 <Tab index={2}>Historique</Tab>
               </TabList>
               <TabPanel index={0}>
@@ -146,11 +130,13 @@ const ProfilPage = () => {
                   )}
                 </div>
               </TabPanel>
-              <TabPanel index={1}>
-                <div className="grid grid-flow-row gap-2">
-                  liste des demandes en attentes
-                </div>
-              </TabPanel>
+              {IsMyProfile && (
+                <TabPanel index={1}>
+                  <div className="grid grid-flow-row gap-2">
+                    liste des demandes en attentes
+                  </div>
+                </TabPanel>
+              )}
               <TabPanel index={2}>
                 <div className="grid grid-flow-row gap-2">
                   {Parties &&

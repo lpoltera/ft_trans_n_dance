@@ -1,32 +1,22 @@
 import axios from "axios";
-import { useEffect, useState, useRef } from "react";
-import { io, Socket } from "socket.io-client";
-import RightMessageContainer from "./RightMessageContainer";
+import { FormEvent, useEffect, useRef, useState } from "react";
+import { useNotificationContext } from "../../contexts/NotificationContext";
+import { useUserContext } from "../../contexts/UserContext";
+import { User } from "../../models/User";
 import LeftMessageContainer from "./LeftMessageContainer";
-
-interface ChatMessage {
-  receiver: string;
-  sender: string;
-  text: string;
-}
-
-interface User {
-  id?: number;
-  username: string;
-  connected: string;
-  avatar: string;
-}
+import RightMessageContainer from "./RightMessageContainer";
+import { ChatMessage } from "../../models/Notifications";
 
 interface Props {
   ami: User;
 }
 
 const Chat = ({ ami }: Props) => {
-  const [socket, setSocket] = useState<Socket | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [newMessage, setNewMessage] = useState("");
-  const [currentUser, setCurrentUser] = useState<string | undefined>("");
+  const { socket, socketLoading } = useNotificationContext();
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const { user, loading } = useUserContext();
   const scrollToBottom = () => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
@@ -36,27 +26,18 @@ const Chat = ({ ami }: Props) => {
   useEffect(scrollToBottom, [messages]);
 
   useEffect(() => {
-    // Création de la connexion Socket.IO lors du montage du composant
-    const newSocket = io("http://localhost:8000");
-    setSocket(newSocket);
-
-    async function fetchCurrent() {
-      try {
-        const response = await axios.get<string>("/api/my-name");
-        setCurrentUser(response.data);
-        return response.data;
-      } catch (error) {
-        console.error("Error fetching my name", error);
-      }
-    }
+    if (loading) return;
+    if (socketLoading) return;
+    console.log("socket :", socket);
 
     async function fetchMessages() {
-      const name = await fetchCurrent();
+      const name = user?.username;
       if (name) {
         try {
           const response = await axios.get(
             "/api/chat/all/" + name + "/" + ami.username
           );
+          console.log("response.data :", response.data);
           setMessages(response.data);
         } catch (error) {
           console.error("Error fetching messages:", error);
@@ -66,80 +47,74 @@ const Chat = ({ ami }: Props) => {
     fetchMessages();
 
     return () => {
-      if (newSocket) newSocket.disconnect();
+      if (socket) socket.off("recMessage");
     };
-  }, [ami, currentUser]);
+  }, [loading]);
 
   useEffect(() => {
-    if (!socket) {
-      console.log("socket :", socket);
-      return;
+    if (socket && user?.username && ami.username) {
+      if (!socket.hasListeners("recMessage")) {
+        socket.on("recMessage", (message) => {
+          if (message.sender !== user.username) {
+            setMessages((prevMessages) => [...prevMessages, message]);
+          }
+        });
+      }
     }
 
-    // Logique pour gérer les événements de la connexion Socket.IO
-
-    socket.on("recMessage", (message: ChatMessage) => {
-      console.log(`message received : ${message.text}`);
-      console.log(`message sent by : ${message.sender}`);
-      console.log(`message sent to : ${message.receiver}`);
-      console.log(`current name  : ${currentUser}`);
-      console.log(`Friend name  : ${ami.username}`);
-      if (
-        (message.sender === ami.username && message.receiver === currentUser) ||
-        (message.sender === currentUser && message.receiver === ami.username)
-      ) {
-        // Gérer le message reçu depuis le serveur Socket.IO
-        setMessages((prevMessages) => [...prevMessages, message]);
-      }
-    });
-
-    // Nettoyage des événements lors du démontage du composant
     return () => {
-      socket.off("recMessage");
-    };
-  }, [socket, currentUser, ami.username]);
-
-  const handleSendMessage = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key == "Enter") {
       if (socket) {
-        socket.emit("sendMessage", {
-          sender: currentUser,
-          receiver: ami.username,
-          text: newMessage,
-        });
-        setNewMessage("");
+        socket.off("recMessage");
       }
+    };
+  }, [socket, user?.username, ami.username]);
+
+  // Update messages state when a message is sent
+  const sendMessage = (e: FormEvent, messageContent: string) => {
+    e.preventDefault();
+    if (user?.username) {
+      const message = {
+        sender: user.username,
+        receiver: ami.username,
+        text: messageContent,
+      };
+
+      socket?.emit("sendMessage", message);
+
+      setMessages((prevMessages) => [...prevMessages, message]);
+      setNewMessage("");
     }
   };
 
   return (
-    <div>
-      <div className="flex h-full">
-        <ul className="grow">
+    <>
+      <div className="flex h-full w-full grow overflow-auto">
+        <ul className="pt-6 space-y-1 w-full flex flex-col">
           {messages.map((message, index) => (
             <li key={index}>
-              {message.sender === currentUser ? (
-                <RightMessageContainer ami={ami} message={message} />
+              {message.sender === user?.username ? (
+                <RightMessageContainer user={ami} message={message} />
               ) : (
-                <LeftMessageContainer ami={ami} message={message} />
+                <LeftMessageContainer user={ami} message={message} />
               )}
-              {/* <strong>{message.sender}:</strong> {message.text} */}
             </li>
           ))}
+          <div ref={messagesEndRef} />
         </ul>
-        <div ref={messagesEndRef} />
       </div>
-      <div className="shrink">
-        <input
-          type="text"
-          className="border-white px-3 py-2 bg-transparent"
-          value={newMessage}
-          onChange={(e) => setNewMessage(e.target.value)}
-          onKeyDown={handleSendMessage}
-          placeholder="Ecrivez un message..."
-        />
+      <div className="shrink w-full">
+        <form onSubmit={(e) => sendMessage(e, newMessage)}>
+          <input
+            type="text"
+            className="border-white rounded-md px-3 py-2 bg-transparent w-full focus:border-cyan-500 focus:outline-none"
+            value={newMessage}
+            onChange={(e) => setNewMessage(e.target.value)}
+            placeholder="Ecrivez un message..."
+          />
+          <input type="submit" className="hidden" />
+        </form>
       </div>
-    </div>
+    </>
   );
 };
 

@@ -1,40 +1,34 @@
-interface User {
-  id?: number;
-  username: string;
-  connected: string;
-  avatar: string;
-}
-
-interface ChatMessage {
-  sender: string;
-  text: string;
-}
+import { ChatMessage } from "../../models/Notifications";
+import { User } from "../../models/User";
 
 interface Props {
-  ami: User;
+  user: User;
   message: ChatMessage;
 }
 
-const LeftMessageContainer = ({ ami, message }: Props) => {
+const LeftMessageContainer = ({ user, message }: Props) => {
+  const dateTime = message.createdAt ? message.createdAt.split("T") : null;
+  // const date = dateTime ? dateTime[0] : "";
+  const time = dateTime ? dateTime[1].substring(0, 5) : "";
+  const formattedDateTime = `${time}`;
   return (
-    <div>
-      {/* Message Left Container */}
-      <div className="message-left message-container">
-        <div className="span-left"></div>
-        <div className="span-content">
+    <>
+      <div className="p-2 max-w-max mr-auto ml-4">
+        <div className="flex flex-row gap-4">
           <img
-            className="message-container__avatar"
-            src={ami.avatar}
-            alt="user'avatar profile"
+            className="w-6 h-6 rounded-full object-cover"
+            src={user.avatar}
+            alt="user avatar profile"
           />
-          <div>
+          <div className="flex flex-col items-start">
             <p>{message.text}</p>
+            <span className=" block text-xs text-white opacity-50">
+              {formattedDateTime}
+            </span>
           </div>
         </div>
-        <div className="span-right"></div>
       </div>
-      <div className="span-right"></div>
-    </div>
+    </>
   );
 };
 

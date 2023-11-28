@@ -5,16 +5,7 @@ import {
 import { useEffect, useState } from "react";
 import "react-toastify/dist/ReactToastify.css";
 import { io, Socket } from "socket.io-client";
-interface User {
-  username: string;
-  avatar: string;
-  connected: string;
-  win: number;
-  loss: number;
-  draw: number;
-  totalXP: number;
-  totalGame: number;
-}
+import { User } from "../models/User";
 
 interface Props {
   ami: User;

@@ -1,85 +1,28 @@
-// Charger et écouter la Table "notifications"
-// Si une nouvelle notif apparait, ajouter un pin rouge aux Notifications.
-// reprendre l'id de l'utilisateur connecté pour créer un lien dynamique vers son profil dans le menu du boutton profil
-
 import {
   BellAlertIcon,
   ChatBubbleBottomCenterIcon,
   UserCircleIcon,
   UserGroupIcon,
 } from "@heroicons/react/24/outline";
-import axios from "axios";
-import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
-import { io, Socket } from "socket.io-client";
+import { useNotificationContext } from "../contexts/NotificationContext";
+import { useUserContext } from "../contexts/UserContext";
 import ButtonIcon from "./ButtonIcon";
 import MenuDropdown from "./MenuDropdown";
 import NotificationPanel from "./NotificationPanel";
 
-interface Notifs {
-  sender: string;
-  receiver: string;
-  message: string;
-  status: string;
-}
-interface ChatMessage {
-  receiver: string;
-  sender: string;
-  text: string;
-}
-
 const Navbar = () => {
-  const [unreadNotif, setUnreadNotif] = useState(false);
-  const [unreadChat, setUnreadChat] = useState(false);
-  const [notifModal, setNotifModal] = useState(false);
-  const [socket, setSocket] = useState<Socket | null>(null);
-  const [currentUserName, setcurrentUserName] = useState<string>("");
-
-  useEffect(() => {
-    axios
-      .get<string>("/api/my-name")
-      .then((response) => setcurrentUserName(response.data));
-    console.log(`Current User Name in Navbar.tsx = ${currentUserName}`);
-    const newSocket = io("http://localhost:8000");
-    setSocket(newSocket);
-    return () => {
-      //     // if (newSocket) newSocket.disconnect();
-    };
-  }, [currentUserName]);
-
-  useEffect(() => {
-    if (!socket) {
-      console.log("socket :", socket);
-      return;
-    }
-    socket.on("myNotifs", (message: Notifs) => {
-      // setNewNotif("Veux-tu être mon ami");
-      console.log("message sent : ", message.message);
-      if (message.receiver === currentUserName) {
-        setUnreadNotif(true);
-        toast("Tu as reçu une nouvelle notification");
-        console.log("unreadNotif true");
-        // console.log("LOG : ", socket.request.session);
-        // console.dir(socket.request.session);
-
-        console.log("message in condition : ", message.message);
-      }
-    });
-
-    socket.on("recMessage", (message: ChatMessage) => {
-      if (message.receiver === currentUserName) {
-        setUnreadChat(true);
-        toast("Tu as reçu un nouveau message dans le chat");
-      }
-    });
-
-    return () => {
-      socket.off("myNotifs");
-    };
-  }, [currentUserName, socket]);
+  const { user } = useUserContext();
+  const {
+    unreadNotif,
+    notifModal,
+    setUnreadNotif,
+    setNotifModal,
+    unreadChat,
+    setUnreadChat,
+  } = useNotificationContext();
 
   const profilLinks = [
-    { title: "Profil", href: "/profil" },
+    { title: "Profil", href: "/profil/" + user?.username },
     { title: "Déconnexion", href: "/logout" },
   ];
 
@@ -134,7 +77,7 @@ const Navbar = () => {
             </ButtonIcon>
           </MenuDropdown>
         </nav>
-        <NotificationPanel visibility={notifModal}></NotificationPanel>
+        <NotificationPanel></NotificationPanel>
       </div>
     </>
   );

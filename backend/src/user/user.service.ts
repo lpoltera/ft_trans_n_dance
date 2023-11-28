@@ -14,6 +14,7 @@ import { Repository } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
 import * as speakeasy from 'speakeasy';
 import { QrCodeService } from '../config/otp.service';
+import { UserResponseDto } from './dto/UserResponseDto';
 
 @Injectable()
 export class UserService {
@@ -62,7 +63,8 @@ export class UserService {
       await this.userDB.save(user);
       console.log(`twoFaEnable = ${twoFaEnable}`);
       console.log(`user.twoFaEnable = ${user.twoFaEnable}`);
-      session.user = user;
+      const userResponse: UserResponseDto = user;
+      session.user = userResponse;
       return 'User Created!';
     } catch (error) {
       throw new ConflictException(error.message);

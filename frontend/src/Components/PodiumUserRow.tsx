@@ -1,35 +1,33 @@
-interface User {
-  id: number;
-  username: string;
-  connected: string;
-  totalXP: number;
-  avatar: string;
-}
+import { useUserContext } from "../contexts/UserContext";
+import { User } from "../models/User";
+
 interface Props {
-  user: User;
+  currentUser: User;
 }
 
-const PodiumUserRow = ({ user }: Props) => {
+const PodiumUserRow = ({ currentUser }: Props) => {
+  const { user } = useUserContext();
   return (
     <a
-      href={"/profil/" + user.username}
-      key={user.id}
+      href={"/profil/" + currentUser.username}
+      key={currentUser.id}
       className="flex justify-between py-4 px-4 border border-white hover:bg-neutral-800 rounded-md"
     >
       <div className="flex justify-center gap-4">
         <img
-          src={user.avatar}
+          src={currentUser.avatar}
           alt=""
           className="w-12 h-12 rounded-full object-cover"
         />
         <div className="flex flex-col justify-start">
-          <div className="text-xl">{user.username}</div>
-          <div className="text-sm text-gray-400">{user.connected}</div>
+          <div className="text-xl">
+            {currentUser.username}{" "}
+            {currentUser.username === user?.username && <sup>(vous)</sup>}
+          </div>
+          <div className="text-sm text-gray-400">{currentUser.connected}</div>
         </div>
       </div>
-      <div className="text-xl flex justify-end items-center">
-        {user.totalXP} pts
-      </div>
+      <div className="text-xl flex justify-end items-center">{3000} pts</div>
     </a>
   );
 };

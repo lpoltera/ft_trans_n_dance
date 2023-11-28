@@ -1,26 +1,18 @@
 import { NoSymbolIcon, UserIcon } from "@heroicons/react/24/outline";
 import axios from "axios";
 import { useState } from "react";
-
-interface User {
-  id?: number;
-  username: string;
-  connected: string;
-  avatar: string;
-}
+import { User } from "../../models/User";
+import { useTabContext } from "../../contexts/TabContext";
 
 interface Props {
   ami: User;
-  handleChatButtonClick: (ami: User) => void;
-  arrIsSelected: { [key: string]: boolean };
+  index: number;
 }
 
-const FriendChatListItem = ({
-  ami,
-  handleChatButtonClick,
-  arrIsSelected,
-}: Props) => {
+const FriendChatListItem = ({ ami, index }: Props) => {
   const [isBlocked, setIsBlocked] = useState(false);
+  const { activeTab } = useTabContext();
+  const isActive = index === activeTab;
 
   const changeFriendshipStatus = async () => {
     const isConfirmed = window.confirm(
@@ -36,41 +28,37 @@ const FriendChatListItem = ({
   return (
     <>
       {!isBlocked && (
-        <button
-          className={`user-list__item hover:bg-neutral-800 rounded-md ${
-            arrIsSelected[ami.username] ? "bg-green" : ""
-          }`}
-          onClick={() => {
-            handleChatButtonClick(ami);
-          }}
+        <div
+          className={`flex flex-row items-center gap-10 p-4 hover:bg-neutral-800 rounded-md w-full hover:cursor-pointer 
+          ${isActive ? "bg-neutral-800" : "bg-transparent"}`}
         >
-          <div className="user-list__item__avatar">
+          <div className="flex flex-row w-full gap-4">
             <img
               src={ami.avatar}
               alt="user'avatar profile"
               className="w-12 h-12 rounded-full object-cover"
             />
-            <div className="user-list__item__infos">
+            <div className=" text-left">
               <div className="text-xl">{ami.username}</div>
               <div className="text-sm text-gray-400">{ami.connected}</div>
             </div>
           </div>
-          <div className="user-list__item__infos__icons">
+          <div className="flex flex-row gap-2">
             <button
               type="button"
-              className="w-6 h-6 opacity-50 hover:opacity-100"
+              className="w-5 h-5 opacity-50 hover:opacity-100"
               onClick={() => changeFriendshipStatus()}
             >
               <NoSymbolIcon />
             </button>
             <button
               type="button"
-              className="w-6 h-6 opacity-50 hover:opacity-100"
+              className="w-5 h-5 opacity-50 hover:opacity-100"
             >
               <UserIcon />
             </button>
           </div>
-        </button>
+        </div>
       )}
     </>
   );

@@ -1,0 +1,117 @@
+import React, {
+  createContext,
+  useState,
+  useContext,
+  useEffect,
+  ReactNode,
+} from "react";
+import { Socket, io } from "socket.io-client";
+import { useUserContext } from "./UserContext";
+import { ChatMessage, Notifs } from "../models/Notifications";
+import { toast } from "react-toastify";
+import axios from "axios";
+
+interface NotificationContextProps {
+  socket: Socket | null;
+  notifsList: Notifs[] | null;
+  unreadNotif: boolean;
+  notifModal: boolean;
+  unreadChat: boolean;
+  socketLoading: boolean;
+  setUnreadNotif: React.Dispatch<React.SetStateAction<boolean>>;
+  setNotifModal: React.Dispatch<React.SetStateAction<boolean>>;
+  setUnreadChat: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+const NotificationContext = createContext<NotificationContextProps | undefined>(
+  undefined
+);
+
+interface NotificationProviderProps {
+  children: ReactNode;
+}
+
+export const useNotificationContext = () => {
+  const context = useContext(NotificationContext);
+  if (!context) {
+    throw new Error(
+      "useNotificationContext must be used within a NotificationProvider"
+    );
+  }
+  return context;
+};
+
+export const NotificationProvider = ({
+  children,
+}: NotificationProviderProps) => {
+  const [notifsList, setNotifsList] = useState<Notifs[] | null>(null);
+  const [unreadNotif, setUnreadNotif] = useState(false);
+  const [notifModal, setNotifModal] = useState(false);
+  const [unreadChat, setUnreadChat] = useState(false);
+  const [socket, setSocket] = useState<Socket | null>(null);
+  const { user } = useUserContext();
+  const [socketLoading, setSocketLoading] = useState(true);
+
+  useEffect(() => {
+    setSocketLoading(true);
+    const newSocket = io("http://localhost:8000");
+    setSocket(newSocket);
+    setSocketLoading(false);
+    return () => {
+      newSocket.close();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!socket) return;
+    socket.on("myNotifs", (message: Notifs) => {
+      if (message.receiver === user?.username) {
+        setUnreadNotif(true);
+        toast(`Tu as reçu une nouvelle notification : ${message.message}`);
+      }
+    });
+
+    socket.on("recMessage", (message: ChatMessage) => {
+      if (message.receiver === user?.username) {
+        setUnreadChat(true);
+        toast("Tu as reçu un nouveau message dans le chat");
+      }
+    });
+
+    return () => {
+      socket.off("myNotifs");
+      socket.off("recMessage");
+    };
+  }, [socket, user]);
+
+  useEffect(() => {
+    const fetchUnreadNotifs = async () => {
+      try {
+        const response = await axios.get("/api/notifications/unread");
+        setNotifsList(response.data);
+      } catch (error) {
+        console.error("Failed to fetch unread notifications:", error);
+      }
+    };
+
+    fetchUnreadNotifs();
+  }, []);
+
+  return (
+    <NotificationContext.Provider
+      value={{
+        socketLoading,
+        socket,
+        notifsList,
+        unreadNotif,
+        notifModal,
+        unreadChat,
+        setUnreadNotif,
+        setNotifModal,
+        setUnreadChat,
+      }}
+    >
+      {children}
+    </NotificationContext.Provider>
+  );
+};

@@ -8,3 +8,8 @@
 #root {
     min-height: 100vh;
 }
+
+html {
+    scroll-behavior: smooth;
+    background-color:rgb(22, 78, 99);
+}

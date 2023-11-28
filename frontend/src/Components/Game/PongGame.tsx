@@ -1,47 +1,9 @@
 import { useEffect, useRef, useState } from "react";
+import { useGameContext } from "../../contexts/GameContext";
+import { Ball, Paddle } from "../../models/Game";
 
-interface PlayerProps {
-  username: string;
-  isAi: boolean;
-}
-
-interface Props {
-  difficulty: number;
-  withPowerUps: boolean;
-  victoryCondition: {
-    type: "points" | "time" | "1972";
-    value: number;
-  };
-  player1: PlayerProps;
-  player2: PlayerProps;
-}
-
-interface Ball {
-  x: number;
-  y: number;
-  radius: number;
-  speed: number;
-  velocityX: number;
-  velocityY: number;
-  color: string;
-}
-
-interface Paddle {
-  width: number;
-  height: number;
-  x: number;
-  y: number;
-  color: string;
-  score: number;
-  speed: number;
-}
-
-const PongGame = ({
-  difficulty,
-  player1,
-  player2,
-  victoryCondition,
-}: Props) => {
+const PongGame = () => {
+  const { gameDetails } = useGameContext();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const ballRef = useRef<Ball>({
     x: 0,
@@ -70,6 +32,7 @@ const PongGame = ({
     score: 0,
     speed: 0,
   });
+  const [gameFinished, setGameFinished] = useState(false); // TODO: Use this to display winner
   const [displayedTimer, setDisplayedTimer] = useState(0);
   const isPaused = useRef(true);
   const setIsPaused = (value: boolean) => {
@@ -80,15 +43,20 @@ const PongGame = ({
     timer.current = value;
   };
 
+  if (gameDetails?.withPowerUps) {
+    console.log("Power-ups are not implemented yet");
+  } // TODO: Implement power-ups
+
   useEffect(() => {
     const canvas = canvasRef.current;
     const context = canvas?.getContext("2d");
+    const maxSpeed = 2 * (gameDetails?.difficulty || 1);
 
     if (context && canvas) {
       player2PaddleRef.current.x = canvas.width - 100 - 10;
       ballRef.current.x = canvas.width / 2;
       ballRef.current.y = canvas.height / 2;
-      ballRef.current.speed = 5 + difficulty;
+      ballRef.current.speed = 1 + (gameDetails?.difficulty || 1);
       ballRef.current.velocityX =
         ballRef.current.speed * (Math.random() < 0.5 ? -1 : 1);
       ballRef.current.velocityY =
@@ -100,14 +68,14 @@ const PongGame = ({
         canvas.height / 2 - player2PaddleRef.current.height / 2;
 
       const handleMovement = (event: KeyboardEvent) => {
-        const moveSpeed = 15;
+        const moveSpeed = 5;
         if (event.key === "ArrowUp") {
           player2PaddleRef.current.speed = -moveSpeed;
         } else if (event.key === "ArrowDown") {
           player2PaddleRef.current.speed = moveSpeed;
-        } else if (event.key === "q") {
+        } else if (event.key === "w") {
           player1PaddleRef.current.speed = -moveSpeed;
-        } else if (event.key === "a") {
+        } else if (event.key === "s") {
           player1PaddleRef.current.speed = moveSpeed;
         } else if (event.key === " ") {
           setIsPaused(!isPaused.current);
@@ -117,7 +85,7 @@ const PongGame = ({
       const handleMovementUp = (event: KeyboardEvent) => {
         if (event.key === "ArrowUp" || event.key === "ArrowDown") {
           player2PaddleRef.current.speed = 0;
-        } else if (event.key === "q" || event.key === "a") {
+        } else if (event.key === "w" || event.key === "s") {
           player1PaddleRef.current.speed = 0;
         }
       };
@@ -126,6 +94,7 @@ const PongGame = ({
         document.removeEventListener("keydown", handleMovement);
         document.removeEventListener("keyup", handleMovementUp);
         clearInterval(interval);
+        setGameFinished(true);
         ballRef.current.velocityX = 0;
         ballRef.current.velocityY = 0;
         ballRef.current.color = "black";
@@ -137,7 +106,7 @@ const PongGame = ({
       document.addEventListener("keyup", handleMovementUp);
 
       const interval = setInterval(() => {
-        if (!isPaused.current) {
+        if (!isPaused.current && !gameFinished) {
           setTimer(timer.current + 1);
           setDisplayedTimer(timer.current);
         }
@@ -145,13 +114,13 @@ const PongGame = ({
 
       const checkVictoryCondition = () => {
         if (
-          victoryCondition.type === "time" &&
-          timer.current >= victoryCondition.value
+          gameDetails?.victoryCondition.type === "time" &&
+          timer.current >= (gameDetails?.victoryCondition.value || 0)
         ) {
           clearInterval(interval);
           endGame();
         } else if (
-          victoryCondition.type === "1972" &&
+          gameDetails?.victoryCondition.type === "1972" &&
           (player1PaddleRef.current.score >= 11 ||
             player2PaddleRef.current.score >= 11) &&
           Math.abs(
@@ -161,9 +130,11 @@ const PongGame = ({
           clearInterval(interval);
           endGame();
         } else if (
-          victoryCondition.type === "points" &&
-          (player1PaddleRef.current.score >= victoryCondition.value ||
-            player2PaddleRef.current.score >= victoryCondition.value)
+          gameDetails?.victoryCondition.type === "points" &&
+          (player1PaddleRef.current.score >=
+            (gameDetails?.victoryCondition.value || 1) ||
+            player2PaddleRef.current.score >=
+              (gameDetails?.victoryCondition.value || 1))
         ) {
           clearInterval(interval);
           endGame();
@@ -215,10 +186,26 @@ const PongGame = ({
       };
 
       const aiPlayer = () => {
-        if (player2.isAi) {
-          // Make the AI paddle follow the ball
-          player2PaddleRef.current.y =
+        if (!gameDetails?.player2 && !gameFinished) {
+          // The speed at which the AI paddle moves
+          const aiSpeed = 0 + (gameDetails?.difficulty || 1); // Adjust as needed
+
+          // The target y-position for the AI paddle
+          const targetY =
             ballRef.current.y - player2PaddleRef.current.height / 2;
+
+          // Interpolate the paddle's current position towards the target position at the AI speed
+          if (targetY < player2PaddleRef.current.y) {
+            player2PaddleRef.current.y = Math.max(
+              targetY,
+              player2PaddleRef.current.y - aiSpeed
+            );
+          } else {
+            player2PaddleRef.current.y = Math.min(
+              targetY,
+              player2PaddleRef.current.y + aiSpeed
+            );
+          }
         }
       };
 
@@ -233,6 +220,14 @@ const PongGame = ({
         if (isPaused.current) {
           context.clearRect(0, 0, canvas.width, canvas.height);
           drawPauseScreen(context, canvas);
+        } else if (gameFinished) {
+          const winner =
+            player1PaddleRef.current.score > player2PaddleRef.current.score
+              ? gameDetails?.player1?.username
+              : gameDetails?.player2?.username;
+          context.clearRect(0, 0, canvas.width, canvas.height);
+          drawScore(context, canvas);
+          drawEndScreen(context, canvas, winner || "AI");
         } else {
           ballRef.current.x += ballRef.current.velocityX;
           ballRef.current.y += ballRef.current.velocityY;
@@ -277,6 +272,15 @@ const PongGame = ({
           checkPaddleCollision(player1PaddleRef.current, ballRef.current);
           checkPaddleCollision(player2PaddleRef.current, ballRef.current);
 
+          // Limit the ball's speed to the maximum speed
+          const speed = Math.sqrt(
+            ballRef.current.velocityX ** 2 + ballRef.current.velocityY ** 2
+          );
+          if (speed > maxSpeed) {
+            ballRef.current.velocityX *= maxSpeed / speed;
+            ballRef.current.velocityY *= maxSpeed / speed;
+          }
+
           context.clearRect(0, 0, canvas.width, canvas.height);
           drawPaddle(context, player1PaddleRef.current);
           drawPaddle(context, player2PaddleRef.current);
@@ -299,7 +303,7 @@ const PongGame = ({
         clearInterval(interval);
       };
     }
-  }, [difficulty, player1, player2, victoryCondition, isPaused]);
+  }, [gameDetails, isPaused, gameFinished, setGameFinished]);
 
   const drawPaddle = (context: CanvasRenderingContext2D, paddle: Paddle) => {
     context.fillStyle = paddle.color;
@@ -373,6 +377,37 @@ const PongGame = ({
     context.fillText(message, canvas.width / 2, canvas.height / 2);
   };
 
+  const drawEndScreen = (
+    context: CanvasRenderingContext2D,
+    canvas: HTMLCanvasElement,
+    winnerName: string
+  ) => {
+    const message = `${winnerName} wins!`;
+    const padding = 20;
+    const boxWidth = context.measureText(message).width + 2 * padding;
+    const boxHeight = 100; // Adjust as needed
+
+    const x = (canvas.width - boxWidth) / 2;
+    const y = (canvas.height - boxHeight) / 2;
+
+    // Draw the black background
+    context.fillStyle = "black";
+    context.fillRect(x, y, boxWidth, boxHeight);
+
+    // Draw the white border
+    context.setLineDash([]);
+    context.strokeStyle = "white";
+    context.lineWidth = 2;
+    context.strokeRect(x, y, boxWidth, boxHeight);
+
+    // Draw the text
+    context.fillStyle = "white";
+    context.font = "30px Arial"; // Adjust as needed
+    context.textAlign = "center";
+    context.textBaseline = "middle";
+    context.fillText(message, canvas.width / 2, canvas.height / 2);
+  };
+
   return (
     <div className="flex flex-col gap-2 items-center">
       <div>
@@ -388,11 +423,15 @@ const PongGame = ({
           className="border-cyan-950 border"
         />
         <div className="flex flex-row justify-between w-full mt-4">
-          <div style={{ textAlign: "left" }}>{player1.username}</div>
+          <div style={{ textAlign: "left" }}>
+            {gameDetails?.player1?.username}
+          </div>
           <div style={{ textAlign: "center" }}>
             Temps écoulé: {displayedTimer} secondes
           </div>
-          <div style={{ textAlign: "right" }}>{player2.username}</div>
+          <div style={{ textAlign: "right" }}>
+            {gameDetails?.player2 ? gameDetails?.player2?.username : "Alex(ai)"}
+          </div>
         </div>
       </div>
     </div>

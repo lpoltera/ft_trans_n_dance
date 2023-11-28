@@ -32,7 +32,7 @@ const NotificationCard = ({
   console.log(`sender = ${sender}`);
 
   return (
-    <div className="p-2 border border-white w-full rounded-lg bg-cyan-950">
+    <div className="py-2 px-4 border border-white w-full rounded-lg bg-cyan-950">
       <div className="mb-1">{message}</div>
       <div className="flex flex-row justify-between items-center">
         <div className="text-sm opacity-50">24.11.23 15:00</div>

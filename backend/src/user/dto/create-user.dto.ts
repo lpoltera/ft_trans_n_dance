@@ -18,4 +18,6 @@ export class CreateUserDto {
   readonly totalXP?: number; // pour faire des tests
 
   readonly secret2fa?: string;
+
+  readonly connected?: string;
 }

@@ -5,6 +5,7 @@ import {
   Controller,
   Delete,
   Get,
+  NotFoundException,
   Param,
   Patch,
   Post,
@@ -20,6 +21,8 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { loginDto } from './dto/login-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserService } from './user.service';
+import { UserResponseDto } from './dto/UserResponseDto';
+import { NotFoundError } from 'rxjs';
 
 @Controller('api')
 export class UserController {
@@ -122,14 +125,27 @@ export class UserController {
   async getMyName(
     @Req() request: Request,
     @Session() session: Record<string, any>,
-  ) {
-    return await session.user.username;
+  ): Promise<UserResponseDto | null> {
+    if (session.user) {
+      const userResponse: UserResponseDto = {
+        id: session.user.id,
+        username: session.user.username,
+        avatar: session.user.avatar,
+        connected: session.user.connected,
+      };
+      return userResponse;
+    } else return null;
   }
 
-  @Get(':username')
+  @Get('/:username')
   // @UseGuards(SessionGuard) // TODO
-  async findOne(@Param('username') username: string) {
-    return await this.userService.findOne(username);
+  async findOne(
+    @Param('username') username: string,
+  ): Promise<UserResponseDto | null> {
+    const userResponse: UserResponseDto =
+      await this.userService.findOne(username);
+    if (userResponse) return userResponse;
+    else throw new NotFoundException('User not found');
   }
 
   @Patch(':username')

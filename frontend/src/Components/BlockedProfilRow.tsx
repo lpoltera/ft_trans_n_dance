@@ -1,15 +1,9 @@
 import { CheckIcon, UserMinusIcon } from "@heroicons/react/24/outline";
 import axios from "axios";
-
-interface Ami {
-  id?: number;
-  username: string;
-  connected: string;
-  avatar: string;
-}
+import { User } from "../models/User";
 
 interface Props {
-  ami: Ami;
+  ami: User;
 }
 
 const FriendProfilRow = ({ ami }: Props) => {
