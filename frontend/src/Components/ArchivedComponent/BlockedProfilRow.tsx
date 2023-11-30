@@ -1,6 +1,6 @@
 import { CheckIcon, UserMinusIcon } from "@heroicons/react/24/outline";
 import axios from "axios";
-import { User } from "../models/User";
+import { User } from "../../models/User";
 
 interface Props {
   ami: User;

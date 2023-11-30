@@ -1,14 +1,17 @@
-import { createContext, useContext, useEffect, useState } from "react";
-import { User } from "../models/User";
-import { Parties } from "../models/Game";
 import axios from "axios";
+import { createContext, useContext, useEffect, useState } from "react";
+import { toast } from "react-toastify";
+import { User, UserRelation } from "../models/User";
 
 type UserContextType = {
+  userRelations: UserRelation[];
   user: User | null;
-  loading: boolean;
-  fetchUserFriends: () => Promise<User[] | null>;
-  fetchUserGames: () => Promise<Parties[] | null>;
-  fetchUserBlocked: () => void;
+  loadingUser: boolean;
+  loadingRelations?: boolean;
+  addFriend: (username: string) => void;
+  removeFriend: (username: string) => void;
+  blockUser: (username: string) => void;
+  unblockUser: (username: string) => void;
 };
 
 export const UserContext = createContext<UserContextType | undefined>(
@@ -20,57 +23,88 @@ interface UserProviderProps {
 }
 
 export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
+  const [connected, setConnected] = useState<boolean | null>(null); // [1
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [userRelations, setUserRelations] = useState<UserRelation[]>([]);
+  const [loadingUser, setLoadingUser] = useState(true);
+  const [loadingRelations, setLoadingRelations] = useState(true);
 
-  const fetchUserFriends = async () => {
+  const addFriend = async (username: string) => {
     try {
-      const response = await axios.get<User[]>(
-        "/api/friends/all/" + user?.username
-      );
-      return response.data;
+      const response = await axios.post("/api/friends/add/" + username);
+      if (response.data === "Demande d'ami envoyé") {
+        toast.success(`Friend request sent to ${username}`);
+      } else {
+        toast.success(`Friend request accepted from ${username}`);
+      }
     } catch (error) {
-      console.error("Failed to fetch user friends:", error);
-      setLoading(false);
-      return null;
+      toast.error(`Failed to add friend:\n ${error}`);
     }
   };
 
-  const fetchUserGames = async () => {
-    try {
-      const response = await axios.get<Parties[]>(
-        "/api/game/user-history/" + user?.username
-      );
-      return response.data;
-    } catch (error) {
-      console.error("Failed to fetch user games:", error);
-      return null;
-    }
-  };
-  const fetchUserBlocked = async () => {}; // TODO
+  const removeFriend = async (username: string) => {};
+  const blockUser = async (username: string) => {};
+  const unblockUser = async (username: string) => {};
 
+  // verify if user is connected
   useEffect(() => {
+    axios
+      .get("/api/connected")
+      .then((response) => setConnected(response.data))
+      .catch((err) => {
+        toast.error(err);
+        setConnected(false);
+      });
+  }, []);
+
+  // fetch user
+  useEffect(() => {
+    if (!connected) return;
     const fetchUser = async () => {
-      setLoading(true);
+      setLoadingUser(true);
       try {
         const response = await axios.get("/api/my-name");
         setUser(response.data);
       } catch (error) {
-        console.error("Failed to fetch user:", error);
+        toast.error(`Failed to fetch user:\n ${error}`);
       }
-      setLoading(false);
+      setLoadingUser(false);
     };
     fetchUser();
-  }, []);
+  }, [connected]);
+
+  // fetch user relations
+  useEffect(() => {
+    if (!user) {
+      return;
+    }
+    const fetchUserRelations = async () => {
+      setLoadingRelations(true);
+      try {
+        const response = await axios.get<UserRelation[]>(
+          "/api/friends/relations"
+        );
+        setUserRelations(response.data);
+      } catch (error) {
+        toast.error(`Failed to fetch user relations:\n ${error}`);
+      }
+      setLoadingRelations(false);
+    };
+
+    fetchUserRelations();
+  }, [user]);
 
   return (
     <UserContext.Provider
       value={{
+        userRelations,
         user,
-        loading,
-        fetchUserFriends,
-        fetchUserBlocked,
-        fetchUserGames,
+        loadingUser,
+        loadingRelations,
+        addFriend,
+        removeFriend,
+        blockUser,
+        unblockUser,
       }}
     >
       {children}

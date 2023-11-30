@@ -23,7 +23,7 @@ const InfosUsersRow = ({
   const [socket, setSocket] = useState<Socket | null>(null);
 
   useEffect(() => {
-    const newSocket = io("http://localhost:8000");
+    const newSocket = io("https://localhost:8000");
     setSocket(newSocket);
     return () => {
       //     // if (newSocket) newSocket.disconnect();

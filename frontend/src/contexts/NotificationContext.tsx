@@ -53,28 +53,29 @@ export const NotificationProvider = ({
   const [socketLoading, setSocketLoading] = useState(true);
 
   useEffect(() => {
+    if (!user) return;
     setSocketLoading(true);
-    const newSocket = io("http://localhost:8000");
+    const newSocket = io("https://localhost:8000");
     setSocket(newSocket);
     setSocketLoading(false);
     return () => {
       newSocket.close();
     };
-  }, []);
+  }, [user]);
 
   useEffect(() => {
     if (!socket) return;
     socket.on("myNotifs", (message: Notifs) => {
       if (message.receiver === user?.username) {
         setUnreadNotif(true);
-        toast(`Tu as reçu une nouvelle notification : ${message.message}`);
+        toast.info(`Nouvelle notification:\n ${message.message}`);
       }
     });
 
     socket.on("recMessage", (message: ChatMessage) => {
       if (message.receiver === user?.username) {
         setUnreadChat(true);
-        toast("Tu as reçu un nouveau message dans le chat");
+        toast(`Nouveau message de ${message.sender}:\n ${message.text}`);
       }
     });
 
@@ -85,17 +86,18 @@ export const NotificationProvider = ({
   }, [socket, user]);
 
   useEffect(() => {
+    if (!user || !socket) return;
     const fetchUnreadNotifs = async () => {
       try {
         const response = await axios.get("/api/notifications/unread");
         setNotifsList(response.data);
       } catch (error) {
-        console.error("Failed to fetch unread notifications:", error);
+        toast.error("Failed to fetch unread notifications:\n" + error);
       }
     };
 
     fetchUnreadNotifs();
-  }, []);
+  }, [user, socket]);
 
   return (
     <NotificationContext.Provider

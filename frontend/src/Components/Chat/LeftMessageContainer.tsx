@@ -13,8 +13,8 @@ const LeftMessageContainer = ({ user, message }: Props) => {
   const formattedDateTime = `${time}`;
   return (
     <>
-      <div className="p-2 max-w-max mr-auto ml-4">
-        <div className="flex flex-row gap-4">
+      <div className="p-2 flex flex-col items-start max-w-md mr-auto">
+        <div className="flex flex-row gap-3 bg-cyan-900 py-2 pr-3 pl-2 rounded-xl">
           <img
             className="w-6 h-6 rounded-full object-cover"
             src={user.avatar}
@@ -22,11 +22,11 @@ const LeftMessageContainer = ({ user, message }: Props) => {
           />
           <div className="flex flex-col items-start">
             <p>{message.text}</p>
-            <span className=" block text-xs text-white opacity-50">
-              {formattedDateTime}
-            </span>
           </div>
         </div>
+        <span className=" block text-xs text-white opacity-50 mt-1 ml-1">
+          {formattedDateTime}
+        </span>
       </div>
     </>
   );

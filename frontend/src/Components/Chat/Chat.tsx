@@ -88,12 +88,12 @@ const Chat = ({ ami }: Props) => {
 
   return (
     <>
-      <div className="flex h-full w-full grow overflow-auto">
-        <ul className="pt-6 space-y-1 w-full flex flex-col">
+      <div className="grow overflow-auto mb-2 flex">
+        <ul className="px-2 mt-auto w-full">
           {messages.map((message, index) => (
             <li key={index}>
               {message.sender === user?.username ? (
-                <RightMessageContainer user={ami} message={message} />
+                <RightMessageContainer user={user} message={message} />
               ) : (
                 <LeftMessageContainer user={ami} message={message} />
               )}
@@ -102,11 +102,11 @@ const Chat = ({ ami }: Props) => {
           <div ref={messagesEndRef} />
         </ul>
       </div>
-      <div className="shrink w-full">
+      <div className="shrink">
         <form onSubmit={(e) => sendMessage(e, newMessage)}>
           <input
             type="text"
-            className="border-white rounded-md px-3 py-2 bg-transparent w-full focus:border-cyan-500 focus:outline-none"
+            className="border-white rounded-md px-3 py-2 bg-transparent w-full focus:border-cyan-500 focus:outline-none appearance-none"
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
             placeholder="Ecrivez un message..."

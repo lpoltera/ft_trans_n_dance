@@ -6,9 +6,10 @@ import {
 } from "@heroicons/react/24/outline";
 import { useNotificationContext } from "../contexts/NotificationContext";
 import { useUserContext } from "../contexts/UserContext";
-import ButtonIcon from "./ButtonIcon";
+import IconButton from "./IconButton";
 import MenuDropdown from "./MenuDropdown";
 import NotificationPanel from "./NotificationPanel";
+import { useEffect } from "react";
 
 const Navbar = () => {
   const { user } = useUserContext();
@@ -21,13 +22,17 @@ const Navbar = () => {
     setUnreadChat,
   } = useNotificationContext();
 
+  useEffect(() => {
+    if (!user) return;
+  }, [user]);
+
   const profilLinks = [
     { title: "Profil", href: "/profil/" + user?.username },
     { title: "Déconnexion", href: "/logout" },
   ];
 
   const navigateToProfil = () => {
-    window.location.href = "/profil";
+    window.location.href = "/profil/" + user?.username;
   };
 
   const navigateToChat = () => {
@@ -42,39 +47,46 @@ const Navbar = () => {
   const showNotificationPanel = () => {
     setUnreadNotif(false);
     setNotifModal(!notifModal);
-    console.log("showing notification panel");
   };
 
   return (
     <>
-      <div className="fixed bg-cyan-900 top-0 right-0 left-0 flex items-center justify-between pl-6 pr-4 h-16">
+      <div className="fixed top-0 right-0 left-0 flex items-center justify-between pl-6 pr-4 h-16 z-40">
         <a href="/accueil" id="logoLink" className="text-white text-lg">
           PONG<sup>42</sup>
         </a>
         <nav className="flex text-white">
           <div className="relative">
-            <ButtonIcon onClick={showNotificationPanel}>
-              <BellAlertIcon />
-            </ButtonIcon>
+            <IconButton
+              onClick={showNotificationPanel}
+              icon={<BellAlertIcon />}
+              classCustom="w-10 h-10 p-2 rounded-lg hover:bg-neutral-800"
+            />
             {unreadNotif && (
-              <span className="bg-red-600 w-2 h-2 rounded-full absolute -bottom-1 right-1/2 translate-x-1/2 z-10"></span>
+              <span className="bg-red-600 w-2 h-2 rounded-full absolute top-2 right-2 z-10"></span>
             )}
           </div>
           <div className="relative">
-            <ButtonIcon onClick={navigateToChat}>
-              <ChatBubbleBottomCenterIcon />
-            </ButtonIcon>
+            <IconButton
+              onClick={navigateToChat}
+              icon={<ChatBubbleBottomCenterIcon />}
+              classCustom="w-10 h-10 p-2 rounded-lg hover:bg-neutral-800"
+            />
             {unreadChat && (
-              <span className="bg-red-600 w-2 h-2 rounded-full absolute -bottom-1 right-1/2 translate-x-1/2 z-10"></span>
+              <span className="bg-red-600 w-2 h-2 rounded-full absolute top-2 right-2 z-10"></span>
             )}
           </div>
-          <ButtonIcon onClick={navigateToUsers}>
-            <UserGroupIcon />
-          </ButtonIcon>
+          <IconButton
+            onClick={navigateToUsers}
+            icon={<UserGroupIcon />}
+            classCustom="w-10 h-10 p-2 rounded-lg hover:bg-neutral-800"
+          />
           <MenuDropdown links={profilLinks}>
-            <ButtonIcon onClick={navigateToProfil}>
-              <UserCircleIcon />
-            </ButtonIcon>
+            <IconButton
+              onClick={navigateToProfil}
+              icon={<UserCircleIcon />}
+              classCustom="w-10 h-10 p-2 rounded-lg hover:bg-neutral-800"
+            />
           </MenuDropdown>
         </nav>
         <NotificationPanel></NotificationPanel>

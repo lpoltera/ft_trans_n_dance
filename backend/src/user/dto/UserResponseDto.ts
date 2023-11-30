@@ -3,4 +3,9 @@ export class UserResponseDto {
   username: string;
   connected: string;
   avatar: string;
+  win: number;
+  loss: number;
+  draw: number;
+  totalXP: number;
+  totalGame: number;
 }

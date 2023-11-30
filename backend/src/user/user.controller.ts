@@ -31,7 +31,7 @@ export class UserController {
     private readonly optService: QrCodeService,
   ) {}
 
-  @Post('/signup') // creation de session (déplace login dans signup)
+  @Post('signup') // creation de session (déplace login dans signup)
   async create(
     @Body() createUserDto: CreateUserDto,
     @Session() session: Record<string, any>,
@@ -132,6 +132,11 @@ export class UserController {
         username: session.user.username,
         avatar: session.user.avatar,
         connected: session.user.connected,
+        win: session.user.win,
+        loss: session.user.loss,
+        totalGame: session.user.totalGame,
+        totalXP: session.user.totalXP,
+        draw: session.user.draw,
       };
       return userResponse;
     } else return null;

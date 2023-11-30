@@ -2,7 +2,7 @@ import { PencilSquareIcon } from "@heroicons/react/24/outline";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import BlockedProfilRow from "../Components/BlockedProfilRow";
+import BlockedProfilRow from "../Components/ArchivedComponent/BlockedProfilRow";
 import FooterMain from "../Components/FooterMain";
 import InfosUsersRow from "../Components/InfosUsersRow";
 import Navbar from "../Components/Navbar";
@@ -14,7 +14,7 @@ const UsersPage = () => {
   const [blocked, setBlocked] = useState<User[] | null>(null);
   const [users, setAllUser] = useState<User[] | null>(null);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
-  const { user, loading } = useUserContext();
+  const { user, loadingUser } = useUserContext();
 
   const handleStatsButtonClick = (ami: User) => {
     setSelectedUser((prevUser) => (prevUser === ami ? null : ami));
@@ -26,7 +26,7 @@ const UsersPage = () => {
   };
 
   useEffect(() => {
-    if (loading) return;
+    if (loadingUser) return;
     async function fetchUserAndBlocked() {
       const name = user?.username;
       if (name) {
@@ -44,15 +44,7 @@ const UsersPage = () => {
       }
     }
     fetchUserAndBlocked();
-  }, [loading]);
-
-  // const Stats = [
-  //   { title: "Score", score: selectedUser?.totalXP },
-  //   { title: "Parties jouées", score: selectedUser?.totalGame },
-  //   { title: "Victoires", score: selectedUser?.win },
-  //   { title: "Défaites", score: selectedUser?.loss },
-  //   { title: "Matchs nuls", score: selectedUser?.draw },
-  // ];
+  }, [loadingUser]);
 
   return (
     <>

@@ -7,7 +7,7 @@ interface Props {
 const PageLayout = ({ children }: Props) => {
   return (
     <>
-      <div className="pt-24 pb-16 pr-16 pl-16 bg-cyan-900 h-screen flex flex-col text-white">
+      <div className="pt-24 pb-20 pr-16 pl-16 bg-cyan-900 h-screen w-screen flex flex-col text-white ">
         {children}
       </div>
     </>

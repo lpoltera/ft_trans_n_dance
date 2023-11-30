@@ -1,19 +1,9 @@
-import { ChangeEvent, useEffect, useState } from "react";
-import { User } from "../../models/User";
+import { ChangeEvent, useState } from "react";
 import { useUserContext } from "../../contexts/UserContext";
-
-interface GameFormProps {
-  difficulty: number;
-  withPowerUps: boolean;
-  victoryCondition: "points" | "1972" | "time";
-  victoryValue?: number;
-  player1: string;
-  player2: string;
-}
+import { GameFormProps } from "../../models/Game";
 
 const GameForm = () => {
-  const { user, fetchUserFriends } = useUserContext();
-  const [friends, setFriends] = useState<User[] | null>(null);
+  const { user, loading, userRelations } = useUserContext();
   const [gameDetails, setGameDetails] = useState<GameFormProps>({
     difficulty: 1,
     withPowerUps: false,
@@ -22,14 +12,6 @@ const GameForm = () => {
     player1: user?.username || "",
     player2: "Bot",
   });
-
-  useEffect(() => {
-    const getFriends = async () => {
-      const userFriends = await fetchUserFriends();
-      setFriends(userFriends);
-    };
-    getFriends();
-  }, [fetchUserFriends]);
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -45,6 +27,10 @@ const GameForm = () => {
     e.preventDefault();
     // Handle the form submission here
   };
+
+  if (loading) {
+    return <> loading… </>;
+  }
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col w-96 gap-4">
@@ -112,11 +98,14 @@ const GameForm = () => {
           className="w-full bg-transparent border-white rounded-sm"
         >
           <option value="Bot">Bot</option>
-          {friends?.map(
-            (friend) =>
-              friend.username !== user?.username && (
-                <option key={friend.id} value={friend.username}>
-                  {friend.username}
+          {userRelations?.map(
+            (relation) =>
+              relation.status === "valider" && (
+                <option
+                  key={relation.friend.id}
+                  value={relation.friend.username}
+                >
+                  {relation.friend.username}
                 </option>
               )
           )}

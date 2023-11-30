@@ -13,13 +13,10 @@ const RightMessageContainer = ({ user, message }: Props) => {
   const formattedDateTime = `${time}`;
   return (
     <>
-      <div className="p-2 max-w-max ml-auto mr-4">
-        <div className="flex flex-row gap-4">
-          <div className="flex flex-col items-end">
+      <div className="p-2 flex flex-col items-end max-w-md ml-auto">
+        <div className="flex flex-row gap-3 bg-cyan-900 py-2 pl-3 pr-2 rounded-xl">
+          <div>
             <p>{message.text}</p>
-            <span className=" block text-xs text-white opacity-50">
-              {formattedDateTime}
-            </span>
           </div>
           <img
             className="w-6 h-6 rounded-full object-cover"
@@ -27,6 +24,9 @@ const RightMessageContainer = ({ user, message }: Props) => {
             alt="user avatar profile"
           />
         </div>
+        <span className=" block text-xs text-white opacity-50 mt-1 mr-1">
+          {formattedDateTime}
+        </span>
       </div>
     </>
   );

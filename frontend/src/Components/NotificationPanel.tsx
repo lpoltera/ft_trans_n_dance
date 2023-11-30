@@ -1,24 +1,11 @@
-import React, { useEffect, useState } from "react";
 import axios from "axios";
-import NotificationCard from "./NotificationCard";
+import { useEffect, useState } from "react";
 import { useNotificationContext } from "../contexts/NotificationContext";
-
-interface NotificationProps {
-  sender: string;
-  receiver: string;
-  message: string;
-  status: string;
-  game: gameProps;
-}
-
-interface gameProps {
-  id: number;
-}
+import NotificationCard from "./NotificationCard";
+import { Notifs } from "../models/Notifications";
 
 const NotificationPanel = () => {
-  const [notifications, setNotifications] = useState<
-    NotificationProps[] | null
-  >(null);
+  const [notifications, setNotifications] = useState<Notifs[] | null>(null);
   const { notifModal, setNotifModal } = useNotificationContext();
 
   useEffect(() => {
@@ -65,8 +52,8 @@ const NotificationPanel = () => {
           ))
         ) : (
           <div className="mb-2">
-            <div className="py-2 px-4 border border-white w-full rounded-lg bg-cyan-950">
-              <div className="mb-1">Aucune notification</div>
+            <div className="py-2 pl-4 pr-2 w-full rounded-lg bg-cyan-950 shadow-md">
+              <div>Aucune notification</div>
             </div>
           </div>
         )}

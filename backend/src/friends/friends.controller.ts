@@ -1,17 +1,16 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
   Session,
 } from '@nestjs/common';
-import { FriendsService } from './friends.service';
-import { CreateFriendDto } from './dto/create-friend.dto';
 import { UpdateFriendDto } from './dto/update-friend.dto';
-import session from 'express-session';
+import { FriendsService } from './friends.service';
+import { relationDto } from './dto/relation.dto';
 
 @Controller('api/friends')
 export class FriendsController {
@@ -25,23 +24,29 @@ export class FriendsController {
   async addFriend(
     @Param('friendName') friendName: string,
     @Session() sessionUser: Record<string, any>,
-  ) {
+  ): Promise<string> {
     const currentUserName = sessionUser.user.username;
-    return await this.friendsService.addFriend(currentUserName, friendName);
+    const requestStatus = await this.friendsService.addFriend(
+      currentUserName,
+      friendName,
+    );
+    if (requestStatus) {
+      return requestStatus;
+    }
   }
+
   @Get('all/:userName')
   async findAll(
     @Param('userName') userName: string,
     // @Session() sessionUser: Record<string, any>
   ) {
-    // const currentUserId = sessionUser.user.id
-    return await this.friendsService.findAll(userName);
+    const friends = await this.friendsService.findAll(userName);
+    if (!friends) {
+      return [];
+    }
+    return friends;
   }
 
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.friendsService.findOne(+id);
-  // }
   @Get('blocked/:userName')
   async findBlocked(@Param('userName') username: string) {
     return await this.friendsService.findBlocked(username);
@@ -70,5 +75,17 @@ export class FriendsController {
   @Delete('delete_all')
   removeAll() {
     return this.friendsService.removeAll();
+  }
+
+  @Get('relations')
+  async getRelations(
+    @Session() session: Record<string, any>,
+  ): Promise<relationDto[]> {
+    const currentUserName = session.user.username;
+    const relations = await this.friendsService.getRelations(currentUserName);
+    if (!relations) {
+      return [];
+    }
+    return relations;
   }
 }

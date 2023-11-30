@@ -16,7 +16,7 @@ const TabPanel: React.FC<TabPanelProps> = ({
 
   if (index !== activeTab) return null;
 
-  return <div className={customClass || "mt-4"}>{children}</div>;
+  return <div className={customClass}>{children}</div>;
 };
 
 export default TabPanel;

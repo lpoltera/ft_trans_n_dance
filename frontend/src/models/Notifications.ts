@@ -3,6 +3,8 @@ export interface Notifs {
   receiver: string;
   message: string;
   status: string;
+  game: number;
+  createdAt?: string;
 }
 
 export interface ChatMessage {

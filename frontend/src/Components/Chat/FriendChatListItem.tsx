@@ -3,6 +3,7 @@ import axios from "axios";
 import { useState } from "react";
 import { User } from "../../models/User";
 import { useTabContext } from "../../contexts/TabContext";
+import IconButton from "../IconButton";
 
 interface Props {
   ami: User;
@@ -25,11 +26,15 @@ const FriendChatListItem = ({ ami, index }: Props) => {
     }
   };
 
+  const navigateToProfile = () => {
+    window.location.href = "/profil/" + ami.username;
+  };
+
   return (
     <>
       {!isBlocked && (
         <div
-          className={`flex flex-row items-center gap-10 p-4 hover:bg-neutral-800 rounded-md w-full hover:cursor-pointer 
+          className={`flex flex-row items-center gap-10 p-4 hover:bg-neutral-800 rounded-l-xl rounded-r-none w-full hover:cursor-pointer 
           ${isActive ? "bg-neutral-800" : "bg-transparent"}`}
         >
           <div className="flex flex-row w-full gap-4">
@@ -44,19 +49,22 @@ const FriendChatListItem = ({ ami, index }: Props) => {
             </div>
           </div>
           <div className="flex flex-row gap-2">
-            <button
-              type="button"
-              className="w-5 h-5 opacity-50 hover:opacity-100"
+            <IconButton
+              icon={<NoSymbolIcon />}
               onClick={() => changeFriendshipStatus()}
-            >
-              <NoSymbolIcon />
-            </button>
-            <button
+              classCustom="w-5 h-5 text-neutral-400 hover:text-white"
+              tooltip="Bloquer cet utilisateur"
+              tooltipId="tooltip-block-user"
               type="button"
-              className="w-5 h-5 opacity-50 hover:opacity-100"
-            >
-              <UserIcon />
-            </button>
+            />
+            <IconButton
+              icon={<UserIcon />}
+              onClick={() => navigateToProfile()}
+              classCustom="w-5 h-5 text-neutral-400 hover:text-white"
+              tooltip="Voir le profil"
+              tooltipId="tooltip-profil-user"
+              type="button"
+            />
           </div>
         </div>
       )}

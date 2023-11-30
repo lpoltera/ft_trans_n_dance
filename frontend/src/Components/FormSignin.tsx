@@ -6,7 +6,7 @@ import AvatarRadioSelect from "./AvatarRadioSelect";
 const FormSignin = () => {
   const navigate = useNavigate();
   const [qrLink, setQrLink] = useState<string | undefined>(undefined);
-  const [user, setUser] = useState({
+  const [form, setForm] = useState({
     username: "",
     password: "",
     avatar: "",
@@ -25,22 +25,22 @@ const FormSignin = () => {
 
   const createUser = async () => {
     await axios
-      .post("http://localhost:8000/api/signup", user, {
+      .post("/api/signup", form, {
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
         },
       })
       .then((response) => {
-        setUser({
+        setForm({
           username: "",
           password: "",
           avatar: "",
           twoFaEnable: false,
         });
         console.log("response : " + response);
-        console.log(`User Created + tfa: ${user.twoFaEnable}`);
+        console.log(`User Created + tfa: ${form.twoFaEnable}`);
 
-        if (user.twoFaEnable) navigate("/twofa-verify");
+        if (form.twoFaEnable) navigate("/twofa-verify");
         else {
           navigate("/accueil");
         }
@@ -55,17 +55,31 @@ const FormSignin = () => {
       });
   };
 
-  const onChangeForm = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.name === "username") {
-      setUser({ ...user, username: e.target.value });
-      console.log("username state : " + user.username);
-    } else if (e.target.name === "password") {
-      setUser({ ...user, password: e.target.value });
-    } else if (e.target.name === "avatar") {
-      setUser({ ...user, avatar: e.target.value });
-    } else if (e.target.name === "twoFaEnable") {
-      setUser({ ...user, twoFaEnable: e.target.checked });
-    }
+  const handleFormChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setForm({
+      ...form,
+      [event.target.name]: event.target.value,
+    });
+  };
+
+  // const onChangeForm = (e: ChangeEvent<HTMLInputElement>) => {
+  //   if (e.target.name === "username") {
+  //     setForm({ ...form, username: e.target.value });
+  //     console.log("username state : " + form.username);
+  //   } else if (e.target.name === "password") {
+  //     setForm({ ...form, password: e.target.value });
+  //   } else if (e.target.name === "avatar") {
+  //     setForm({ ...form, avatar: e.target.value });
+  //   } else if (e.target.name === "twoFaEnable") {
+  //     setForm({ ...form, twoFaEnable: e.target.checked });
+  //   }
+  // };
+
+  const handleAvatarChange = (avatar: string) => {
+    setForm({
+      ...form,
+      avatar,
+    });
   };
 
   // const onChangeCheckbox = (e: ChangeEvent<HTMLInputElement>) => {
@@ -82,7 +96,9 @@ const FormSignin = () => {
         {
           <>
             <div className="flex flex-row gap-4">
-              <AvatarRadioSelect></AvatarRadioSelect>
+              <AvatarRadioSelect
+                onChange={handleAvatarChange}
+              ></AvatarRadioSelect>
             </div>
             <div className="flex flex-col gap-2 border border-x-0 border-t-0 border-gray-400 py-4">
               <input
@@ -90,27 +106,27 @@ const FormSignin = () => {
                 name="username"
                 className="border border-white px-3 py-2 bg-transparent text-white rounded-md"
                 placeholder="Pseudo"
-                onChange={(e) => onChangeForm(e)}
+                onChange={handleFormChange}
               />
               <input
                 type="password"
                 name="password"
                 className="border border-white px-3 py-2 bg-transparent text-white rounded-md"
                 placeholder="Mot de passe"
-                onChange={(e) => onChangeForm(e)}
+                onChange={handleFormChange}
               />
               <div className="flex gap-3 items-center py-6">
                 <input
                   type="checkbox"
                   id="twoFaEnable"
                   name="twoFaEnable"
-                  onChange={(e) => onChangeForm(e)}
+                  onChange={handleFormChange}
                 />
                 <label htmlFor="twoFaEnable" className="ml-2">
                   Activer la double authentification
                 </label>
               </div>
-              {user.twoFaEnable && (
+              {form.twoFaEnable && (
                 <div className="flex justify-center items-center py-6">
                   <img
                     src={qrLink}

@@ -16,7 +16,7 @@ const Tab = ({ children, index, classInactive, classActive }: TabProps) => {
 
   return (
     <button
-      className={`py-2 text-white ${isActive ? activeClass : inactiveClass}`}
+      className={`${isActive ? activeClass : inactiveClass}`}
       onClick={() => setActiveTab(index)}
     >
       {children}

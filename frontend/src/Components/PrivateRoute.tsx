@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Navigate } from "react-router-dom";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 type PrivateRouteProps = {
   children: React.ReactNode;
@@ -9,7 +10,6 @@ type PrivateRouteProps = {
 let showAlert = true;
 
 const PrivateRoute: React.FC<PrivateRouteProps> = ({ children }) => {
-  console.log("PrivateRoute called");
   const [connected, setConnected] = useState<null | boolean>(null);
 
   useEffect(() => {
@@ -17,7 +17,7 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({ children }) => {
       .get("/api/connected")
       .then((response) => setConnected(response.data))
       .catch((err) => {
-        console.error(err);
+        toast.error(err);
         setConnected(false);
       });
   }, []);
@@ -25,8 +25,6 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({ children }) => {
   if (connected === null) {
     return null;
   }
-  console.log("show alert = " + showAlert);
-  console.log("connection status = " + connected);
 
   if (!connected && showAlert) {
     showAlert = false;

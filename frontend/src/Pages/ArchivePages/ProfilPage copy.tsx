@@ -7,51 +7,51 @@ import {
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import FooterMain from "../Components/FooterMain";
-import HistoryMatchRow from "../Components/HistoryMatchRow";
-import IconButton from "../Components/IconButton";
-import Navbar from "../Components/Navbar";
-import PageLayout from "../Components/PageLayout";
-import StatRow from "../Components/StatRow";
-import Tab from "../Components/Tab/Tab";
-import TabContainer from "../Components/Tab/TabContainer";
-import TabList from "../Components/Tab/TabList";
-import TabPanel from "../Components/Tab/TabPanel";
-import UserRow from "../Components/UserRow";
-import { useUserContext } from "../contexts/UserContext";
-import { GameStatsProps, Parties } from "../models/Game";
-import { User } from "../models/User";
+import FooterMain from "../../Components/FooterMain";
+import HistoryMatchRow from "../../Components/HistoryMatchRow";
+import IconButton from "../../Components/IconButton";
+import Navbar from "../../Components/Navbar";
+import PageLayout from "../../Components/PageLayout";
+import StatRow from "../../Components/StatRow";
+import Tab from "../../Components/Tab/Tab";
+import TabContainer from "../../Components/Tab/TabContainer";
+import TabList from "../../Components/Tab/TabList";
+import TabPanel from "../../Components/Tab/TabPanel";
+import UserRow from "../../Components/UserRow";
+import { useUserContext } from "../../contexts/UserContext";
+import { GameStatsProps, Parties } from "../../models/Game";
+import { User } from "../../models/User";
 import { toast } from "react-toastify";
 
 const ProfilPage = () => {
-  const { user, loadingUser, userRelations } = useUserContext();
+  const { user, loading, userRelations } = useUserContext();
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [userGames, setUserGames] = useState<Parties[] | null>(null);
   const [userFriends, setUserFriends] = useState<User[] | null>(null);
+  const [isMe, setIsMe] = useState(false);
   const [relationStatus, setRelationStatus] = useState<string>("none");
   const [userStats, setUserStats] = useState<GameStatsProps[]>([]); // TODO: type this
-  const [loading, setLoading] = useState<boolean>(true); // TODO: type this
   const navigate = useNavigate();
 
   const { id } = useParams<{ id: string }>();
 
   // Finding out who's profile we're on
   useEffect(() => {
-    if (loadingUser || !user) return;
-    const fetchProfileUser = async () => {
-      if (id === user.username) {
-        setRelationStatus("self");
-        setCurrentUser(user);
+    if (loading) return;
+    if (id === user?.username) {
+      setIsMe(true);
+      setCurrentUser(user);
+    } else {
+      const relation = userRelations?.find(
+        (relation) => relation.friend.username === id
+      );
+      if (relation) {
+        setRelationStatus(relation.status);
+        setCurrentUser(relation.friend);
       } else {
-        const relation = userRelations.find(
-          (relation) => relation.friend.username === id
-        );
-        if (relation) {
-          setRelationStatus(relation.status);
-          setCurrentUser(relation.friend);
-        } else {
+        const fetchProfileUser = async () => {
           try {
-            const response = await axios.get(`/api/${id}`);
+            const response = await axios.get<User>("/api/" + id);
             setCurrentUser(response.data);
           } catch (err) {
             if (axios.isAxiosError(err) && err.response?.status === 404) {
@@ -60,38 +60,72 @@ const ProfilPage = () => {
               toast.error("An error occurred while fetching the user");
             }
           }
-        }
+        };
+        fetchProfileUser();
       }
-      setLoading(false);
-    };
-    fetchProfileUser();
-  }, [id, user, userRelations]);
+    }
+  }, [loading]);
 
   // fetch user games
   useEffect(() => {
-    const fetchUserGames = async () => {
+    if (!currentUser) return;
+    const Stats = [
+      { title: "Score", value: currentUser?.totalXP },
+      { title: "Parties jouées", value: currentUser?.totalGame },
+      { title: "Victoires", value: currentUser?.win },
+      { title: "Défaites", value: currentUser?.loss },
+      { title: "Matchs nuls", value: currentUser?.draw },
+    ];
+    setUserStats(Stats);
+    const fetchProfileUserGames = async () => {
       try {
-        const response = await axios.get(`/api/game/user-history/${id}`);
+        const response = await axios.get<Parties[]>(
+          "/api/game/user-history/" + id
+        );
         setUserGames(response.data);
       } catch (err) {
         toast.error("An error occurred while fetching the user games");
       }
     };
+    fetchProfileUserGames();
+  }, [currentUser]);
 
-    if (!loading) {
-      fetchUserGames();
-    }
-  }, [id, loading]);
+  // fetch user friend
+  useEffect(() => {
+    if (!currentUser || isMe || relationStatus === "none") return;
+    const fetchProfileUserFriends = async () => {
+      try {
+        const response = await axios.get<User[]>("/api/friends/all/" + id);
+        setUserFriends(response.data);
+      } catch (error) {
+        toast.error("An error occurred while fetching user friends");
+      }
+    };
+    fetchProfileUserFriends();
+  }, [currentUser, isMe, relationStatus]);
+
   // useEffect(() => {
-  //   if (!loading) return;
-  //   const Stats = [
-  //     { title: "Score", value: currentUser?.totalXP },
-  //     { title: "Parties jouées", value: currentUser?.totalGame },
-  //     { title: "Victoires", value: currentUser?.win },
-  //     { title: "Défaites", value: currentUser?.loss },
-  //     { title: "Matchs nuls", value: currentUser?.draw },
-  //   ];
-  //   setUserStats(Stats);
+  //   if (loading) return;
+  //   if (id === user?.username) {
+  //     setIsMe(true);
+  //     setCurrentUser(user);
+  //   }
+
+  //   const fetchProfileUser = async () => {
+  //     try {
+  //       const response = await axios.get<User>("/api/" + id);
+  //       setCurrentUser(response.data);
+  //     } catch (err) {
+  //       if (axios.isAxiosError(err) && err.response?.status === 404) {
+  //         // Handle 404 error;
+  //         navigate("/404");
+  //         return;
+  //       }
+  //       // Handle other errors
+  //       toast.error("An error occurred while fetching the user");
+  //     }
+  //   };
+
   //   const fetchProfileUserGames = async () => {
   //     try {
   //       const response = await axios.get<Parties[]>(
@@ -102,26 +136,7 @@ const ProfilPage = () => {
   //       toast.error("An error occurred while fetching the user games");
   //     }
   //   };
-  //   fetchProfileUserGames();
-  // }, [loading]);
 
-  // fetch user friend
-  useEffect(() => {
-    const fetchUserRelations = async () => {
-      try {
-        const response = await axios.get(`/api/relations/${id}`);
-        setUserRelations(response.data);
-      } catch (err) {
-        // Handle error
-      }
-    };
-
-    if (!loading) {
-      fetchUserRelations();
-    }
-  }, [id, loading]);
-  // useEffect(() => {
-  //   if (!loading) return;
   //   const fetchProfileUserFriends = async () => {
   //     try {
   //       const response = await axios.get<User[]>("/api/friends/all/" + id);
@@ -130,17 +145,35 @@ const ProfilPage = () => {
   //       toast.error("An error occurred while fetching user friends");
   //     }
   //   };
-  //   fetchProfileUserFriends();
-  // }, [loading]);
+
+  //   const fetchProfileData = async () => {
+  //     setLoadingData(true);
+  //     await Promise.all([
+  //       fetchProfileUser(),
+  //       fetchProfileUserGames(),
+  //       fetchProfileUserFriends(),
+  //     ]);
+  //     setLoadingData(false);
+  //   };
+  //   if (!isMe) {
+  //     const relation = userRelations?.find(
+  //       (relation) => relation.friend.username === id
+  //     );
+  //     if (relation) {
+  //       setRelationStatus(relation.status);
+  //       fetchProfileData();
+  //     } else {
+  //       fetchProfileUser();
+  //     }
+  //   } else {
+  //     fetchProfileUserGames();
+  //   }
+  // }, [loading, user, id]);
 
   const editProfil = () => {};
   const addFriend = () => {};
   const removeFriend = () => {};
   const blockUser = () => {};
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
 
   return (
     <>
@@ -164,7 +197,7 @@ const ProfilPage = () => {
               </div>
             </div>
             <div className="flex gap-0 items-center">
-              {relationStatus === "self" ? (
+              {isMe ? (
                 <IconButton
                   onClick={editProfil}
                   icon={<PencilSquareIcon />}
@@ -215,8 +248,7 @@ const ProfilPage = () => {
                   >
                     Statistiques
                   </Tab>
-                  {(relationStatus === "valider" ||
-                    relationStatus === "self") && (
+                  {(relationStatus === "valider" || isMe) && (
                     <>
                       <Tab
                         index={1}
@@ -234,7 +266,7 @@ const ProfilPage = () => {
                       </Tab>
                     </>
                   )}
-                  {relationStatus === "self" && (
+                  {isMe && (
                     <>
                       <Tab
                         index={3}
@@ -264,8 +296,7 @@ const ProfilPage = () => {
                     ))}
                   </div>
                 </TabPanel>
-                {(relationStatus === "valider" ||
-                  relationStatus === "self") && (
+                {(relationStatus === "valider" || isMe) && (
                   <>
                     <TabPanel index={1}>
                       {!(userGames === undefined || userGames?.length === 0) ? (
@@ -288,7 +319,7 @@ const ProfilPage = () => {
                       )}
                     </TabPanel>
                     <TabPanel index={2}>
-                      {relationStatus === "self" ? (
+                      {isMe ? (
                         <div className="flex flex-col gap-1">
                           {userRelations?.map(
                             (relation, index) =>
@@ -296,7 +327,7 @@ const ProfilPage = () => {
                                 <UserRow
                                   key={index}
                                   user={relation.friend}
-                                  isMyProfile={true}
+                                  isMyProfile={isMe}
                                 />
                               )
                           )}
@@ -307,7 +338,7 @@ const ProfilPage = () => {
                             <UserRow
                               key={index}
                               user={relation}
-                              isMyProfile={false}
+                              isMyProfile={isMe}
                             />
                           ))}
                         </div>
@@ -315,7 +346,7 @@ const ProfilPage = () => {
                     </TabPanel>
                   </>
                 )}
-                {relationStatus === "self" && (
+                {isMe && (
                   <>
                     <TabPanel index={3}>
                       <div className="flex flex-col gap-1">
@@ -327,7 +358,7 @@ const ProfilPage = () => {
                               <UserRow
                                 key={index}
                                 user={relation.friend}
-                                isMyProfile={true}
+                                isMyProfile={isMe}
                               />
                             )
                         )}
@@ -339,7 +370,7 @@ const ProfilPage = () => {
                               <UserRow
                                 key={index}
                                 user={relation.friend}
-                                isMyProfile={true}
+                                isMyProfile={isMe}
                               />
                             )
                         )}
@@ -353,7 +384,7 @@ const ProfilPage = () => {
                               <UserRow
                                 key={index}
                                 user={relation.friend}
-                                isMyProfile={true}
+                                isMyProfile={isMe}
                               />
                             )
                         )}

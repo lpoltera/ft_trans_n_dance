@@ -39,7 +39,7 @@ services:
     container_name: nginx
     tty: true
     ports: 
-      - "8000:80"
+      - "8000:443" 
     networks: 
       - app-network
     depends_on:

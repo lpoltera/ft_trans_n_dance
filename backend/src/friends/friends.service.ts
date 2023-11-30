@@ -4,6 +4,8 @@ import { In, Repository } from 'typeorm';
 import { Friendship } from './entities/friends.entity';
 import { User } from '../user/entities/user.entity';
 import { Notification } from '../notifications/entities/notifications.entity';
+import { relationDto } from './dto/relation.dto';
+import { UserResponseDto } from 'src/user/dto/UserResponseDto';
 
 @Injectable()
 export class FriendsService {
@@ -15,77 +17,57 @@ export class FriendsService {
     private readonly notifsDB: Repository<Notification>,
   ) {}
 
-  // create(createFriendDto: CreateFriendDto) {
-  //   return 'This action adds a new friend';
-  // }
-
-  async addFriend(userName: string, friendName: string) {
-    const friend = await this.friendRepository.findOne({
+  async findFriendship(userName: string, friendName: string, status: string) {
+    const friendship = await this.friendRepository.findOne({
       where: [
         {
           user: { username: userName },
           friend: { username: friendName },
-          status: 'valider',
+          status,
         },
         {
           user: { username: friendName },
           friend: { username: userName },
-          status: 'valider',
+          status,
         },
       ],
     });
-    if (friend) {
+
+    return {
+      friendship,
+      isSender: friendship?.user.username === userName,
+    };
+  }
+
+  async addFriend(userName: string, friendName: string) {
+    if (await this.findFriendship(userName, friendName, 'valider')) {
       throw new ForbiddenException('Vous êtes déjà ami avec cette personne.');
     }
 
-    const already_ask = await this.friendRepository.findOne({
-      where: [
-        {
-          user: { username: userName },
-          friend: { username: friendName },
-          status: 'pending',
-        },
-      ],
-    });
-    if (already_ask) {
-      throw new ForbiddenException(
-        'Vous avez déjà fait une demande à ce joueur.',
-      );
-    }
-    const Friend_Not_confirmed = await this.friendRepository.findOne({
-      where: {
-        user: { username: friendName },
-        friend: { username: userName },
-        status: 'pending',
-      },
-    });
-    if (Friend_Not_confirmed) {
-      Friend_Not_confirmed.status = 'valider';
-      await this.friendRepository.save(Friend_Not_confirmed);
+    const { friendship, isSender } = await this.findFriendship(
+      userName,
+      friendName,
+      'pending',
+    );
 
-      const id = Friend_Not_confirmed.id;
-      const msgToDelete = await this.notifsDB.findOne({
-        where: { friend: { id: id } },
-      });
-      await this.notifsDB.delete(msgToDelete);
-      return "Demande d'ami validé";
+    if (friendship) {
+      if (isSender) {
+        throw new ForbiddenException(
+          'Vous avez déjà fait une demande à ce joueur.',
+        );
+      } else {
+        friendship.status = 'valider';
+        await this.friendRepository.save(friendship);
+
+        const msgToDelete = await this.notifsDB.findOne({
+          where: { friend: { id: friendship.id } },
+        });
+        await this.notifsDB.delete(msgToDelete);
+        return "Demande d'ami validé";
+      }
     }
 
-    const blockedFriend = await this.friendRepository.findOne({
-      where: [
-        {
-          user: { username: userName },
-          friend: { username: friendName },
-          status: 'bloquer',
-        },
-        {
-          user: { username: friendName },
-          friend: { username: userName },
-          status: 'bloquer',
-        },
-      ],
-    });
-    if (blockedFriend) {
+    if (await this.findFriendship(userName, friendName, 'bloquer')) {
       throw new ForbiddenException(
         "L'utilisateur vous a bloqué, vous ne pouvez pas l'ajouter comme ami.",
       );
@@ -126,7 +108,6 @@ export class FriendsService {
     const friendValidateOK = friendValidate.map((item) =>
       item.friendName != userName ? item.friendName : item.userName,
     );
-    friendValidateOK.unshift(userName); // équivalent de pushback mais pas placé en première place placé selon ordre de l'id
 
     const userFriends = await this.userDB.find({
       where: {
@@ -200,5 +181,50 @@ export class FriendsService {
 
   removeAll() {
     return this.friendRepository.clear();
+  }
+
+  async getRelations(username: string): Promise<relationDto[]> {
+    const relations = await this.friendRepository.find({
+      where: [
+        {
+          user: { username: username },
+        },
+        {
+          friend: { username: username },
+        },
+      ],
+    });
+    const friends = [];
+    for (const relation of relations) {
+      const friendUsername =
+        relation.userName === username
+          ? relation.friendName
+          : relation.userName;
+      const senderUsername = relation.userName;
+      const friend = await this.userDB.findOne({
+        where: { username: friendUsername },
+      });
+      if (friend.username === username) {
+        continue;
+      }
+      const friendResponse: UserResponseDto = {
+        id: friend.id,
+        username: friend.username,
+        connected: friend.connected,
+        avatar: friend.avatar,
+        win: friend.win,
+        loss: friend.loss,
+        draw: friend.draw,
+        totalXP: friend.totalXP,
+        totalGame: friend.totalGame,
+      };
+      friends.push({
+        friend: friendResponse,
+        status: relation.status,
+        sender: senderUsername,
+      });
+    }
+    console.log(friends);
+    return friends;
   }
 }

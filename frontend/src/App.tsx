@@ -80,7 +80,7 @@ function App() {
                 }
               ></Route>
               <Route
-                path="/profil/*"
+                path="/profil/:id"
                 element={
                   <PrivateRoute>
                     <ProfilPage />
@@ -131,7 +131,12 @@ function App() {
               <Route path="/twofa-verify" element={<TfaPage />}></Route>
             </Routes>
           </BrowserRouter>
-          <ToastContainer position="bottom-right" closeOnClick theme="dark" />
+          <ToastContainer
+            position="bottom-right"
+            closeOnClick
+            theme="dark"
+            newestOnTop
+          />
         </NotificationProvider>
       </UserProvider>
     </>
