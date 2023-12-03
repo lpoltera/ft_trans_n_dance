@@ -52,6 +52,7 @@ export interface Paddle {
   color: string;
   score: number;
   speed: number;
+  acceleration: number;
 }
 
 export interface Parties {

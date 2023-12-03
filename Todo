@@ -1,5 +1,5 @@
 ** ChatPage
-[ ] Backend     !   Indiquer l'heure d'envoi lorsque l'on écrit un message (ne s'affiche actuellement que lorsque l'on recharche la page)
+[X] Backend     !   Indiquer l'heure d'envoi lorsque l'on écrit un message (ne s'affiche actuellement que lorsque l'on recharche la page)
 [ ] Frontend    ~   Afficher un message "écrivez votre premier message à XXX" lorsque la conversation est vide
 
 ** ProfilPage

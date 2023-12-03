@@ -1,54 +1,54 @@
 import {
-  ReactNode,
-  createContext,
-  useContext,
-  useEffect,
-  useState,
+	ReactNode,
+	createContext,
+	useContext,
+	useEffect,
+	useState,
 } from "react";
 import { useUserContext } from "./UserContext";
 import { GameProps } from "../models/Game";
 
 interface GameProviderProps {
-  children: ReactNode;
+	children: ReactNode;
 }
 
 export const GameContext = createContext<
-  | {
-      gameDetails: GameProps | null;
-      setGameDetails: React.Dispatch<React.SetStateAction<GameProps | null>>;
-    }
-  | undefined
+	| {
+		gameDetails: GameProps | null;
+		setGameDetails: React.Dispatch<React.SetStateAction<GameProps | null>>;
+	}
+	| undefined
 >(undefined);
 
 export const GameProvider = ({ children }: GameProviderProps) => {
-  const [gameDetails, setGameDetails] = useState<GameProps | null>(null);
-  const { user } = useUserContext();
+	const [gameDetails, setGameDetails] = useState<GameProps | null>(null);
+	const { user } = useUserContext();
 
-  useEffect(() => {
-    const newGameDetails: GameProps = {
-      difficulty: 1,
-      withPowerUps: false,
-      victoryCondition: { type: "1972", value: 5 },
-      player1: user,
-      player2: null,
-    };
+	useEffect(() => {
+		const newGameDetails: GameProps = {
+			difficulty: 2,
+			withPowerUps: false,
+			victoryCondition: { type: "1972", value: 5 },
+			player1: user,
+			player2: null,
+		};
 
-    setGameDetails(newGameDetails);
-  }, [user]);
+		setGameDetails(newGameDetails);
+	}, [user]);
 
-  return (
-    <GameContext.Provider value={{ gameDetails, setGameDetails }}>
-      {children}
-    </GameContext.Provider>
-  );
+	return (
+		<GameContext.Provider value={{ gameDetails, setGameDetails }}>
+			{children}
+		</GameContext.Provider>
+	);
 };
 
 export function useGameContext() {
-  const context = useContext(GameContext);
+	const context = useContext(GameContext);
 
-  if (context === undefined) {
-    throw new Error("useGameContext must be used within a GameProvider");
-  }
+	if (context === undefined) {
+		throw new Error("useGameContext must be used within a GameProvider");
+	}
 
-  return context;
+	return context;
 }

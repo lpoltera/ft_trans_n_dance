@@ -158,7 +158,9 @@ export class UserService {
   }
 
   async remove(id: number) {
-    return await this.userDB.delete({ id });
+    //soft delete
+    // return await this.userDB.delete({ id });
+    return await this.userDB.softDelete({ id });
   }
 
   async getpodium() {

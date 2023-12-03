@@ -4,8 +4,8 @@ FROM debian:buster
 # Mettre à jour les paquets et installer Nginx et OpenSSL à partir de backports
 RUN apt-get update && apt-get install -y \
     nginx \ 
-    openssl \
-    curl
+    openssl
+	
 # Supprimer le fichier de configuration Nginx par défaut
 RUN rm /etc/nginx/sites-enabled/default
 

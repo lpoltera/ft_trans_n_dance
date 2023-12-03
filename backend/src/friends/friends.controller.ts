@@ -81,6 +81,7 @@ export class FriendsController {
   async getRelations(
     @Session() session: Record<string, any>,
   ): Promise<relationDto[]> {
+    // console.log('username = ', session.user.username);
     const currentUserName = session.user.username;
     const relations = await this.friendsService.getRelations(currentUserName);
     if (!relations) {

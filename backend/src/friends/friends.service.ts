@@ -32,7 +32,12 @@ export class FriendsService {
         },
       ],
     });
-
+    if (!friendship) {
+      return {
+        friendship: null,
+        isSender: '',
+      };
+    }
     return {
       friendship,
       isSender: friendship?.user.username === userName,
@@ -40,7 +45,13 @@ export class FriendsService {
   }
 
   async addFriend(userName: string, friendName: string) {
-    if (await this.findFriendship(userName, friendName, 'valider')) {
+    const existingRelation = await this.findFriendship(
+      userName,
+      friendName,
+      'valider',
+    );
+    console.log('Realtion = ', existingRelation.friendship);
+    if (existingRelation.friendship) {
       throw new ForbiddenException('Vous êtes déjà ami avec cette personne.');
     }
 
@@ -49,7 +60,6 @@ export class FriendsService {
       friendName,
       'pending',
     );
-
     if (friendship) {
       if (isSender) {
         throw new ForbiddenException(
@@ -66,8 +76,12 @@ export class FriendsService {
         return "Demande d'ami validé";
       }
     }
-
-    if (await this.findFriendship(userName, friendName, 'bloquer')) {
+    const isblocked = await this.findFriendship(
+      userName,
+      friendName,
+      'blocked',
+    );
+    if (isblocked.friendship) {
       throw new ForbiddenException(
         "L'utilisateur vous a bloqué, vous ne pouvez pas l'ajouter comme ami.",
       );
@@ -121,7 +135,7 @@ export class FriendsService {
     const blockedValidate = await this.friendRepository.find({
       where: [
         {
-          user: { username: username },
+          user: { username: username }, // blockedBy === username
           status: 'blocked',
         },
         {
@@ -133,7 +147,7 @@ export class FriendsService {
     const blockedValidateOK = blockedValidate.map((item) =>
       item.friendName != username ? item.friendName : item.userName,
     );
-    blockedValidateOK.unshift(username); // équivalent de pushback mais pas placé en première place placé selon ordre de l'id
+    // blockedValidateOK.unshift(username); // équivalent de pushback mais pas placé en première place placé selon ordre de l'id
 
     const userFriends = await this.userDB.find({
       where: {
@@ -148,6 +162,7 @@ export class FriendsService {
   // }
 
   async update(userName: string, friendName: string, statusToUpdate: string) {
+    //indiquer qui a bloqué (rajouter blockedBy un champ dans la table) - remettre à null après déblocage
     const friendToUpdate = await this.friendRepository.findOne({
       where: [
         {
@@ -204,7 +219,7 @@ export class FriendsService {
       const friend = await this.userDB.findOne({
         where: { username: friendUsername },
       });
-      if (friend.username === username) {
+      if (!friend || friend.username === username) {
         continue;
       }
       const friendResponse: UserResponseDto = {
