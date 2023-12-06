@@ -40,6 +40,21 @@ export class MatchsHistoryController {
     return await this.matchsHistoryService.update(+id, statusValue);
   }
 
+  @Patch('/update-score/:id')
+  async updateScore(
+    @Param('id') id: string,
+    @Body() ScoreToUpdate: UpdateMatchsHistoryDto,
+  ) {
+    const scoreP1Value = ScoreToUpdate.score_p1.valueOf();
+    const scoreP2Value = ScoreToUpdate.score_p2.valueOf();
+
+    return await this.matchsHistoryService.updateScore(
+      +id,
+      +scoreP1Value,
+      +scoreP2Value,
+    );
+  }
+
   // @Get(':id')
   // findOne(@Param('id') id: string) {
   //   return this.matchsHistoryService.findOne(+id);

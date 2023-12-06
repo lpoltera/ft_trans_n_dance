@@ -20,16 +20,16 @@ export class MatchsHistory {
   @Column()
   name_p1: string;
 
-  @Column()
-  name_p2: string;
+  @Column({ nullable: true })
+  name_p2: string | null;
 
   @ManyToOne(() => User)
   @JoinColumn({ name: 'name_p1', referencedColumnName: 'username' })
   user_p1: User;
 
-  @ManyToOne(() => User)
+  @ManyToOne(() => User, { nullable: true })
   @JoinColumn({ name: 'name_p2', referencedColumnName: 'username' })
-  user_p2: User;
+  user_p2: User | null;
 
   @CreateDateColumn()
   readonly created_at: Date;
@@ -43,20 +43,26 @@ export class MatchsHistory {
   @Column()
   score_p2: number;
 
-  @Column()
-  win: number; // id_p1 or id_p2
-
-  @Column()
-  loss: number; // id_p1 or id_p2
+  // @Column()
+  // winner: string; // username winner
 
   @Column()
   time: number;
 
   @Column()
-  xp: number;
-
-  @Column()
   status: string;
+
+  // @Column()
+  // difficulty: string;
+
+  // @Column()
+  // mode: string;
+
+  // @Column()
+  // power_ups: string;
+
+  // @Column()
+  // is_tournament: number;   TODO : relation ??
 
   @OneToOne(() => Notification)
   notification: Notification;

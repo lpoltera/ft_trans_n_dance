@@ -1,5 +1,6 @@
 import {
   Body,
+  ClassSerializerInterceptor,
   Controller,
   Delete,
   Get,
@@ -7,6 +8,7 @@ import {
   Patch,
   Post,
   Session,
+  UseInterceptors,
 } from '@nestjs/common';
 import { UpdateFriendDto } from './dto/update-friend.dto';
 import { FriendsService } from './friends.service';
@@ -35,6 +37,7 @@ export class FriendsController {
     }
   }
 
+  @UseInterceptors(ClassSerializerInterceptor)
   @Get('all/:userName')
   async findAll(
     @Param('userName') userName: string,

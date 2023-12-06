@@ -33,8 +33,12 @@ export class ChatGateway {
   @SubscribeMessage('sendFriendNotif') // sendFriendNotif
   async createNotif(client: Socket, @MessageBody() notif: Notification) {
     console.log('sendNotifs called');
-    await this.FriendsService.addFriend(notif.sender, notif.receiver);
-    this.server.emit('myNotifs', notif);
+    try {
+      await this.FriendsService.addFriend(notif.sender, notif.receiver);
+      this.server.emit('myNotifs', notif);
+    } catch (error) {
+      this.server.emit('error', { error: error.message });
+    }
   }
 
   // @SubscribeMessage('sendGameNotifs')

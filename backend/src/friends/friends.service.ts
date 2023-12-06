@@ -33,15 +33,18 @@ export class FriendsService {
       ],
     });
     if (!friendship) {
-      return {
-        friendship: null,
-        isSender: '',
-      };
+      return false;
     }
-    return {
-      friendship,
-      isSender: friendship?.user.username === userName,
-    };
+    return true;
+    //   return {
+    //     friendship: null,
+    //     isSender: '',
+    //   };
+    // }
+    // return {
+    //   friendship,
+    //   isSender: friendship?.user.username === userName,
+    // };
   }
 
   async addFriend(userName: string, friendName: string) {
@@ -50,38 +53,48 @@ export class FriendsService {
       friendName,
       'valider',
     );
-    console.log('Realtion = ', existingRelation.friendship);
-    if (existingRelation.friendship) {
+    console.log('Realtion = ', existingRelation);
+    if (existingRelation === true) {
       throw new ForbiddenException('Vous êtes déjà ami avec cette personne.');
     }
 
-    const { friendship, isSender } = await this.findFriendship(
-      userName,
-      friendName,
-      'pending',
-    );
-    if (friendship) {
-      if (isSender) {
-        throw new ForbiddenException(
-          'Vous avez déjà fait une demande à ce joueur.',
-        );
-      } else {
-        friendship.status = 'valider';
-        await this.friendRepository.save(friendship);
-
-        const msgToDelete = await this.notifsDB.findOne({
-          where: { friend: { id: friendship.id } },
-        });
-        await this.notifsDB.delete(msgToDelete);
-        return "Demande d'ami validé";
-      }
+    const alreadyAsked = await this.friendRepository.findOne({
+      where: {
+        user: { username: userName },
+        friend: { username: friendName },
+        status: 'pending',
+      },
+    });
+    if (alreadyAsked) {
+      throw new ForbiddenException(
+        'Vous avez déjà fait une demande à ce joueur.',
+      );
     }
+
+    const Friend_Not_confirmed = await this.friendRepository.findOne({
+      where: {
+        user: { username: friendName },
+        friend: { username: userName },
+        status: 'pending',
+      },
+    });
+    if (Friend_Not_confirmed) {
+      Friend_Not_confirmed.status = 'valider';
+      await this.friendRepository.save(Friend_Not_confirmed);
+
+      const msgToDelete = await this.notifsDB.findOne({
+        where: { friend: { id: Friend_Not_confirmed.id } },
+      });
+      await this.notifsDB.delete(msgToDelete);
+      return "Demande d'ami validé";
+    }
+
     const isblocked = await this.findFriendship(
       userName,
       friendName,
       'blocked',
     );
-    if (isblocked.friendship) {
+    if (isblocked === true) {
       throw new ForbiddenException(
         "L'utilisateur vous a bloqué, vous ne pouvez pas l'ajouter comme ami.",
       );

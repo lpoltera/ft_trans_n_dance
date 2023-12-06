@@ -11,7 +11,7 @@ interface Props {
   ami: User;
   handleStatsButtonClick: (ami: User) => void;
   currentUser: User;
-  displayToast: () => void;
+  displayToast: (socket: any) => void;
 }
 
 const InfosUsersRow = ({
@@ -24,10 +24,18 @@ const InfosUsersRow = ({
 
   useEffect(() => {
     const newSocket = io("https://localhost:8000");
+
+    // newSocket.on("error", (error) => {
+    //   displayToast(error.error);
+    // });
+
+    // newSocket.on("myNotifs", () => {
+    //   displayToast("");
+    // });
+
     setSocket(newSocket);
-    return () => {
-      //     // if (newSocket) newSocket.disconnect();
-    };
+
+    return () => {};
   }, []);
 
   //   const addFriend = () => {
@@ -47,6 +55,15 @@ const InfosUsersRow = ({
   //     //   });
   //   };
 
+  // socket?.on("connect_error", (error) => {
+  //   console.log("Erreur de connexion : ", error);
+  // });
+
+  // socket?.on("error", (error) => {
+  //   console.log("Erreurrrr : ", error);
+  //   displayToast(error);
+  // });
+
   const changeFriendshipStatus = async () => {
     console.log("send notif");
     if (socket) {
@@ -56,7 +73,8 @@ const InfosUsersRow = ({
         message: `Tu as reçu une demande d'ami de ${currentUser.username}`,
       });
     }
-    displayToast();
+    displayToast(socket);
+
     // addFriend();
   };
 

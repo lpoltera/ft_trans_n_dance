@@ -20,9 +20,35 @@ const UsersPage = () => {
     setSelectedUser((prevUser) => (prevUser === ami ? null : ami));
   };
 
-  const notify = () => {
+  const notify = (socket: any) => {
     console.log("notify function called");
-    toast("Demande d'ami envoyée !");
+
+    // useEffect(() => {
+    if (socket) {
+      socket.on("error", (error: any) => {
+        toast(error.error);
+        socket.off("error");
+        socket.off("myNotifs");
+      });
+
+      socket.on("myNotifs", () => {
+        toast("Demande d'ami envoyée !");
+        socket.off("error");
+        socket.off("myNotifs");
+      });
+    }
+
+    // Supprimez les écouteurs lorsque le composant est démonté
+    // return () => {
+    //   if (socket) {
+    //     socket.off("error");
+    //     socket.off("myNotifs");
+    //   }
+    // };
+    // }, [socket]);
+
+    // if (!error) toast("Demande d'ami envoyée !");
+    // else toast(error);
   };
 
   useEffect(() => {

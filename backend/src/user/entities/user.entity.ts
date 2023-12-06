@@ -57,6 +57,7 @@ export class User {
   totalGame: number;
 
   @Column()
+  @Exclude()
   secret2fa: string;
   // scoresTotal: number;
 
