@@ -10,9 +10,7 @@ const TabContainer: React.FC<TabContainerProps> = ({ children }) => {
   const [activeTab, setActiveTab] = useState(0);
 
   return (
-    <TabProvider value={{ activeTab, setActiveTab }}>
-      <div>{children}</div>
-    </TabProvider>
+    <TabProvider value={{ activeTab, setActiveTab }}>{children}</TabProvider>
   );
 };
 

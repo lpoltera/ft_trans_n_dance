@@ -1,17 +1,15 @@
 import {
+  Body,
   Controller,
   Get,
-  Post,
-  Body,
-  Patch,
   Param,
-  Delete,
+  Patch,
+  Post,
   Session,
 } from '@nestjs/common';
-import { MatchsHistoryService } from './matchs-history.service';
 import { CreateMatchsHistoryDto } from './dto/create-matchs-history.dto';
 import { UpdateMatchsHistoryDto } from './dto/update-matchs-history.dto';
-import { countReset } from 'console';
+import { MatchsHistoryService } from './matchs-history.service';
 
 @Controller('api/game')
 export class MatchsHistoryController {
@@ -40,6 +38,21 @@ export class MatchsHistoryController {
   ) {
     const statusValue = StatusToUpdate.status.valueOf();
     return await this.matchsHistoryService.update(+id, statusValue);
+  }
+
+  @Patch('/update-score/:id')
+  async updateScore(
+    @Param('id') id: string,
+    @Body() ScoreToUpdate: UpdateMatchsHistoryDto,
+  ) {
+    const scoreP1Value = ScoreToUpdate.score_p1.valueOf();
+    const scoreP2Value = ScoreToUpdate.score_p2.valueOf();
+
+    return await this.matchsHistoryService.updateScore(
+      +id,
+      +scoreP1Value,
+      +scoreP2Value,
+    );
   }
 
   // @Get(':id')

@@ -1,9 +1,11 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   Body,
   ClassSerializerInterceptor,
   Controller,
   Delete,
   Get,
+  NotFoundException,
   Param,
   Patch,
   Post,
@@ -19,6 +21,8 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { loginDto } from './dto/login-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserService } from './user.service';
+import { UserResponseDto } from './dto/UserResponseDto';
+import { NotFoundError } from 'rxjs';
 
 @Controller('api')
 export class UserController {
@@ -27,7 +31,7 @@ export class UserController {
     private readonly optService: QrCodeService,
   ) {}
 
-  @Post('/signup') // creation de session (déplace login dans signup)
+  @Post('signup') // creation de session (déplace login dans signup)
   async create(
     @Body() createUserDto: CreateUserDto,
     @Session() session: Record<string, any>,
@@ -121,14 +125,32 @@ export class UserController {
   async getMyName(
     @Req() request: Request,
     @Session() session: Record<string, any>,
-  ) {
-    return await session.user.username;
+  ): Promise<UserResponseDto | null> {
+    if (session.user) {
+      const userResponse: UserResponseDto = {
+        id: session.user.id,
+        username: session.user.username,
+        avatar: session.user.avatar,
+        connected: session.user.connected,
+        win: session.user.win,
+        loss: session.user.loss,
+        totalGame: session.user.totalGame,
+        totalXP: session.user.totalXP,
+        draw: session.user.draw,
+      };
+      return userResponse;
+    } else return null;
   }
 
-  @Get(':username')
+  @Get('/:username')
   // @UseGuards(SessionGuard) // TODO
-  async findOne(@Param('username') username: string) {
-    return await this.userService.findOne(username);
+  async findOne(
+    @Param('username') username: string,
+  ): Promise<UserResponseDto | null> {
+    const userResponse: UserResponseDto =
+      await this.userService.findOne(username);
+    if (userResponse) return userResponse;
+    else throw new NotFoundException('User not found');
   }
 
   @Patch(':username')

@@ -1,140 +1,108 @@
-// Charger et écouter la Table "notifications"
-// Si une nouvelle notif apparait, ajouter un pin rouge aux Notifications.
-// reprendre l'id de l'utilisateur connecté pour créer un lien dynamique vers son profil dans le menu du boutton profil
-
 import {
   BellAlertIcon,
   ChatBubbleBottomCenterIcon,
   UserCircleIcon,
   UserGroupIcon,
 } from "@heroicons/react/24/outline";
-import ButtonIcon from "./ButtonIcon";
+import { useNotificationContext } from "../contexts/NotificationContext";
+import { useUserContext } from "../contexts/UserContext";
+import IconButton from "./IconButton";
 import MenuDropdown from "./MenuDropdown";
-import { useEffect, useState } from "react";
 import NotificationPanel from "./NotificationPanel";
-import { io } from "socket.io-client";
-import axios from "axios";
-import { ToastContainer, toast } from "react-toastify";
-
-interface Notifs {
-  sender: string;
-  receiver: string;
-  message: string;
-  status: string;
-}
-interface ChatMessage {
-  receiver: string;
-  sender: string;
-  text: string;
-}
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
-  const [unreadNotif, setUnreadNotif] = useState(false);
-  const [unreadChat, setUnreadChat] = useState(false);
-  const [notifModal, setNotifModal] = useState(false);
-  const [socket, setSocket] = useState<any>(null);
-  const [currentUserName, setcurrentUserName] = useState<string>("");
+  const { user, loadingUser } = useUserContext();
+  const {
+    unreadNotif,
+    notifModal,
+    setUnreadNotif,
+    setNotifModal,
+    unreadChat,
+    setUnreadChat,
+  } = useNotificationContext();
+  const navigate = useNavigate();
+  const [shouldNavigate, setShouldNavigate] = useState(false);
 
   useEffect(() => {
-    axios
-      .get<string>("/api/my-name")
-      .then((response) => setcurrentUserName(response.data));
-    console.log(`Current User Name in Navbar.tsx = ${currentUserName}`);
-    const newSocket = io("http://localhost:8000");
-    setSocket(newSocket);
-    return () => {
-      //     // if (newSocket) newSocket.disconnect();
-    };
-  }, [currentUserName]);
-
-  useEffect(() => {
-    if (!socket) {
-      console.log("socket :", socket);
-      return;
-    }
-    socket.on("myNotifs", (message: Notifs) => {
-      // setNewNotif("Veux-tu être mon ami");
-      console.log("message sent : ", message.message);
-      if (message.receiver === currentUserName) {
-        setUnreadNotif(true);
-        toast("Tu as reçu une nouvelle notification");
-        console.log("unreadNotif true");
-        // console.log("LOG : ", socket.request.session);
-        // console.dir(socket.request.session);
-
-        console.log("message in condition : ", message.message);
-      }
-    });
-
-    socket.on("recMessage", (message: ChatMessage) => {
-      if (message.receiver === currentUserName) {
-        setUnreadChat(true);
-        toast("Tu as reçu un nouveau message dans le chat");
-      }
-    });
-
-    return () => {
-      socket.off("myNotifs");
-    };
-  }, [socket]);
+    if (!loadingUser) return;
+  }, [user]);
 
   const profilLinks = [
-    { title: "Profil", href: "/profil" },
+    { title: "Profil", href: "/profil/" + user?.username },
     { title: "Déconnexion", href: "/logout" },
   ];
 
   const navigateToProfil = () => {
-    window.location.href = "/profil";
+    if (user) {
+      navigate(`/profil/${user.username}`);
+    } else {
+      setShouldNavigate(true);
+    }
   };
 
+  useEffect(() => {
+    if (user && shouldNavigate) {
+      navigate(`/profil/${user.username}`);
+      setShouldNavigate(false); // Reset for future navigations
+    }
+  }, [user, shouldNavigate, navigate]);
+
   const navigateToChat = () => {
-    window.location.href = "/chat";
+    navigate("/chat");
     setUnreadChat(false);
   };
 
   const navigateToUsers = () => {
-    window.location.href = "/users";
+    navigate("/users");
   };
 
   const showNotificationPanel = () => {
     setUnreadNotif(false);
     setNotifModal(!notifModal);
-    console.log("showing notification panel");
   };
-
   return (
     <>
-      <div className="fixed bg-cyan-900 top-0 right-0 left-0 flex items-center justify-between pl-6 pr-4 h-16">
+      <div className="fixed top-0 right-0 left-0 flex items-center justify-between pl-6 pr-4 h-16 z-40">
         <a href="/accueil" id="logoLink" className="text-white text-lg">
           PONG<sup>42</sup>
         </a>
         <nav className="flex text-white">
           <div className="relative">
-            <ButtonIcon onClick={showNotificationPanel}>
-              <BellAlertIcon />
-            </ButtonIcon>
+            <IconButton
+              onClick={showNotificationPanel}
+              icon={<BellAlertIcon />}
+              classCustom="w-10 h-10 p-2 rounded-lg hover:bg-neutral-800"
+            />
             {unreadNotif && (
-              <span className="bg-red-600 w-2 h-2 rounded-full absolute -bottom-1 right-1/2 translate-x-1/2 z-10"></span>
+              <span className="bg-red-600 w-2 h-2 rounded-full absolute top-2 right-2 z-10"></span>
             )}
           </div>
           <div className="relative">
-            <ButtonIcon onClick={navigateToChat}>
-              <ChatBubbleBottomCenterIcon />
-            </ButtonIcon>
+            <IconButton
+              onClick={navigateToChat}
+              icon={<ChatBubbleBottomCenterIcon />}
+              classCustom="w-10 h-10 p-2 rounded-lg hover:bg-neutral-800"
+            />
             {unreadChat && (
-              <span className="bg-red-600 w-2 h-2 rounded-full absolute -bottom-1 right-1/2 translate-x-1/2 z-10"></span>
+              <span className="bg-red-600 w-2 h-2 rounded-full absolute top-2 right-2 z-10"></span>
             )}
           </div>
-          <ButtonIcon onClick={navigateToUsers}>
-            <UserGroupIcon />
-          </ButtonIcon>
+          <IconButton
+            onClick={navigateToUsers}
+            icon={<UserGroupIcon />}
+            classCustom="w-10 h-10 p-2 rounded-lg hover:bg-neutral-800"
+          />
           <MenuDropdown links={profilLinks}>
-            <ButtonIcon onClick={navigateToProfil}>
-              <UserCircleIcon />
-            </ButtonIcon>
+            <IconButton
+              onClick={navigateToProfil}
+              icon={<UserCircleIcon />}
+              classCustom="w-10 h-10 p-2 rounded-lg hover:bg-neutral-800"
+            />
           </MenuDropdown>
         </nav>
-        <NotificationPanel visibility={notifModal}></NotificationPanel>
+        <NotificationPanel></NotificationPanel>
       </div>
     </>
   );

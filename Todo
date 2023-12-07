@@ -1,0 +1,34 @@
+\*\* ChatPage
+[X] Backend ! Indiquer l'heure d'envoi lorsque l'on écrit un message (ne s'affiche actuellement que lorsque l'on recharche la page)
+[ ] Frontend ~ Afficher un message "écrivez votre premier message à XXX" lorsque la conversation est vide
+
+\*\* ProfilPage
+[ ] Backend ! Gérer modification du profil
+[ ] Backend ! Gérer le "isFriend"
+[ ] Backend ! Ajouter / bloquer / retirer l'utilisateur
+[ ] Backend ! Charger les invitations pending
+[ ] Backend ! Charger les personnes bloquées
+[ ] Backend !! Revoir les data des matchHistory: Ajouter le type de partie, la durée, etc…
+[ ] Back/Front ? Bouton "inviter l'utilisateur à démarrer une partie"
+[x] Frontend ! HistoryMatchRow
+[ ] Frontend ? HistoryMatchRow: N'afficher que l'adversaire ? + autres data
+[ ] Frontend ! UserRow: meme row pour bloqué / amis / pending
+[ ] Back/Front ! Intégrer les tournois
+
+\*\* FooterMain
+[ ] Frontend ! Changer le lien Github
+
+\*\* App
+[ ] Frontend ! Faire que la Page Users soit /profil sans id ou faire users/:id
+
+---
+
+---
+
+---
+
+[ ] Backend !  
+[ ] Backend !  
+[ ] Backend !  
+[ ] Backend !  
+[ ] Backend !

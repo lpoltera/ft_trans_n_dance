@@ -3,21 +3,21 @@ FROM debian:buster
 
 # Mettre à jour les paquets et installer Nginx et OpenSSL à partir de backports
 RUN apt-get update && apt-get install -y \
-    nginx 
-    # openssl \
-	# curl
+    nginx \ 
+    openssl
+	
 # Supprimer le fichier de configuration Nginx par défaut
 RUN rm /etc/nginx/sites-enabled/default
 
-# RUN mkdir -p /etc/nginx/ssl
+RUN mkdir -p /etc/nginx/ssl
 
 # Ajouter un fichier de configuration personnalisé pour Nginx
 COPY ./nginx.conf /etc/nginx/sites-enabled/
-# COPY ./tools/nginx_start.sh /var/www
+COPY ./nginx_start.sh /var/www
 
-# RUN chmod +x /var/www/nginx_start.sh
+RUN chmod +x /var/www/nginx_start.sh
 
-# ENTRYPOINT [ "var/www/nginx_start.sh" ]
+ENTRYPOINT [ "var/www/nginx_start.sh" ]
 
 # Démarrer Nginx lors du démarrage du conteneur
 CMD ["nginx", "-g", "daemon off;"]

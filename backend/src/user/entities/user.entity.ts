@@ -1,5 +1,11 @@
 import { Exclude } from 'class-transformer';
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  DeleteDateColumn,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { Friendship } from '../../friends/entities/friends.entity';
 import { MatchsHistory } from '../../matchs-history/entities/matchs-history.entity';
 
@@ -51,8 +57,12 @@ export class User {
   totalGame: number;
 
   @Column()
+  @Exclude()
   secret2fa: string;
   // scoresTotal: number;
+
+  @DeleteDateColumn()
+  deleteAt: Date;
 
   //...
 }

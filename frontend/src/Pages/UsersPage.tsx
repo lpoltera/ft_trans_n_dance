@@ -1,80 +1,76 @@
 import { PencilSquareIcon } from "@heroicons/react/24/outline";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
+import BlockedProfilRow from "../Components/ArchivedComponent/BlockedProfilRow";
 import FooterMain from "../Components/FooterMain";
+import InfosUsersRow from "../Components/InfosUsersRow";
 import Navbar from "../Components/Navbar";
 import PageLayout from "../Components/PageLayout";
-import BlockedProfilRow from "../Components/BlockedProfilRow";
-import InfosUsersRow from "../Components/InfosUsersRow";
-import StatBloc from "../Components/StatBloc";
-import { ToastContainer, toast } from "react-toastify";
-
-interface User {
-  //   id: number;
-  username: string;
-  avatar: string;
-  connected: string;
-  win: number;
-  loss: number;
-  draw: number;
-  totalXP: number;
-  totalGame: number;
-}
+import { useUserContext } from "../contexts/UserContext";
+import { User } from "../models/User";
 
 const UsersPage = () => {
-  const [currentUser, setCurrentUser] = useState<User>();
   const [blocked, setBlocked] = useState<User[] | null>(null);
   const [users, setAllUser] = useState<User[] | null>(null);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const { user, loadingUser } = useUserContext();
 
   const handleStatsButtonClick = (ami: User) => {
     setSelectedUser((prevUser) => (prevUser === ami ? null : ami));
   };
 
-  const notify = () => {
+  const notify = (socket: any) => {
     console.log("notify function called");
-    toast("Demande d'ami envoyée !");
+
+    // useEffect(() => {
+    if (socket) {
+      socket.on("error", (error: any) => {
+        toast(error.error);
+        socket.off("error");
+        socket.off("myNotifs");
+      });
+
+      socket.on("myNotifs", () => {
+        toast("Demande d'ami envoyée !");
+        socket.off("error");
+        socket.off("myNotifs");
+      });
+    }
+
+    // Supprimez les écouteurs lorsque le composant est démonté
+    // return () => {
+    //   if (socket) {
+    //     socket.off("error");
+    //     socket.off("myNotifs");
+    //   }
+    // };
+    // }, [socket]);
+
+    // if (!error) toast("Demande d'ami envoyée !");
+    // else toast(error);
   };
 
   useEffect(() => {
-    async function fetchCurrent() {
-      try {
-        const response = await axios.get<string>("/api/my-name");
-        return response.data;
-      } catch (err) {
-        console.error(err);
-        return null;
-      }
-    }
-
+    if (loadingUser) return;
     async function fetchUserAndBlocked() {
-      const name = await fetchCurrent();
-      console.log("name in fetchUserAndFriend =", name);
+      const name = user?.username;
       if (name) {
         try {
-          const [userResponse, blockedResponse, usersResponse] =
-            await Promise.all([
-              axios.get<User>("/api/" + name),
-              axios.get<User[]>("api/friends/blocked/" + name),
-              axios.get<User[]>("/api/all"),
-            ]);
-          setCurrentUser(userResponse.data);
+          const [blockedResponse, usersResponse] = await Promise.all([
+            axios.get<User[]>("api/friends/blocked/" + name),
+            axios.get<User[]>("/api/all"),
+          ]);
           setAllUser(usersResponse.data);
           if (blockedResponse) setBlocked(blockedResponse.data);
           else setBlocked(null);
-        } catch (err) {}
+        } catch (err) {
+          console.error("Error fetching blocked users:", err);
+        }
       }
     }
     fetchUserAndBlocked();
-  }, []);
-
-  const Stats = [
-    { title: "Score", score: selectedUser?.totalXP },
-    { title: "Parties jouées", score: selectedUser?.totalGame },
-    { title: "Victoires", score: selectedUser?.win },
-    { title: "Défaites", score: selectedUser?.loss },
-    { title: "Matchs nuls", score: selectedUser?.draw },
-  ];
+  }, [loadingUser]);
 
   return (
     <>
@@ -104,13 +100,13 @@ const UsersPage = () => {
               id="section-stats"
               className="grid grid-flow-col grid-cols-6 gap-4"
             >
-              {Stats.map((stat, index) => (
+              {/* {Stats.map((stat, index) => (
                 <StatBloc
                   key={index}
                   title={stat.title}
                   score={!stat.score ? 0 : stat.score}
                 />
-              ))}
+              ))} */}
             </div>
           </div>
         )}
@@ -121,15 +117,15 @@ const UsersPage = () => {
           <div className="h-full overflow-auto">
             <h2 className="text-xl mb-4">Liste de tous les joueurs</h2>
             <div className="grid grid-flow-row gap-2">
-              {currentUser &&
+              {user &&
                 users?.map(
                   (ami, index) =>
-                    currentUser?.username !== ami.username && (
+                    user?.username !== ami.username && (
                       <InfosUsersRow
                         key={index}
                         ami={ami}
                         handleStatsButtonClick={handleStatsButtonClick}
-                        currentUser={currentUser}
+                        currentUser={user}
                         displayToast={notify}
                       />
                     )
@@ -141,7 +137,7 @@ const UsersPage = () => {
             <div className="grid grid-flow-row gap-2">
               {blocked?.map(
                 (ami, index) =>
-                  currentUser?.username !== ami.username && (
+                  user?.username !== ami.username && (
                     <BlockedProfilRow key={index} ami={ami} />
                   )
               )}

@@ -1,92 +1,94 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
-import Navbar from "../Components/Navbar";
-import PageLayout from "../Components/PageLayout";
 import Chat from "../Components/Chat/Chat";
 import FriendChatListItem from "../Components/Chat/FriendChatListItem";
 import FooterMain from "../Components/FooterMain";
-import '../Components/Chat/Chat.css';
-
-interface User {
-	id?: number;
-	username: string;
-	avatar: string;
-	connected: string;
-}
+import Navbar from "../Components/Navbar";
+import PageLayout from "../Components/PageLayout";
+import Tab from "../Components/Tab/Tab";
+import TabContainer from "../Components/Tab/TabContainer";
+import TabList from "../Components/Tab/TabList";
+import TabPanel from "../Components/Tab/TabPanel";
+import { useUserContext } from "../contexts/UserContext";
+import { User } from "../models/User";
 
 const ChatPage = () => {
-	const [currentUser, setCurrentUser] = useState<User | null>(null);
-	const [friends, setAllFriends] = useState<User[] | null>(null);
-	const [selectedFriend, setSelectedFriend] = useState<User | null>(null);
-	const [arrIsSelected, setArrIsSelected] = useState<{ [key: string]: boolean }>({});
-
-
-	const handleChatButtonClick = (ami: User) => {
-		setSelectedFriend((prevFriend) => (prevFriend === ami ? null : ami));
-		setArrIsSelected((prev) => ({
-			...Object.fromEntries(Object.keys(prev).map((key) => [key, false])),
-			[ami.username]: true,
-		}));
-	};
+	const [friends, setFriends] = useState<User[] | null>(null);
+	const { user, loadingUser, userRelations } = useUserContext();
+	const [loadingFriends, setLoadingFriends] = useState(true);
 
 	useEffect(() => {
-		async function fetchCurrent() {
-			try {
-				const response = await axios.get<string>("/api/my-name");
-				console.log(`response ligne 29 ChatPage = ${response.data}`)
-				return response.data;
-			} catch (err) {
-				console.error(err);
-				return null;
-			}
-		}
-
-		async function fetchUserAndFriend() {
-			const name = await fetchCurrent();
-			if (name) {
-				try {
-					const [userResponse, friendResponse] = await Promise.all([
-						axios.get<User>("/api/" + name),
-						axios.get<User[]>("/api/friends/all/" + name),
-					]);
-					setCurrentUser(userResponse.data);
-					setAllFriends(friendResponse.data);
-				} catch (err) {
-					console.error(err);
+		if (loadingUser && userRelations) return;
+		const getFriends = async () => {
+			setLoadingFriends(true);
+			const userFriends: User[] = [];
+			userRelations.forEach((relation) => {
+				if (relation.status === "valider") {
+					userFriends.push(relation.friend);
 				}
-			}
-		}
-		fetchUserAndFriend();
-	}, []);
+			});
+			setFriends(userFriends);
+			setLoadingFriends(false);
+		};
+		getFriends();
+	}, [loadingUser, userRelations]);
+
+	console.log("friendsList length =" + friends?.length);
 
 	return (
 		<>
 			<Navbar />
 			<PageLayout>
-				<h2 className="text-xl mb-4">Amis</h2>
-				<main>
-					<div className="panel user-list w-1/3">
-						{friends?.map(
-							(ami, index) =>
-								currentUser?.username !== ami.username && (
-									<FriendChatListItem
-										key={index}
-										ami={ami}
-										handleChatButtonClick={handleChatButtonClick}
-										arrIsSelected={arrIsSelected}
-									/>
-								)
-						)}
-					</div>
-
-					<div className="panel chat-container">
-						{selectedFriend && (
-							<div>
-								<Chat ami={selectedFriend}></Chat>
+				<TabContainer>
+					<div className="bg-red-600 w-full h-full rounded-xl overflow-hidden">
+						<div className="bg-green-600 h-full w-full flex flex-row">
+							<div className="bg-cyan-950 h-full shrink min-w-min relative z-10">
+								<TabList classCustom="py-2 w-full overflow-auto flex flex-col h-full">
+									{/* <div className="w-full overflow-auto flex flex-col gap-0"> */}
+									{friends &&
+										friends.map(
+											(ami, index) =>
+												user?.username !== ami.username && (
+													<Tab index={index} key={index} classInactive=" ">
+														<FriendChatListItem ami={ami} index={index} />
+													</Tab>
+												)
+										)}
+									{/* </div> */}
+								</TabList>
 							</div>
-						)}
+							<div className="bg-neutral-800 h-full grow relative z-0">
+								<div className="absolute top-10 left-8">
+									{loadingFriends ? (
+										<div className="text-2xl">Loading friends...</div>
+									) : friends && friends.length === 1 ? (
+										<div className="text-2xl">
+											Ajoutez des amis pour discuter !
+										</div>
+									) : (
+										<div className="text-2xl">
+											← Sélectionnez une discussion
+										</div>
+									)}
+								</div>
+								<div className="relative h-full w-full">
+									{friends &&
+										friends.map(
+											(ami, index) =>
+												user?.username !== ami.username && (
+													<TabPanel
+														index={index}
+														key={index}
+														customClass="bg-neutral-800 flex flex-col p-2 h-full"
+													>
+														<Chat ami={ami}></Chat>
+													</TabPanel>
+												)
+										)}
+								</div>
+							</div>
+						</div>
 					</div>
-				</main>
+				</TabContainer>
 			</PageLayout>
 			<FooterMain />
 		</>

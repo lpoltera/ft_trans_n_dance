@@ -5,16 +5,10 @@ import {
 } from "@heroicons/react/24/outline";
 import axios from "axios";
 import { useState } from "react";
-
-interface Ami {
-  id?: number;
-  username: string;
-  connected: string;
-  avatar: string;
-}
+import { User } from "../models/User";
 
 interface Props {
-  ami: Ami;
+  ami: User;
   IsMyProfile: boolean;
 }
 

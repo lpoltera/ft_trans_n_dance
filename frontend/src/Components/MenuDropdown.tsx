@@ -22,7 +22,7 @@ const MenuDropdown = ({ children, links }: Props) => {
         {children}
         <div
           className={
-            "absolute right-0.5 top-full bg-white text-black rounded-md overflow-clip z-10 " +
+            "absolute right-0.5 top-full bg-neutral-800 text-white rounded-md overflow-clip z-10 " +
             dropdownVisibility
           }
         >
@@ -30,7 +30,7 @@ const MenuDropdown = ({ children, links }: Props) => {
             {links.map((link) => (
               <li key={link.title} className="list-none block">
                 <a
-                  className="text-black block whitespace-nowrap pl-4 pr-4 pt-2 pb-2 hover:bg-slate-200"
+                  className="block whitespace-nowrap pl-4 pr-4 pt-2 pb-2 hover:bg-neutral-900"
                   href={link.href}
                 >
                   {link.title}

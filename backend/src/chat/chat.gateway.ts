@@ -1,16 +1,12 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
-  WebSocketGateway,
-  SubscribeMessage,
   MessageBody,
-  OnGatewayConnection,
-  OnGatewayDisconnect,
-  OnGatewayInit,
+  SubscribeMessage,
+  WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
-import { Socket, Server } from 'socket.io';
+import { Server, Socket } from 'socket.io';
 import { ChatService } from './chat.service';
-import { CreateChatDto } from './dto/create-chat.dto';
-import { UpdateChatDto } from './dto/update-chat.dto';
 import { Chat } from './entities/chat.entity';
 
 // import { Session } from '@nestjs/common';
@@ -37,8 +33,12 @@ export class ChatGateway {
   @SubscribeMessage('sendFriendNotif') // sendFriendNotif
   async createNotif(client: Socket, @MessageBody() notif: Notification) {
     console.log('sendNotifs called');
-    await this.FriendsService.addFriend(notif.sender, notif.receiver);
-    this.server.emit('myNotifs', notif);
+    try {
+      await this.FriendsService.addFriend(notif.sender, notif.receiver);
+      this.server.emit('myNotifs', notif);
+    } catch (error) {
+      this.server.emit('error', { error: error.message });
+    }
   }
 
   // @SubscribeMessage('sendGameNotifs')

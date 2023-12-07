@@ -1,5 +1,5 @@
 import axios from "axios";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const FormLogin = () => {
@@ -8,7 +8,8 @@ const FormLogin = () => {
 		username: "",
 		password: "",
 	});
-	const loginUser = async () => {
+	const loginUser = async (e: FormEvent) => {
+		e?.preventDefault();
 		await axios
 			.post("/api/login", login, {
 				headers: {
@@ -16,19 +17,18 @@ const FormLogin = () => {
 				},
 			})
 			.then((response) => {
-				setLogin({
-					username: "",
-					password: "",
-				});
 				const twoFaEnable = response.data.user;
 				console.log("session.twoFaEnable = ", twoFaEnable);
-				if (twoFaEnable === true)
-					navigate("/twofa-verify");
+				if (twoFaEnable === true) navigate("/twofa-verify");
 				else {
 					navigate("/accueil");
 				}
 			})
 			.catch((err) => {
+				setLogin({
+					username: login.username,
+					password: "",
+				});
 				if (err.response && err.response.data && err.response.data.message) {
 					const errorMessage = err.response.data.message;
 					return alert("Error: " + errorMessage);
@@ -46,7 +46,11 @@ const FormLogin = () => {
 	};
 	return (
 		<>
-			<form className="min-w-fit w-96 flex flex-col" name="loginForm">
+			<form
+				className="min-w-fit w-96 flex flex-col"
+				name="loginForm"
+				onSubmit={(e) => loginUser(e)}
+			>
 				<div>
 					<h1 className="text-xl">CONNEXION</h1>
 				</div>
@@ -72,8 +76,7 @@ const FormLogin = () => {
 				</div>
 				<div className="flex flex-row mt-4 justify-between items-center">
 					<button
-						type="button"
-						onClick={() => loginUser()}
+						type="submit"
 						className="bg-white text-black py-2 px-4 rounded-md border border-white"
 					>
 						Se connecter

@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { Controller, Get, Query, Redirect, Res, Session } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { ConfigService } from '@nestjs/config';
@@ -47,11 +48,11 @@ export class AuthController {
     if (exist === 'new') {
       // create secret stocké dans session.secret
 
-      res.redirect('http://localhost:8000/signin');
+      res.redirect('https://localhost:8000/signin');
     } else if (exist === '2faNO') {
-      res.redirect('http://localhost:8000/accueil');
+      res.redirect('https://localhost:8000/accueil');
     } else if (exist === '2faYES') {
-      res.redirect('http://localhost:8000/twofa-verify');
+      res.redirect('https://localhost:8000/twofa-verify');
     }
   }
 }

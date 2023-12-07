@@ -1,146 +1,125 @@
 import axios from "axios";
-import { useEffect, useState, useRef } from "react";
-import io from "socket.io-client";
-import RightMessageContainer from "./RightMessageContainer";
+import { FormEvent, useEffect, useRef, useState } from "react";
+import { useNotificationContext } from "../../contexts/NotificationContext";
+import { useUserContext } from "../../contexts/UserContext";
+import { User } from "../../models/User";
 import LeftMessageContainer from "./LeftMessageContainer";
-import "./Chat.css";
-// import newSocket from "../socket";
-
-interface ChatMessage {
-  receiver: string;
-  sender: string;
-  text: string;
-}
-
-interface User {
-  id?: number;
-  username: string;
-  connected: string;
-  avatar: string;
-}
+import RightMessageContainer from "./RightMessageContainer";
+import { ChatMessage } from "../../models/Notifications";
 
 interface Props {
-  ami: User;
+	ami: User;
 }
 
 const Chat = ({ ami }: Props) => {
-  const [socket, setSocket] = useState<any>(null);
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [newMessage, setNewMessage] = useState("");
-  const [currentUser, setCurrentUser] = useState<string | undefined>("");
-  const messagesEndRef = useRef<any>(null);
-  const scrollToBottom = () => {
-    messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
-  };
+	const [messages, setMessages] = useState<ChatMessage[]>([]);
+	const [newMessage, setNewMessage] = useState("");
+	const { socket, socketLoading } = useNotificationContext();
+	const messagesEndRef = useRef<HTMLDivElement | null>(null);
+	const { user, loadingUser } = useUserContext();
+	const scrollToBottom = () => {
+		if (messagesEndRef.current) {
+			messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+		}
+	};
 
-  useEffect(scrollToBottom, [messages]);
+	useEffect(scrollToBottom, [messages]);
 
-  useEffect(() => {
-    // Création de la connexion Socket.IO lors du montage du composant
-    const newSocket = io("http://localhost:8000");
-    setSocket(newSocket);
+	useEffect(() => {
+		if (loadingUser) return;
+		if (socketLoading) return;
+		console.log("socket :", socket);
 
-    async function fetchCurrent() {
-      try {
-        const response = await axios.get<string>("/api/my-name");
-        setCurrentUser(response.data);
-        return response.data;
-      } catch (error) {
-        console.error("Error fetching my name", error);
-      }
-    }
+		async function fetchMessages() {
+			const name = user?.username;
+			if (name) {
+				try {
+					const response = await axios.get(
+						"/api/chat/all/" + name + "/" + ami.username
+					);
+					console.log("response.data :", response.data);
+					setMessages(response.data);
+				} catch (error) {
+					console.error("Error fetching messages:", error);
+				}
+			}
+		}
+		fetchMessages();
 
-    async function fetchMessages() {
-      const name = await fetchCurrent();
-      if (name) {
-        try {
-          const response = await axios.get(
-            "/api/chat/all/" + name + "/" + ami.username
-          );
-          setMessages(response.data);
-        } catch (error) {
-          console.error("Error fetching messages:", error);
-        }
-      }
-    }
-    fetchMessages();
+		return () => {
+			if (socket) socket.off("recMessage");
+		};
+	}, [loadingUser, ami]);
 
-    return () => {
-      if (newSocket) newSocket.disconnect();
-    };
-  }, [ami, currentUser]);
+	useEffect(() => {
+		if (socket && user?.username && ami.username) {
+			if (!socket.hasListeners("recMessage")) {
+				socket.on("recMessage", (message) => {
+					if ((message.sender === ami.username && message.receiver === user.username) ||
+						(message.sender === user.username && message.receiver === ami.username)) {
+						if (message.sender !== user.username) {
 
-  useEffect(() => {
-    if (!socket) {
-      console.log("socket :", socket);
-      return;
-    }
+							setMessages((prevMessages) => [...prevMessages, message]);
+						}
+					}
+				});
+			}
+		}
 
-    // Logique pour gérer les événements de la connexion Socket.IO
+		return () => {
+			if (socket) {
+				socket.off("recMessage");
+			}
+		};
+	}, [socket, user?.username, ami.username]);
 
-    socket.on("recMessage", (message: ChatMessage) => {
-      console.log(`message received : ${message.text}`);
-      console.log(`message sent by : ${message.sender}`);
-      console.log(`message sent to : ${message.receiver}`);
-      console.log(`current name  : ${currentUser}`);
-      console.log(`Friend name  : ${ami.username}`);
-      if (
-        (message.sender === ami.username && message.receiver === currentUser) ||
-        (message.sender === currentUser && message.receiver === ami.username)
-      ) {
-        // Gérer le message reçu depuis le serveur Socket.IO
-        setMessages((prevMessages) => [...prevMessages, message]);
-      }
-    });
+	// Update messages state when a message is sent
+	const sendMessage = (e: FormEvent, messageContent: string) => {
+		e.preventDefault();
+		if (user?.username) {
+			const message = {
+				sender: user.username,
+				receiver: ami.username,
+				text: messageContent,
+			};
 
-    // Nettoyage des événements lors du démontage du composant
-    return () => {
-      socket.off("recMessage");
-    };
-  }, [socket]);
+			socket?.emit("sendMessage", message);
 
-  const handleSendMessage = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key == "Enter") {
-      if (socket) {
-        socket.emit("sendMessage", {
-          sender: currentUser,
-          receiver: ami.username,
-          text: newMessage,
-        });
-        setNewMessage("");
-      }
-    }
-  };
+			setMessages((prevMessages) => [...prevMessages, message]);
+			setNewMessage("");
+		}
+	};
 
-  return (
-    <div>
-      <div className="messages-container">
-        <ul>
-          {messages.map((message, index) => (
-            <li key={index}>
-              {message.sender === currentUser ? (
-                <RightMessageContainer ami={ami} message={message} />
-              ) : (
-                <LeftMessageContainer ami={ami} message={message} />
-              )}
-              {/* <strong>{message.sender}:</strong> {message.text} */}
-            </li>
-          ))}
-        </ul>
-        <div ref={messagesEndRef} />
-        <div className="sending-form">
-          <input
-            type="text"
-            className="border-white px-3 py-2 bg-transparent"
-            value={newMessage}
-            onChange={(e) => setNewMessage(e.target.value)}
-            onKeyDown={handleSendMessage}
-            placeholder="Ecrivez un message..."
-          />
-        </div>
-      </div>
-    </div>
-  );
+	return (
+		<>
+			<div className="grow overflow-auto mb-2 flex">
+				<ul className="px-2 mt-auto w-full">
+					{messages.map((message, index) => (
+						<li key={index}>
+							{message.sender === user?.username ? (
+								<RightMessageContainer user={user} message={message} />
+							) : (
+								<LeftMessageContainer user={ami} message={message} />
+							)}
+						</li>
+					))}
+					<div ref={messagesEndRef} />
+				</ul>
+			</div>
+			<div className="shrink">
+				<form onSubmit={(e) => sendMessage(e, newMessage)}>
+					<input
+						type="text"
+						className="border-white rounded-md px-3 py-2 bg-transparent w-full focus:border-cyan-500 focus:outline-none appearance-none"
+						value={newMessage}
+						onChange={(e) => setNewMessage(e.target.value)}
+						placeholder="Ecrivez un message..."
+					/>
+					<input type="submit" className="hidden" />
+				</form>
+			</div>
+		</>
+	);
 };
 
 export default Chat;

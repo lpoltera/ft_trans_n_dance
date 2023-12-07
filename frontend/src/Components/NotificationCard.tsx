@@ -1,18 +1,8 @@
-import React from "react";
-import axios from "axios";
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { CheckIcon, XMarkIcon } from "@heroicons/react/24/outline";
-
-interface Props {
-  sender: string;
-  receiver: string;
-  message: string;
-  status: string;
-  game: gameProps;
-}
-
-interface gameProps {
-  id: number;
-}
+import axios from "axios";
+import { Notifs } from "../models/Notifications";
+import IconButton from "./IconButton";
 
 const NotificationCard = ({
   sender,
@@ -20,43 +10,42 @@ const NotificationCard = ({
   message,
   status,
   game,
-}: Props) => {
+  createdAt,
+}: Notifs) => {
   async function HandleNotifFriend(message: string) {
     await axios.patch("api/friends/" + sender, { status: message });
   }
 
   async function HandleNotifGame(message: string) {
-    await axios.patch("api/game/update/" + game.id, { status: message });
+    await axios.patch("api/game/update/" + game, { status: message });
   }
-  console.log(`game ID = ${game}`);
-  console.log(`sender = ${sender}`);
 
   return (
-    <div className="p-2 border border-white w-full rounded-lg bg-cyan-950">
+    <div className="py-2 pl-4 pr-2 w-full rounded-lg bg-cyan-950 shadow-md">
       <div className="mb-1">{message}</div>
       <div className="flex flex-row justify-between items-center">
-        <div className="text-sm opacity-50">24.11.23 15:00</div>
-        <div className="flex gap-2">
-          <button
-            className="w-4 h-4"
+        <div className="text-sm text-neutral-400">
+          {createdAt || "Sometime ago"}
+        </div>
+        <div className="flex">
+          <IconButton
             onClick={
               game
                 ? () => HandleNotifGame("valider")
                 : () => HandleNotifFriend("valider")
             }
-          >
-            <CheckIcon />
-          </button>
-          <button
-            className="w-4 h-4"
+            icon={<CheckIcon />}
+            classCustom="w-6 h-6 p-1 rounded-lg hover:bg-green-800"
+          />
+          <IconButton
             onClick={
               game
                 ? () => HandleNotifGame("refuser")
                 : () => HandleNotifFriend("refuser")
             }
-          >
-            <XMarkIcon />
-          </button>
+            icon={<XMarkIcon />}
+            classCustom="w-6 h-6 p-1 rounded-lg hover:bg-red-800"
+          />
         </div>
       </div>
     </div>

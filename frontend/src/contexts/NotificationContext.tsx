@@ -1,57 +1,119 @@
-// NotificationContext.tsx
-import {
-  ReactNode,
+import React, {
   createContext,
+  useState,
   useContext,
   useEffect,
-  useState,
+  ReactNode,
 } from "react";
-import { Notification } from "../types/applicationTypes";
-import { WebSocketContext } from "./WebSocketContext";
+import { Socket, io } from "socket.io-client";
+import { useUserContext } from "./UserContext";
+import { ChatMessage, Notifs } from "../models/Notifications";
+import { toast } from "react-toastify";
+import axios from "axios";
 
 interface NotificationContextProps {
-  notifications: Notification[];
-  addNotification: (notification: Notification) => void;
+  socket: Socket | null;
+  notifsList: Notifs[] | null;
+  unreadNotif: boolean;
+  notifModal: boolean;
+  unreadChat: boolean;
+  socketLoading: boolean;
+  setUnreadNotif: React.Dispatch<React.SetStateAction<boolean>>;
+  setNotifModal: React.Dispatch<React.SetStateAction<boolean>>;
+  setUnreadChat: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export const NotificationContext = createContext<NotificationContextProps>({
-  notifications: [],
-  addNotification: () => {}, // fonction vide par défaut
-});
+const NotificationContext = createContext<NotificationContextProps | undefined>(
+  undefined
+);
 
 interface NotificationProviderProps {
   children: ReactNode;
 }
 
+export const useNotificationContext = () => {
+  const context = useContext(NotificationContext);
+  if (!context) {
+    throw new Error(
+      "useNotificationContext must be used within a NotificationProvider"
+    );
+  }
+  return context;
+};
+
 export const NotificationProvider = ({
   children,
 }: NotificationProviderProps) => {
-  const { socket } = useContext(WebSocketContext);
-  const [notifications, setNotifications] = useState<Notification[]>([]);
-
-  const addNotification = (notification: Notification) => {
-    setNotifications((prevNotifications) => [
-      ...prevNotifications,
-      notification,
-    ]);
-  };
+  const [notifsList, setNotifsList] = useState<Notifs[] | null>(null);
+  const [unreadNotif, setUnreadNotif] = useState(false);
+  const [notifModal, setNotifModal] = useState(false);
+  const [unreadChat, setUnreadChat] = useState(false);
+  const [socket, setSocket] = useState<Socket | null>(null);
+  const { user } = useUserContext();
+  const [socketLoading, setSocketLoading] = useState(true);
 
   useEffect(() => {
-    if (socket) {
-      socket.on("notification", addNotification);
+    if (!user) return;
+    setSocketLoading(true);
+    const newSocket = io("https://localhost:8000");
+    setSocket(newSocket);
+    setSocketLoading(false);
+    return () => {
+      newSocket.close();
+    };
+  }, [user]);
 
-      // Cleanup listener on unmount
-      return () => {
-        socket.off("notification", addNotification);
-      };
-    }
-  }, [socket]);
+  useEffect(() => {
+    if (!socket) return;
+    socket.on("myNotifs", (message: Notifs) => {
+      if (message.receiver === user?.username) {
+        setUnreadNotif(true);
+        toast.info(`Nouvelle notification:\n ${message.message}`);
+      }
+    });
+
+    socket.on("recMessage", (message: ChatMessage) => {
+      if (message.receiver === user?.username) {
+        setUnreadChat(true);
+        toast(`Nouveau message de ${message.sender}:\n ${message.text}`);
+      }
+    });
+
+    return () => {
+      socket.off("myNotifs");
+      socket.off("recMessage");
+    };
+  }, [socket, user]);
+
+  useEffect(() => {
+    if (!user || !socket) return;
+    const fetchUnreadNotifs = async () => {
+      try {
+        const response = await axios.get("/api/notifications/unread");
+        setNotifsList(response.data);
+      } catch (error) {
+        toast.error("Failed to fetch unread notifications:\n" + error);
+      }
+    };
+
+    fetchUnreadNotifs();
+  }, [user, socket]);
 
   return (
-    <NotificationContext.Provider value={{ notifications, addNotification }}>
+    <NotificationContext.Provider
+      value={{
+        socketLoading,
+        socket,
+        notifsList,
+        unreadNotif,
+        notifModal,
+        unreadChat,
+        setUnreadNotif,
+        setNotifModal,
+        setUnreadChat,
+      }}
+    >
       {children}
     </NotificationContext.Provider>
   );
 };
-
-export default NotificationProvider;

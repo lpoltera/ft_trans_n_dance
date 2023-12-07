@@ -1,45 +1,35 @@
-import './Chat.css';
-
-interface User {
-	id?: number;
-	username: string;
-	connected: string;
-	avatar: string;
-}
-
-interface ChatMessage {
-	sender: string;
-	text: string;
-}
+import { ChatMessage } from "../../models/Notifications";
+import { User } from "../../models/User";
 
 interface Props {
-	ami: User;
-	message: ChatMessage;
+  user: User;
+  message: ChatMessage;
 }
 
-const LeftMessageContainer = ({ ami, message }: Props) => {
-	return (
-		<div>
-
-			{/* Message Left Container */}
-			<div className="message-left message-container">
-					<div className="span-left"></div>
-					<div className="span-content">
-							<img
-								className="message-container__avatar"
-								src={ami.avatar}
-								alt="user'avatar profile"
-								/>
-						<div>
-							<p>{message.text}</p>
-						</div>
-					</div>
-					<div className="span-right"></div>
-				</div>
-			<div className="span-right"></div>
-
-		</div>
-	);
+const LeftMessageContainer = ({ user, message }: Props) => {
+  const dateTime = message.createdAt ? message.createdAt.split("T") : null;
+  // const date = dateTime ? dateTime[0] : "";
+  const time = dateTime ? dateTime[1].substring(0, 5) : "";
+  const formattedDateTime = `${time}`;
+  return (
+    <>
+      <div className="p-2 flex flex-col items-start max-w-md mr-auto">
+        <div className="flex flex-row gap-3 bg-cyan-900 py-2 pr-3 pl-2 rounded-xl">
+          <img
+            className="w-6 h-6 rounded-full object-cover"
+            src={user.avatar}
+            alt="user avatar profile"
+          />
+          <div className="flex flex-col items-start">
+            <p>{message.text}</p>
+          </div>
+        </div>
+        <span className=" block text-xs text-white opacity-50 mt-1 ml-1">
+          {formattedDateTime}
+        </span>
+      </div>
+    </>
+  );
 };
 
 export default LeftMessageContainer;

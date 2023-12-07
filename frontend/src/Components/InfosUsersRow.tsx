@@ -3,27 +3,15 @@ import {
   UserPlusIcon,
 } from "@heroicons/react/24/outline";
 import { useEffect, useState } from "react";
-import { io } from "socket.io-client";
-import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import axios from "axios";
-
-interface User {
-  username: string;
-  avatar: string;
-  connected: string;
-  win: number;
-  loss: number;
-  draw: number;
-  totalXP: number;
-  totalGame: number;
-}
+import { io, Socket } from "socket.io-client";
+import { User } from "../models/User";
 
 interface Props {
   ami: User;
   handleStatsButtonClick: (ami: User) => void;
   currentUser: User;
-  displayToast: () => void;
+  displayToast: (socket: any) => void;
 }
 
 const InfosUsersRow = ({
@@ -32,14 +20,22 @@ const InfosUsersRow = ({
   currentUser,
   displayToast,
 }: Props) => {
-  const [socket, setSocket] = useState<any>(null);
+  const [socket, setSocket] = useState<Socket | null>(null);
 
   useEffect(() => {
-    const newSocket = io("http://localhost:8000");
+    const newSocket = io("https://localhost:8000");
+
+    // newSocket.on("error", (error) => {
+    //   displayToast(error.error);
+    // });
+
+    // newSocket.on("myNotifs", () => {
+    //   displayToast("");
+    // });
+
     setSocket(newSocket);
-    return () => {
-      //     // if (newSocket) newSocket.disconnect();
-    };
+
+    return () => {};
   }, []);
 
   //   const addFriend = () => {
@@ -59,6 +55,15 @@ const InfosUsersRow = ({
   //     //   });
   //   };
 
+  // socket?.on("connect_error", (error) => {
+  //   console.log("Erreur de connexion : ", error);
+  // });
+
+  // socket?.on("error", (error) => {
+  //   console.log("Erreurrrr : ", error);
+  //   displayToast(error);
+  // });
+
   const changeFriendshipStatus = async () => {
     console.log("send notif");
     if (socket) {
@@ -68,7 +73,8 @@ const InfosUsersRow = ({
         message: `Tu as reçu une demande d'ami de ${currentUser.username}`,
       });
     }
-    displayToast();
+    displayToast(socket);
+
     // addFriend();
   };
 
