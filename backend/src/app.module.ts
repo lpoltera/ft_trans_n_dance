@@ -13,6 +13,7 @@ import { Notification } from './notifications/entities/notifications.entity';
 import { AuthModule } from './auth/auth.module';
 import { ChatModule } from './chat/chat.module';
 import { Chat } from './chat/entities/chat.entity';
+import { TournamentsModule } from './tournaments/tournaments.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { Chat } from './chat/entities/chat.entity';
     NotificationsModule,
     AuthModule,
     ChatModule,
+    TournamentsModule,
     // SessionModule
   ],
   controllers: [AppController],

@@ -52,17 +52,17 @@ export class MatchsHistory {
   @Column()
   status: string;
 
-  // @Column()
-  // difficulty: string;
+  @Column()
+  difficulty: string;
 
-  // @Column()
-  // mode: string;
+  @Column()
+  mode: string;
 
-  // @Column()
-  // power_ups: string;
+  @Column()
+  power_ups: string;
 
-  // @Column()
-  // is_tournament: number;   TODO : relation ??
+  @Column()
+  tournament_name: string;
 
   @OneToOne(() => Notification)
   notification: Notification;
