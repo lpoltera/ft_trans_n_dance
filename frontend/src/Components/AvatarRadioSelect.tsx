@@ -28,11 +28,11 @@ const AvatarRadioSelect = ({ onChange }: Props) => {
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (!event.target.files) return;
     const file = event.target.files[0];
-    const maxFileSize = 1024 * 1024; // 1MB
+    const maxFileSize = 7000 * 7000; // env 50MB
     const validImageTypes = ["image/jpeg", "image/png", "image/gif"];
     const reader = new FileReader();
     if (file.size > maxFileSize) {
-      alert("The file is too large. Please select a file smaller than 1MB.");
+      alert("The file is too large. Please select a file smaller than 50MB.");
       return;
     }
 
