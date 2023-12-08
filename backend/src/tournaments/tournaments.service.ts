@@ -24,7 +24,7 @@ export class TournamentsService {
             time: 0,
             status: 'pending',
             difficulty: create.difficulty,
-            mode: create.mode,
+            mode: create.mode,                                
             power_ups: create.power_ups,
             tournament_name: create.name,
           });

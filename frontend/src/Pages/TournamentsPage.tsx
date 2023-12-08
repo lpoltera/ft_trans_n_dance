@@ -22,7 +22,7 @@ const TournamentsPage: React.FC = () => {
 						className="bg-emerald-700 hover:bg-emerald-950 rounded-md p-3 mb-5"
 						onClick={addNewItem}
 						>
-							Créer un nouveau tournois
+							Ajouter un nouveau tournois
 					</button>
 					{tournamentList.map((itemId) => (
 						<TournamentsListItem key={itemId} />
