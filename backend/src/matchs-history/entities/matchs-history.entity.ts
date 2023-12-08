@@ -72,3 +72,23 @@ export class MatchsHistory {
 
   // ..
 }
+
+//table tournamentGame
+// id | nameP1 | nameP2 |         created_at         |         updated_at         | scoreP1 | scoreP2 | time | status  |   TournamentName      | difficulty | mode | powerUps
+// ---+--------+--------+----------------------------+----------------------------+---------+---------+------+---------+-----------------------+------------+------+----------
+//  1 |  tito  |  lucie | 2023-10-20 11:13:29.9411   | 2023-10-20 11:13:29.9411   | 5	      | 4       | 0    | pending |  mytournamenetname    | 2          | 0    | 0
+//  2 |  tito  |  drem  | 2023-10-20 11:13:29.9411   | 2023-10-20 11:13:29.9411   | 0	      | 0       | 0    | pending |  mytournamenetname    | 2          | 0    | 0
+//  3 |  drem  |  lucie | 2023-10-20 11:13:29.9411   | 2023-10-20 11:13:29.9411   | 0	      | 0       | 0    | pending |  mytournamenetname    | 2          | 0    | 0
+//  1 |  tito  |  lucie | 2023-10-20 11:13:29.9411   | 2023-10-20 11:13:29.9411   | 0	      | 0       | 0    | pending |  mytournamenetname2   | 2          | 0    | 0
+//  2 |  tito  |  drem  | 2023-10-20 11:13:29.9411   | 2023-10-20 11:13:29.9411   | 0	      | 0       | 0    | pending |  mytournamenetname2   | 2          | 0    | 0
+//  3 |  drem  |  lucie | 2023-10-20 11:13:29.9411   | 2023-10-20 11:13:29.9411   | 0	      | 0       | 0    | pending |  mytournamenetname2   | 2          | 0    | 0
+
+//table tournament
+// id | tournamentName    | participants | win | loss | PointAfaveur | PointContre
+// ---+-------------------+--------------+-----+------+--------------+-------------
+// 1  |  mytournamenetname| lucie        | 0   | 1    | 4		         | 5
+// 2  |  mytournamenetname|  drem        | 0   | 0    | 0		         | 0
+// 3  |  mytournamenetname|  tito        | 1   | 0    | 5		         | 4
+// 1  | mytournamenetname2| lucie        | 0   | 0    | 0		         | 0
+// 2  | mytournamenetname2|  drem        | 0   | 0    | 0		         | 0
+// 3  | mytournamenetname2|  tito        | 0   | 0    | 0		         | 0

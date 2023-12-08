@@ -32,7 +32,9 @@ export class User {
   })
   friends: Friendship[];
 
-  @OneToMany(() => MatchsHistory, (matchs) => matchs.user_p1)
+  @OneToMany(() => MatchsHistory, (matchs) => matchs.user_p1, {
+    cascade: true,
+  })
   matchsHistory: MatchsHistory[];
 
   @Column()
