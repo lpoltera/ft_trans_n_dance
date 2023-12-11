@@ -15,6 +15,14 @@
 [ ] Frontend ! UserRow: meme row pour bloqué / amis / pending
 [ ] Back/Front ! Intégrer les tournois
 
+\*\* Tournois
+[ ] Stocker les datas de la liste des tournois dans la db
+[ ] Modal lecture seule qui s'affiche quand on clique sur l'oeil
+[ ] Uniquement créateur du tournois peut voir et cliquer sur modifier, va UPDATE les champs de la db
+[ ] Cliquer sur corbeille : message d'alerte, si oui DELETE toute la ligne correspondante dans la db
+[ ] Modal création : afficher la liste des utilisateurs existants avec checkbox de sélection
+[ ] Afficher le créateur du tournois
+
 \*\* FooterMain
 [ ] Frontend ! Changer le lien Github
 
@@ -27,8 +35,8 @@
 
 ---
 
-[ ] Backend !  
-[ ] Backend !  
-[ ] Backend !  
-[ ] Backend !  
+[ ] Backend !
+[ ] Backend !
+[ ] Backend !
+[ ] Backend !
 [ ] Backend !
