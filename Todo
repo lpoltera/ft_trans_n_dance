@@ -14,6 +14,7 @@
 [ ] Frontend ? HistoryMatchRow: N'afficher que l'adversaire ? + autres data
 [ ] Frontend ! UserRow: meme row pour bloqué / amis / pending
 [ ] Back/Front ! Intégrer les tournois
+[ ] Dans sa page profil, quand on clique sur la cloche des notifs, erreur "Uncaught TypeError: notifications?.map is not a function"
 
 \*\* Tournois
 [ ] Stocker les datas de la liste des tournois dans la db
