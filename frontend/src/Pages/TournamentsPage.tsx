@@ -3,6 +3,7 @@ import Navbar from "../Components/Navbar";
 import PageLayout from "../Components/PageLayout";
 import TournamentsListItem from "../Components/Tournament/TournamentsListItem";
 import axios from "axios";
+import { useUserContext } from '../contexts/UserContext';
 
 interface Tournament {
 	name: string;
@@ -13,11 +14,12 @@ interface Tournament {
 }
 
 const TournamentsPage: React.FC = () => {
+	const { user, userRelations } = useUserContext();
 	const [tournaments, setTournaments] = useState<Tournament[]>([]);
 	const [showEditModal, setShowEditModal] = useState(false);
-	const [form, setForm] = useState({
+	const [form, setForm] = useState<Tournament>({
 		name: "test name",
-		participants: ["Nakawashi", "Bryan", "Vragdas"],
+		participants: [],
 		difficulty: "Normal",
 		mode: "3",
 		power_ups: false,
@@ -26,44 +28,58 @@ const TournamentsPage: React.FC = () => {
 	const createTournament = async () => {
 		setShowEditModal(false);
 
-		// store new tournament in tournaments array
-		const newTournament: Tournament = { ...form };
-		setTournaments([...tournaments, newTournament]);
+		if (user) {
+			// store new tournament in tournaments array
+			const newTournament: Tournament = { ...form, participants: [...form.participants, user.username], };
+			setTournaments([...tournaments, newTournament]);
 
-		console.log("Afficher name : " + form.name)
-		console.log("Afficher participants : " + form.participants)
-		console.log("Afficher difficulty : " + form.difficulty)
-		console.log("Afficher mode : " + form.mode)
-		console.log("Afficher power_ups : " + form.power_ups)
+			console.log("Afficher name : " + newTournament.name)
+			console.log("Afficher participants : " + newTournament.participants)
+			console.log("Afficher difficulty : " + newTournament.difficulty)
+			console.log("Afficher mode : " + newTournament.mode)
+			console.log("Afficher power_ups : " + newTournament.power_ups)
 
-		try {
-			// Effectuez une requête vers votre backend pour enregistrer le tournoi
-			await axios.post("/api/tournaments/create", newTournament, {
-				headers: {
-					"Content-Type": "application/json",
-				},
-			});
+			try {
+				await axios.post("/api/tournaments/create", newTournament, {
+					headers: {
+						"Content-Type": "application/json",
+					},
+				});
 
-			console.log("Tournoi enregistré avec succès dans la base de données.");
+				console.log("Tournoi enregistré avec succès dans la base de données.");
 			} catch (error) {
-			console.error("Erreur lors de l'enregistrement du tournoi :", error);
+				console.error("Erreur lors de l'enregistrement du tournoi :", error);
 			}
-		};
+		}
+	};
 
 	const handleFormChange = (event: ChangeEvent<HTMLInputElement>) => {
-		console.log("handleFormChange called", event.target.value)
+		// console.log("handleFormChange called", event.target.value)
 		if (event.target.name === "name") {
 			setForm({ ...form, name: event.target.value });
-			// } else if (event.target.name === "participants") {
-			// 	setForm({ ...form, participants: event.target.value });
 		} else if (event.target.name === "difficulty") {
 			setForm({ ...form, difficulty: event.target.value });
 		} else if (event.target.name === "mode") {
 			setForm({ ...form, mode: event.target.value });
 		} else if (event.target.name === "power_ups") {
 			setForm({ ...form, power_ups: event.target.checked });
+		} else if (event.target.name === "participants") {
+			if (event.target.checked) {
+				let checkboxValue = event.target.value;
+				console.log(`Participant ${checkboxValue} added`);
+				setForm({ ...form, participants: [...form.participants, checkboxValue] });
+			} else {
+				let checkboxValue = event.target.value;
+				if (checkboxValue !== user?.username) {
+					console.log(`Particiapnt ${checkboxValue} removed`);
+				}
+				setForm({ ...form, participants: form.participants.filter((participant) => participant !== checkboxValue) });
+			}
 		}
 	};
+
+
+	const updatedUserRelations = [...userRelations, { friend: user }];
 
 	return (
 		<>
@@ -75,8 +91,8 @@ const TournamentsPage: React.FC = () => {
 						<button
 							className="bg-emerald-700 hover:bg-emerald-950 rounded-md p-3 mb-5"
 							onClick={() => setShowEditModal(true)}
-							>
-								Ajouter un nouveau tournois
+						>
+							Ajouter un nouveau tournois
 						</button>
 					</div>
 					{tournaments.map((tournament, index) => (
@@ -114,17 +130,25 @@ const TournamentsPage: React.FC = () => {
 											<p className="font-semibold mb-3">
 												Liste des Participants
 											</p>
-											<ul>
-												<div className="flex items-center mb-2">
-													<input
-														name="withPowerUps"
-														type="checkbox"
-														className="cursor-pointer bg-slate-200 border-none checked:bg-emerald-500 checked:outline-none focus:outline-none"
-													/>
-													<li>
+											<ul className="flex-col items-center mb-2">
+												{updatedUserRelations.map((relation, index) => (
+													relation.friend && user && (
+														<li key={index}>
+															<input
+																name="participants"
+																type="checkbox"
+																className="cursor-pointer bg-slate-200 border-none checked:bg-emerald-500 checked:outline-none focus:outline-none mr-2"
+																onChange={handleFormChange}
+																value={relation.friend.username}
+																checked={form.participants.includes(relation.friend.username) || user.username === relation.friend.username}
+															/>
+															{relation.friend?.username}
+														</li>
+													))
+												)}
+												{/* <li>
 														Bryan
-													</li>
-												</div>
+													</li> */}
 											</ul>
 										</div>
 
@@ -166,9 +190,9 @@ const TournamentsPage: React.FC = () => {
 												required
 												className="w-full bg-transparent border-white rounded-sm"
 											>
-												<option className="bg-neutral-800" value={1}>Facile</option>
-												<option className="bg-neutral-800" value={2}>Moyen</option>
-												<option className="bg-neutral-800" value={3}>Difficile</option>
+												<option className="bg-neutral-800" value="facile">Facile</option>
+												<option className="bg-neutral-800" value="moyen">Moyen</option>
+												<option className="bg-neutral-800" value="difficile">Difficile</option>
 											</select>
 										</div>
 									</div>
