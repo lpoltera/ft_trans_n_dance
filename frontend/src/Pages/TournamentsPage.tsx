@@ -11,10 +11,15 @@ import TabPanel from '../Components/Tab/TabPanel';
 import HistoryMatchRow from '../Components/HistoryMatchRow';
 import { TournamentGameProps } from '../models/Game';
 
+// interface Tournament {
+// 	name: string;
+// 	creator: string;
+// }
+
 
 const TournamentsPage: React.FC = () => {
 	const { user, userRelations } = useUserContext();
-	const [tournaments, setTournaments] = useState<string[]>([]);
+	const [tournaments, setTournaments] = useState<string[][]>([]);
 	const [showEditModal, setShowEditModal] = useState(false);
 	const [selectedTournament, setSelectedTournament] = useState<string | null>(null);
 	const [tournamentGames, setTournamentGames] = useState<TournamentGameProps[] | any>();
@@ -48,7 +53,9 @@ const TournamentsPage: React.FC = () => {
 			try {
 				const response = await axios.get("/api/tournaments/all");
 				setTournaments(response.data);
-				console.log("Tournaments : ", response.data);
+				console.log("response.data : ", response.data);
+				console.log("Tournaments name : ", tournaments);
+
 			} catch (error) {
 				console.error("Erreur lors de la récupération des tournois :", error);
 			}
@@ -61,9 +68,9 @@ const TournamentsPage: React.FC = () => {
 		setShowEditModal(false);
 
 		if (user) {
-			// store new tournament in tournaments array
 			const newTournament: TournamentGameProps = { ...form, participants: [...form.participants, user.username], tournament_creator: user.username };
-			setTournaments([...tournaments, newTournament.name]);
+			// setTournaments([...tournaments, [newTournament.name, user.username]);
+			setTournaments([...tournaments, [newTournament.name, user.username]]);
 			console.log("Afficher name : " + newTournament.name)
 			console.log("Afficher participants : " + newTournament.participants)
 			console.log("Afficher difficulty : " + newTournament.difficulty)
@@ -132,11 +139,12 @@ const TournamentsPage: React.FC = () => {
 					<div className="flex">
 						<div className="w-1/3 bg-cyan-950 h-full shrink min-w-min relative z-10 rounded-md">
 							<TabList classCustom="py-2 w-full overflow-auto flex flex-col h-full">
-								{tournaments.map((tournament, index) => (
+								{tournaments.map((tournamentName, index) => (
 									<TournamentsListItem
 										key={index}
-										name={tournament}
-										creator={user.username}
+										tournoi={tournamentName}
+										// creator={tournamentCreator}
+										// creator={user.username}
 										handleStatsButtonClick={handleStatsButtonClick}
 									/>
 								))}
@@ -242,8 +250,8 @@ const TournamentsPage: React.FC = () => {
 												required
 												className="w-full bg-transparent border-white rounded-sm"
 											>
-												<option className="bg-neutral-800" value="points" >Points</option>
-												<option className="bg-neutral-800" value="1972">1972</option>
+												<option className="bg-neutral-800" value="1972" >1972</option>
+												<option className="bg-neutral-800" value="points">Points</option>
 												<option className="bg-neutral-800" value="time">Time</option>
 											</select>
 										</div>

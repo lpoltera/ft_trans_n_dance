@@ -99,15 +99,20 @@ export class TournamentsService {
 
   async findAll() {
     const tournaments = await this.MatchDB.createQueryBuilder('matchs_history')
-      .select('matchs_history.tournament_name')
+      .select([
+        'matchs_history.tournament_name',
+        'matchs_history.tournament_creator',
+      ])
       .groupBy('matchs_history.tournament_name')
+      .addGroupBy('matchs_history.tournament_creator')
       .getRawMany();
 
-    console.log(tournaments); // Add this line
+    console.log(tournaments);
 
-    const tournaments_names = tournaments.map(
-      (tournament) => tournament.matchs_history_tournament_name,
-    );
+    const tournaments_names = tournaments.map((tournament) => [
+      tournament.matchs_history_tournament_name,
+      tournament.matchs_history_tournament_creator,
+    ]);
     return tournaments_names; //[[TitoTournoi, tito], [LucieTournoi, lucie]]
   }
 }
