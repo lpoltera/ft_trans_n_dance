@@ -17,12 +17,12 @@
 [ ] Dans sa page profil, quand on clique sur la cloche des notifs, erreur "Uncaught TypeError: notifications?.map is not a function"
 
 \*\* Tournois
-[ ] Stocker les datas de la liste des tournois dans la db
-[ ] Modal lecture seule qui s'affiche quand on clique sur l'oeil
+[x] Stocker les datas de la liste des tournois dans la db
+[x] Modal lecture seule qui s'affiche quand on clique sur l'oeil
+[ ] Afficher le créateur du tournois
 [ ] Uniquement créateur du tournois peut voir et cliquer sur modifier, va UPDATE les champs de la db
 [ ] Cliquer sur corbeille : message d'alerte, si oui DELETE toute la ligne correspondante dans la db
-[ ] Modal création : afficher la liste des utilisateurs existants avec checkbox de sélection
-[ ] Afficher le créateur du tournois
+[x] Modal création : afficher la liste des utilisateurs existants avec checkbox de sélection
 
 \*\* FooterMain
 [ ] Frontend ! Changer le lien Github
