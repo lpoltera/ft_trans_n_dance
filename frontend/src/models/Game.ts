@@ -29,6 +29,21 @@ export interface GameHistoryProps {
   updated_at: string;
 }
 
+export interface TournamentGameProps {
+  id: number;
+  name: string;
+  name_p1: string;
+  name_p2: string;
+  score_p1: number;
+  score_p2: number;
+  updated_at: string;
+  participants: string[];
+  difficulty: string;
+  mode: string;
+  power_ups: boolean;
+  tournament_creator: string | undefined;
+}
+
 export interface GameStatsProps {
   title: string;
   value: number | undefined;

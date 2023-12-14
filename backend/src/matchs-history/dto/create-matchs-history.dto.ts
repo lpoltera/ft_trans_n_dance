@@ -10,5 +10,5 @@ export class CreateMatchsHistoryDto {
   mode: string;
 
   @IsNotEmpty({ message: 'Please choose a powerUps\n' })
-  powerUps: string;
+  power_ups: string;
 }

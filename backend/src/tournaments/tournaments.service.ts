@@ -24,9 +24,10 @@ export class TournamentsService {
             time: 0,
             status: 'pending',
             difficulty: create.difficulty,
-            mode: create.mode,                                
+            mode: create.mode,
             power_ups: create.power_ups,
             tournament_name: create.name,
+            tournament_creator: create.tournament_creator,
           });
           await this.MatchDB.save(match);
         }
@@ -72,18 +73,19 @@ export class TournamentsService {
   }
 
   async getRankings(name: string) {
+    console.log(name);
     const rankings = await this.MatchDB.manager.query(
       `
       SELECT name, SUM(wins) as wins, SUM(losses) as losses, SUM(goals_scored) as goals_scored, SUM(goals_conceded) as goals_conceded, SUM(point_difference) as point_difference
       FROM (
         SELECT name_p1 as name, COUNT(*) FILTER (WHERE score_p1 > score_p2) as wins, COUNT(*) FILTER (WHERE score_p1 < score_p2) as losses, SUM(score_p1) as goals_scored, SUM(score_p2) as goals_conceded, SUM(score_p1 - score_p2) as point_difference
         FROM matchs_history
-        WHERE status = 'terminer' AND tournament_name = $1
+        WHERE tournament_name = $1
         GROUP BY name_p1
         UNION ALL
         SELECT name_p2 as name, COUNT(*) FILTER (WHERE score_p2 > score_p1) as wins, COUNT(*) FILTER (WHERE score_p2 < score_p1) as losses, SUM(score_p2) as goals_scored, SUM(score_p1) as goals_conceded, SUM(score_p2 - score_p1) as point_difference
         FROM matchs_history
-        WHERE status = 'terminer' AND tournament_name = $1
+        WHERE tournament_name = $1
         GROUP BY name_p2
       ) AS subquery
       GROUP BY name
@@ -93,6 +95,20 @@ export class TournamentsService {
     );
 
     return rankings;
+  }
+
+  async findAll() {
+    const tournaments = await this.MatchDB.createQueryBuilder('matchs_history')
+      .select('matchs_history.tournament_name')
+      .groupBy('matchs_history.tournament_name')
+      .getRawMany();
+
+    console.log(tournaments); // Add this line
+
+    const tournaments_names = tournaments.map(
+      (tournament) => tournament.matchs_history_tournament_name,
+    );
+    return tournaments_names; //[[TitoTournoi, tito], [LucieTournoi, lucie]]
   }
 }
 

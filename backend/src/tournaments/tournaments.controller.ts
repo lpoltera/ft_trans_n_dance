@@ -20,7 +20,12 @@ export class TournamentsController {
     return this.tournamentsService.create(createTournamentDto);
   }
 
-  @Get('all/:name')
+  @Get('all')
+  findAllTournaments() {
+    return this.tournamentsService.findAll();
+  }
+
+  @Get('games/:name')
   findAll(@Param('name') name: string) {
     return this.tournamentsService.findTournamentGames(name);
   }

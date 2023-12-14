@@ -15,4 +15,7 @@ export class CreateTournamentDto {
 
   @IsNotEmpty({ message: 'Please choose a powerUps\n' })
   power_ups: string;
+
+  @IsNotEmpty()
+  tournament_creator: string;
 }

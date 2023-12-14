@@ -1,43 +1,75 @@
-import React, { useState, ChangeEvent } from 'react';
+import React, { useState, ChangeEvent, useEffect } from 'react';
 import Navbar from "../Components/Navbar";
 import PageLayout from "../Components/PageLayout";
 import TournamentsListItem from "../Components/Tournament/TournamentsListItem";
 import axios from "axios";
 import { useUserContext } from '../contexts/UserContext';
+import FooterMain from '../Components/FooterMain';
+import TabContainer from '../Components/Tab/TabContainer';
+import TabList from '../Components/Tab/TabList';
+import TabPanel from '../Components/Tab/TabPanel';
+import HistoryMatchRow from '../Components/HistoryMatchRow';
+import { TournamentGameProps } from '../models/Game';
 
-interface Tournament {
-	name: string;
-	participants: string[];
-	difficulty: string;
-	mode: string;
-	power_ups: boolean;
-}
 
 const TournamentsPage: React.FC = () => {
 	const { user, userRelations } = useUserContext();
-	const [tournaments, setTournaments] = useState<Tournament[]>([]);
+	const [tournaments, setTournaments] = useState<string[]>([]);
 	const [showEditModal, setShowEditModal] = useState(false);
-	const [form, setForm] = useState<Tournament>({
-		name: "test name",
+	const [selectedTournament, setSelectedTournament] = useState<string | null>(null);
+	const [tournamentGames, setTournamentGames] = useState<TournamentGameProps[] | any>();
+	const [form, setForm] = useState<TournamentGameProps>({
+		id: 0,
+		name: "",
+		name_p1: "",
+		name_p2: "",
+		score_p1: 0,
+		score_p2: 0,
+		updated_at: "",
 		participants: [],
-		difficulty: "Normal",
-		mode: "3",
+		difficulty: "facile",
+		mode: "1972",
 		power_ups: false,
+		tournament_creator: "",
 	});
+
+	const handleStatsButtonClick = async (tournamentName: string) => {
+		console.log("Tournament selected : ", tournamentName);
+		const games = await axios.get<TournamentGameProps[]>(`/api/tournaments/games/${tournamentName}`);
+		setTournamentGames(games.data);
+		setSelectedTournament((prevTournament) => (prevTournament === tournamentName ? null : tournamentName));
+		// setSelectedTournament(true);
+		console.log("Tournament games : ", games.data);
+
+	};
+
+	useEffect(() => {
+		const fetchTournaments = async () => {
+			try {
+				const response = await axios.get("/api/tournaments/all");
+				setTournaments(response.data);
+				console.log("Tournaments : ", response.data);
+			} catch (error) {
+				console.error("Erreur lors de la récupération des tournois :", error);
+			}
+		};
+
+		fetchTournaments();
+	}, []);
 
 	const createTournament = async () => {
 		setShowEditModal(false);
 
 		if (user) {
 			// store new tournament in tournaments array
-			const newTournament: Tournament = { ...form, participants: [...form.participants, user.username], };
-			setTournaments([...tournaments, newTournament]);
-
+			const newTournament: TournamentGameProps = { ...form, participants: [...form.participants, user.username], tournament_creator: user.username };
+			setTournaments([...tournaments, newTournament.name]);
 			console.log("Afficher name : " + newTournament.name)
 			console.log("Afficher participants : " + newTournament.participants)
 			console.log("Afficher difficulty : " + newTournament.difficulty)
 			console.log("Afficher mode : " + newTournament.mode)
 			console.log("Afficher power_ups : " + newTournament.power_ups)
+			console.log("Afficher creator : " + newTournament.tournament_creator)
 
 			try {
 				await axios.post("/api/tournaments/create", newTournament, {
@@ -95,10 +127,47 @@ const TournamentsPage: React.FC = () => {
 							Ajouter un nouveau tournois
 						</button>
 					</div>
-					{tournaments.map((tournament, index) => (
-						<TournamentsListItem key={index} tournament={tournament} />
-					))}
 				</main>
+				{tournaments && tournaments.length !== 0 && user && (
+					<div className="flex">
+						<div className="w-1/3 bg-cyan-950 h-full shrink min-w-min relative z-10 rounded-md">
+							<TabList classCustom="py-2 w-full overflow-auto flex flex-col h-full">
+								{tournaments.map((tournament, index) => (
+									<TournamentsListItem
+										key={index}
+										name={tournament}
+										creator={user.username}
+										handleStatsButtonClick={handleStatsButtonClick}
+									/>
+								))}
+							</TabList>
+						</div>
+						<div className="relative h-full w-full ml-4">
+							<TabPanel index={0}>
+								{selectedTournament && (
+									<>
+										<h2 className="text-xl mb-4">Liste des matches</h2>
+										<div className="overflow-hidden border border-cyan-700 rounded-xl">
+											<div className="grid grid-flow-col grid-cols-4 text-md sticky py-2 border border-t-0 border-r-0 border-l-0 border-cyan-700 bg-cyan-700">
+												<div className="pl-4">Joueur 1</div>
+												<div className="pl-4">Joueur 2</div>
+												<div className="pl-4">Score</div>
+												<div className="pl-4">Date</div>
+											</div>
+											{tournamentGames &&
+												tournamentGames.map((partie: TournamentGameProps, index: number) => (
+													<HistoryMatchRow key={index} partie={partie} />
+												))}
+										</div>
+									</>
+								)}
+							</TabPanel>
+						</div>
+					</div>
+				)}
+
+
+
 
 				{/* [Main Modal] Edit */}
 				{showEditModal && (
@@ -146,9 +215,6 @@ const TournamentsPage: React.FC = () => {
 														</li>
 													))
 												)}
-												{/* <li>
-														Bryan
-													</li> */}
 											</ul>
 										</div>
 
@@ -218,10 +284,11 @@ const TournamentsPage: React.FC = () => {
 						</div>
 					</div>
 				)}
-
-			</PageLayout>
+			</PageLayout >
+			<FooterMain />
 		</>
 	);
 }
 
 export default TournamentsPage;
+

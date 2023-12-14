@@ -61,8 +61,11 @@ export class MatchsHistory {
   @Column()
   power_ups: string;
 
-  @Column()
+  @Column({ nullable: true })
   tournament_name: string;
+
+  @Column({ nullable: true })
+  tournament_creator: string;
 
   @OneToOne(() => Notification)
   notification: Notification;
