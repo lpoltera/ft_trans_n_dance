@@ -299,4 +299,3 @@ const TournamentsPage: React.FC = () => {
 }
 
 export default TournamentsPage;
-
