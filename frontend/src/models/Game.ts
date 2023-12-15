@@ -27,6 +27,7 @@ export interface GameHistoryProps {
   score_p1: number;
   score_p2: number;
   updated_at: string;
+  status: string;
 }
 
 export interface TournamentGameProps {
@@ -42,6 +43,7 @@ export interface TournamentGameProps {
   mode: string;
   power_ups: boolean;
   tournament_creator: string | undefined;
+  status: string;
 }
 
 export interface GameStatsProps {
@@ -77,4 +79,15 @@ export interface Parties {
   score_p1: number;
   score_p2: number;
   updated_at: string;
+  status: string;
+}
+
+export interface RankingProps {
+  id: number;
+  name: string;
+  wins: number;
+  losses: number;
+  goals_scored: number;
+  goals_conceded: number;
+  point_difference: number;
 }

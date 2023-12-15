@@ -271,11 +271,12 @@ const ProfilPage = () => {
 												{!(userGames === undefined || userGames?.length === 0) ? (
 													<>
 														<div className="overflow-hidden border border-cyan-700 rounded-xl">
-															<div className="grid grid-flow-col grid-cols-4 text-md sticky py-2 border border-t-0 border-r-0 border-l-0 border-cyan-700 bg-cyan-700">
+															<div className="grid grid-flow-col grid-cols-5 text-md text-center sticky py-2 border border-t-0 border-r-0 border-l-0 border-cyan-700 bg-cyan-700">
 																<div className="pl-4">Joueur 1</div>
 																<div className="pl-4">Joueur 2</div>
 																<div className="pl-4">Score</div>
 																<div className="pl-4">Date</div>
+																<div className="pl-4">Status</div>
 															</div>
 															{userGames &&
 																userGames.map((partie, index) => (

@@ -35,14 +35,14 @@ const TournamentsListItem: React.FC<TournamentsListItemProps> = ({ tournoi, hand
 						</div>
 					</div>
 				</a>
-				<div className="grid grid-flow-col grid-cols-3 gap-3">
+				<div className="grid grid-flow-col grid-cols-2 gap-3">
 					{/* [Modal toggle] Edit */}
-					<button
+					{/* <button
 						type="button"
 						className="w-6 h-6 opacity-50 hover:opacity-100"
 					>
 						<PencilSquareIcon />
-					</button>
+					</button> */}
 
 					{/* [Modal toggle] Watch brackets */}
 					<button type="button" className="w-6 h-6 opacity-50 hover:opacity-100"

@@ -9,7 +9,8 @@ import TabContainer from '../Components/Tab/TabContainer';
 import TabList from '../Components/Tab/TabList';
 import TabPanel from '../Components/Tab/TabPanel';
 import HistoryMatchRow from '../Components/HistoryMatchRow';
-import { TournamentGameProps } from '../models/Game';
+import { TournamentGameProps, RankingProps } from '../models/Game';
+import RankingPlayersRow from '../Components/RankingPlayerRow';
 
 // interface Tournament {
 // 	name: string;
@@ -36,12 +37,16 @@ const TournamentsPage: React.FC = () => {
 		mode: "1972",
 		power_ups: false,
 		tournament_creator: "",
+		status: "pending",
 	});
+	const [ranking, setRanking] = useState<RankingProps[] | any>();
 
 	const handleStatsButtonClick = async (tournamentName: string) => {
 		console.log("Tournament selected : ", tournamentName);
 		const games = await axios.get<TournamentGameProps[]>(`/api/tournaments/games/${tournamentName}`);
+		const tmp = await axios.get<RankingProps[]>(`/api/tournaments/ranking/${tournamentName}`);
 		setTournamentGames(games.data);
+		setRanking(tmp.data);
 		setSelectedTournament((prevTournament) => (prevTournament === tournamentName ? null : tournamentName));
 		// setSelectedTournament(true);
 		console.log("Tournament games : ", games.data);
@@ -137,7 +142,7 @@ const TournamentsPage: React.FC = () => {
 				</main>
 				{tournaments && tournaments.length !== 0 && user && (
 					<div className="flex">
-						<div className="w-1/3 bg-cyan-950 h-full shrink min-w-min relative z-10 rounded-md">
+						<div className="w-1/2 bg-cyan-950 h-full shrink min-w-min relative z-10 rounded-md">
 							<TabList classCustom="py-2 w-full overflow-auto flex flex-col h-full">
 								{tournaments.map((tournamentName, index) => (
 									<TournamentsListItem
@@ -156,16 +161,43 @@ const TournamentsPage: React.FC = () => {
 									<>
 										<h2 className="text-xl mb-4">Liste des matches</h2>
 										<div className="overflow-hidden border border-cyan-700 rounded-xl">
-											<div className="grid grid-flow-col grid-cols-4 text-md sticky py-2 border border-t-0 border-r-0 border-l-0 border-cyan-700 bg-cyan-700">
+											<div className="grid grid-flow-col grid-cols-5 text-md text-center sticky py-2 border border-t-0 border-r-0 border-l-0 border-cyan-700 bg-cyan-700">
 												<div className="pl-4">Joueur 1</div>
 												<div className="pl-4">Joueur 2</div>
 												<div className="pl-4">Score</div>
 												<div className="pl-4">Date</div>
+												<div className="pl-4">Status</div>
 											</div>
 											{tournamentGames &&
 												tournamentGames.map((partie: TournamentGameProps, index: number) => (
 													<HistoryMatchRow key={index} partie={partie} />
 												))}
+										</div>
+									</>
+								)}
+							</TabPanel>
+						</div>
+						<div className="relative h-full w-full ml-4">
+							<TabPanel index={0}>
+								{selectedTournament && (
+									<>
+										<h2 className="text-xl mb-4">Classement du tournoi</h2>
+										<div className="overflow-hidden border border-cyan-700 rounded-xl">
+											<div className="grid grid-flow-col grid-cols-6 text-md text-center sticky py-2 border border-t-0 border-r-0 border-l-0 border-cyan-700 bg-cyan-700">
+												<div className="pl-4">Pos.</div>
+												<div className="pl-4">Joueur</div>
+												<div className="pl-4">V</div>
+												<div className="pl-4">D</div>
+												<div className="pl-4">BM</div>
+												<div className="pl-4">BE</div>
+											</div>
+											{ranking &&
+												ranking.map((joueur: RankingProps, index: number) => (
+													<RankingPlayersRow key={index} joueur={joueur} id={index + 1} />
+												))}
+										</div>
+										<div className='text-sm mt-1'>
+											<p>V : Victoires - D : Défaites - BM : Buts marqués - BE : Buts encaissés</p>
 										</div>
 									</>
 								)}

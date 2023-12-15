@@ -981,6 +981,10 @@ select {
   width: 33.333333%;
 }
 
+.w-1\/2 {
+  width: 50%;
+}
+
 .w-10 {
   width: 2.5rem;
 }
@@ -1095,6 +1099,10 @@ select {
 
 .grid-cols-4 {
   grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.grid-cols-5 {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
 }
 
 .grid-cols-6 {
