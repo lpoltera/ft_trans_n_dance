@@ -4,6 +4,7 @@ import { UpdateTournamentDto } from './dto/update-tournament.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MatchsHistory } from '../matchs-history/entities/matchs-history.entity';
 import { Repository } from 'typeorm';
+import { matches } from 'class-validator';
 
 @Injectable()
 export class TournamentsService {
@@ -14,9 +15,10 @@ export class TournamentsService {
 
   async create(create: CreateTournamentDto) {
     try {
+      let sortedGames = [];
       for (let i = 0; i < create.participants.length - 1; i++) {
         for (let j = i + 1; j < create.participants.length; j++) {
-          const match = this.MatchDB.create({
+          const game = this.MatchDB.create({
             name_p1: create.participants[i],
             name_p2: create.participants[j],
             score_p1: 0,
@@ -29,9 +31,15 @@ export class TournamentsService {
             tournament_name: create.name,
             tournament_creator: create.tournament_creator,
           });
-          await this.MatchDB.save(match);
+          sortedGames.push(game);
         }
       }
+      const shuffledGames = sortedGames
+        .map((value) => ({ value, sort: Math.random() }))
+        .sort((a, b) => a.sort - b.sort)
+        .map(({ value }) => value);
+      for (let game of shuffledGames) await this.MatchDB.save(game);
+
       return 'Tournament created!';
     } catch (error) {
       throw new ConflictException('erreur creation tournoi', error.message);
@@ -40,22 +48,21 @@ export class TournamentsService {
 
   async findTournamentGames(name: string) {
     try {
-      const games = await this.MatchDB.find({
+      const gamesList = await this.MatchDB.find({
         where: [
           {
             tournament_name: name,
           },
         ],
       });
-
-      return games;
+      return gamesList;
     } catch (error) {
       throw new ConflictException(error.message);
     }
   }
 
   findOne(id: number) {
-    return `This action returnssss a #${id} tournament`;
+    return `This action returns a #${id} tournament`;
   }
 
   async update_score(gameId: number, score_p1: number, score_p2: number) {
@@ -102,9 +109,12 @@ export class TournamentsService {
       .select([
         'matchs_history.tournament_name',
         'matchs_history.tournament_creator',
+        // 'matchs_history.status',
       ])
+      // .where('matchs_history.status = :status', { status: 'pending' })
       .groupBy('matchs_history.tournament_name')
       .addGroupBy('matchs_history.tournament_creator')
+      // .addGroupBy('matchs_history.status')
       .getRawMany();
 
     console.log(tournaments);
@@ -112,6 +122,7 @@ export class TournamentsService {
     const tournaments_names = tournaments.map((tournament) => [
       tournament.matchs_history_tournament_name,
       tournament.matchs_history_tournament_creator,
+      // tournament.matchs_history_status,
     ]);
     return tournaments_names; //[[TitoTournoi, tito], [LucieTournoi, lucie]]
   }
