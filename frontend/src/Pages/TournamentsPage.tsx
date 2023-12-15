@@ -126,7 +126,7 @@ const TournamentsPage: React.FC = () => {
 			<PageLayout>
 				<h2 className="text-xl mb-4">Liste des tournois</h2>
 				<main>
-					<div className="w-1/3 h-250">
+					<div>
 						<button
 							className="bg-emerald-700 hover:bg-emerald-950 rounded-md p-3 mb-5"
 							onClick={() => setShowEditModal(true)}
@@ -134,45 +134,48 @@ const TournamentsPage: React.FC = () => {
 							Ajouter un nouveau tournois
 						</button>
 					</div>
-				</main>
-				{tournaments && tournaments.length !== 0 && user && (
-					<div className="flex">
-						<div className="w-1/3 bg-cyan-950 h-full shrink min-w-min relative z-10 rounded-md">
-							<TabList classCustom="py-2 w-full overflow-auto flex flex-col h-full">
-								{tournaments.map((tournamentName, index) => (
-									<TournamentsListItem
-										key={index}
-										tournoi={tournamentName}
-										// creator={tournamentCreator}
-										// creator={user.username}
-										handleStatsButtonClick={handleStatsButtonClick}
-									/>
-								))}
-							</TabList>
-						</div>
-						<div className="relative h-full w-full ml-4">
-							<TabPanel index={0}>
-								{selectedTournament && (
-									<>
-										<h2 className="text-xl mb-4">Liste des matches</h2>
-										<div className="overflow-hidden border border-cyan-700 rounded-xl">
-											<div className="grid grid-flow-col grid-cols-4 text-md sticky py-2 border border-t-0 border-r-0 border-l-0 border-cyan-700 bg-cyan-700">
-												<div className="pl-4">Joueur 1</div>
-												<div className="pl-4">Joueur 2</div>
-												<div className="pl-4">Score</div>
-												<div className="pl-4">Date</div>
+					{tournaments && tournaments.length !== 0 && user && (
+						<div className="flex justify-between items-start">
+							<div className="bg-cyan-950 shrink-0 min-w-min rounded-md">
+								<TabList classCustom="py-2 w-full overflow-auto flex flex-col h-full">
+									{tournaments.map((tournamentName, index) => (
+										<TournamentsListItem
+											key={index}
+											tournoi={tournamentName}
+											// creator={tournamentCreator}
+											// creator={user.username}
+											handleStatsButtonClick={handleStatsButtonClick}
+										/>
+									))}
+								</TabList>
+							</div>
+							<div className="">
+								<TabPanel index={0}>
+									{selectedTournament && (
+										<>
+											<h3 className="text-xl mb-4">Liste des matches</h3>
+											<div className="w-fit text-center overflow-hidden border border-cyan-700 rounded-md">
+												<div className="grid grid-flow-col grid-cols-4 text-sm sticky py-2 border border-t-0 border-r-0 border-l-0 border-cyan-700 bg-cyan-700">
+													<div className="pl-4 pr-4">Joueur 1</div>
+													<div className="pl-4 pr-4">Joueur 2</div>
+													<div className="pl-4 pr-4">Score</div>
+													<div className="pl-4 pr-4">Date</div>
+												</div>
+												{tournamentGames &&
+													tournamentGames.map((partie: TournamentGameProps, index: number) => (
+														<HistoryMatchRow key={index} partie={partie} />
+													))}
 											</div>
-											{tournamentGames &&
-												tournamentGames.map((partie: TournamentGameProps, index: number) => (
-													<HistoryMatchRow key={index} partie={partie} />
-												))}
-										</div>
-									</>
-								)}
-							</TabPanel>
+										</>
+									)}
+								</TabPanel>
+							</div>
+							<div className='bg-cyan-950 shrink-0 w-1/4 min-w-min rounded-md'>
+								<p>Scores</p>
+							</div>
 						</div>
-					</div>
-				)}
+					)}
+				</main>
 
 
 
