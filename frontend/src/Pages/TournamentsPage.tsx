@@ -5,17 +5,11 @@ import TournamentsListItem from "../Components/Tournament/TournamentsListItem";
 import axios from "axios";
 import { useUserContext } from '../contexts/UserContext';
 import FooterMain from '../Components/FooterMain';
-import TabContainer from '../Components/Tab/TabContainer';
 import TabList from '../Components/Tab/TabList';
 import TabPanel from '../Components/Tab/TabPanel';
 import HistoryMatchRow from '../Components/HistoryMatchRow';
 import { TournamentGameProps, RankingProps } from '../models/Game';
 import RankingPlayersRow from '../Components/RankingPlayerRow';
-
-// interface Tournament {
-// 	name: string;
-// 	creator: string;
-// }
 
 
 const TournamentsPage: React.FC = () => {
@@ -70,11 +64,25 @@ const TournamentsPage: React.FC = () => {
 	}, []);
 
 	const createTournament = async () => {
+		for (let i = 0; i < tournaments.length; i++) {
+			if (form.name === tournaments[i][0]) {
+				window.alert(`Ce nom de tournoi est déjà utilisé`);
+				console.log("Tournoi déjà existant");
+				setForm({ ...form, name: "" });
+				return;
+			}
+		}
+		if (form.name.length < 3 || form.name.length > 20) {
+			window.alert(`Le nom du tournoi doit contenir entre 3 et 20 caractères`);
+			return;
+		}
+		if (form.participants.length < 2 || form.participants.length > 8) {
+			window.alert(`Le nombre de participants doit être compris entre 3 et 8`);
+			return;
+		}
 		setShowEditModal(false);
-
 		if (user) {
 			const newTournament: TournamentGameProps = { ...form, participants: [...form.participants, user.username], tournament_creator: user.username };
-			// setTournaments([...tournaments, [newTournament.name, user.username]);
 			setTournaments([...tournaments, [newTournament.name, user.username]]);
 			console.log("Afficher name : " + newTournament.name)
 			console.log("Afficher participants : " + newTournament.participants)
@@ -82,14 +90,12 @@ const TournamentsPage: React.FC = () => {
 			console.log("Afficher mode : " + newTournament.mode)
 			console.log("Afficher power_ups : " + newTournament.power_ups)
 			console.log("Afficher creator : " + newTournament.tournament_creator)
-
 			try {
 				await axios.post("/api/tournaments/create", newTournament, {
 					headers: {
 						"Content-Type": "application/json",
 					},
 				});
-
 				console.log("Tournoi enregistré avec succès dans la base de données.");
 			} catch (error) {
 				console.error("Erreur lors de l'enregistrement du tournoi :", error);
@@ -129,7 +135,7 @@ const TournamentsPage: React.FC = () => {
 		<>
 			<Navbar />
 			<PageLayout>
-				<h2 className="text-xl mb-4">Liste des tournois</h2>
+				<h1 className="text-xl mb-4">Liste des tournois</h1>
 				<main>
 					<div className="w-1/3 h-250">
 						<button
@@ -141,15 +147,13 @@ const TournamentsPage: React.FC = () => {
 					</div>
 				</main>
 				{tournaments && tournaments.length !== 0 && user && (
-					<div className="flex">
-						<div className="w-1/2 bg-cyan-950 h-full shrink min-w-min relative z-10 rounded-md">
+					<div className="flex justify-between rounded-md items-start">
+						<div className="bg-cyan-950 shrink-0 min-w-min rounded-md">
 							<TabList classCustom="py-2 w-full overflow-auto flex flex-col h-full">
 								{tournaments.map((tournamentName, index) => (
 									<TournamentsListItem
 										key={index}
 										tournoi={tournamentName}
-										// creator={tournamentCreator}
-										// creator={user.username}
 										handleStatsButtonClick={handleStatsButtonClick}
 									/>
 								))}
@@ -206,14 +210,10 @@ const TournamentsPage: React.FC = () => {
 					</div>
 				)}
 
-
-
-
 				{/* [Main Modal] Edit */}
 				{showEditModal && (
-					<div className="fixed inset-0 overflow-y-auto z-50 flex items-center justify-center ">
+					<div className="fixed inset-0 overflow-y-auto z-50 flex items-center justify-center bg-black/60">
 						<div className="relative p-8 bg-grey w-full max-w-2xl mx-auto rounded-md shadow-lg bg-neutral-800">
-
 							<div className="flex flex-col space-y-4">
 								<h3 className="text-2xl font-semibold text-center mb-4">Configuration du tournoi</h3>
 								<form name="createTournamentForm">
@@ -257,9 +257,7 @@ const TournamentsPage: React.FC = () => {
 												)}
 											</ul>
 										</div>
-
 									</div>
-
 									{/* Options */}
 									<div className="flex justify-around mt-7">
 										<div className="flex flex-col">
