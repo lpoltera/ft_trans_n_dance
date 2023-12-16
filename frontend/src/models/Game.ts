@@ -26,8 +26,11 @@ export interface GameHistoryProps {
   name_p2: string;
   score_p1: number;
   score_p2: number;
-  updated_at: string;
+  // updated_at: string;
   status: string;
+  difficulty: string;
+  mode: string;
+  power_ups: boolean;
 }
 
 export interface TournamentGameProps {
