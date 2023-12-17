@@ -37,11 +37,11 @@ export class MatchsHistoryService {
           game: match,
         });
         await this.notifsDB.save(notif);
-        return 'Game and notification created!';
+        return match.id;
       } else {
         match.status = 'en cours';
         await this.MatchDB.save(match);
-        return 'Game created!';
+        return match.id;
       }
     } catch (error) {
       throw new ConflictException('erreur service', error.message);
@@ -110,9 +110,11 @@ export class MatchsHistoryService {
     }
   }
 
-  // findOne(id: number) {
-  //   return `This action returns a #${id} matchsHistory`;
-  // }
+  async findOne(id: number) {
+    const game = await this.MatchDB.findOne({ where: { id: id } });
+    return game;
+  }
+
   // remove(id: number) {
   //   return `This action removes a #${id} matchsHistory`;
   // }

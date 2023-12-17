@@ -41,3 +41,10 @@
 [ ] Backend !
 [ ] Backend !
 [ ] Backend !
+
+- blocage utilisateur -> asymétrique
+- TournamentPage bin/poubelle visible uniquement si user == creator
+- tournois visibles uniquement si user == participants[]
+- supprimer son compte depuis boutton modifier profile
+- boutton actifs depuis profil
+- envoyer notif/chat "tu es attendu pour la prochaine partie"

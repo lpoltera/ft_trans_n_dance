@@ -7,5 +7,5 @@ export class UpdateMatchsHistoryDto extends PartialType(
   score_p1: number;
   score_p2: number;
   status: string;
-  // time: number;
+  time: number;
 }

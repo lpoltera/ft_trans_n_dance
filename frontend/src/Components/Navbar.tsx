@@ -67,7 +67,7 @@ const Navbar = () => {
 							icon={<BellAlertIcon />}
 							classCustom="w-10 h-10 p-2 rounded-lg hover:bg-neutral-800"
 						/>
-						<span className={`w-2 h-2 rounded-full absolute top-2 right-2 z-10 ${notifsList && notifsList.length > 0 || unreadNotif ? 'bg-red-600' : ''}`}></span>
+						<span className={`px-1 rounded-full absolute top-1 right-1 z-10 text-xs ${unreadNotif ? 'bg-red-600' : 'bg-cyan-950'}`}>{notifsList?.length}</span>
 					</div>
 					<div className="relative">
 						<IconButton

@@ -67,6 +67,7 @@ export const NotificationProvider = ({
 	useEffect(() => {
 		if (!socket) return;
 		socket.on("myNotifs", (message: Notifs) => {
+
 			if (message.receiver === user?.username) {
 				setUnreadNotif(true);
 				toast.info(`Nouvelle notification:\n ${message.message}`);
@@ -97,7 +98,7 @@ export const NotificationProvider = ({
 			}
 		};
 		fetchUnreadNotifs();
-	}, [user, socket]);
+	}, [user, socket, unreadNotif]);
 
 	return (
 		<NotificationContext.Provider

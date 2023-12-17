@@ -55,18 +55,18 @@ const HomePage = () => {
 		// 	window.alert(`Le nombre de participants doit être égal à 1`); // logique à revoir (lorsque on sélectionne un adversaire le précédent est déselectionné)
 		// 	return;
 		// }
-
 		// envoyer une invitation à name_p2
+		// navigate to avec id de la partie en paramètre
 		setShowEditModal(false);
 		if (user) {
 			form.name_p1 = user.username;
 			try {
-				await axios.post("/api/game/create", form, { // axios.post("api/games/create")
+				const response = await axios.post("/api/game/create", form, { // axios.post("api/games/create")
 					headers: {
 						"Content-Type": "application/json",
 					},
 				});
-				console.log("Partie enregistrée avec succès dans la base de données.");
+				console.log("Partie enregistrée avec succès dans la base de données. id = ", response.data);
 			} catch (error) {
 				console.error("Erreur lors de l'enregistrement de la partie :", error);
 			}
