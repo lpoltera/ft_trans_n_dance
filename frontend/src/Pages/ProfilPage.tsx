@@ -87,11 +87,11 @@ const ProfilPage = () => {
 		fetchUserAndFriend();
 	}, [idURL]);
 
-	const editProfil = () => { };		// TODO
-	const addFriend = () => { };		// TODO
-	const removeFriend = () => { };	// TODO
-	const blockUser = () => { };		// TODO
-	const unblockUser = () => { };	// TODO
+	const editProfil = () => { };		// TODO modal -> axios.patch update
+	const addFriend = () => { };		// TODO à copier
+	const removeFriend = () => { };	// TODO à créer ?
+	const blockUser = () => { };		// TODO à copier
+	const unblockUser = () => { };	// TODO à copier
 
 	return (
 		<>

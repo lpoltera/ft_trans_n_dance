@@ -8,6 +8,7 @@ import { GameHistoryProps } from "../models/Game";
 import axios from "axios";
 
 const HomePage = () => {
+	const [checkedId, setCheckedId] = useState<string | null>(null);
 	const { user, loadingUser, userRelations } = useUserContext();
 	const [showEditModal, setShowEditModal] = useState(false);
 	const [form, setForm] = useState<GameHistoryProps>({
@@ -16,7 +17,7 @@ const HomePage = () => {
 		name_p2: "",
 		score_p1: 0,
 		score_p2: 0,
-		// updated_at: "",
+		updated_at: "",
 		difficulty: "facile",
 		mode: "1972",
 		power_ups: false,
@@ -42,6 +43,13 @@ const HomePage = () => {
 		}
 	};
 
+	const onlyOneCheckbox = (event: ChangeEvent<HTMLInputElement>) => {
+		console.log("onlyOneCheckbox called value : ", event.target.value);
+		setCheckedId(event.target.value);
+		setForm({ ...form, name_p2: event.target.value });
+	}
+
+
 	const createGame = async () => {
 		// if (form.participants.length !== 1) {
 		// 	window.alert(`Le nombre de participants doit être égal à 1`); // logique à revoir (lorsque on sélectionne un adversaire le précédent est déselectionné)
@@ -64,6 +72,22 @@ const HomePage = () => {
 			}
 		}
 	};
+
+	const resestForm = () => {
+		setShowEditModal(false);
+		setForm({
+			id: 0,
+			name_p1: "",
+			name_p2: "",
+			score_p1: 0,
+			score_p2: 0,
+			updated_at: "",
+			difficulty: "facile",
+			mode: "1972",
+			power_ups: false,
+			status: "pending",
+		});
+	}
 
 	return (
 		<>
@@ -110,7 +134,8 @@ const HomePage = () => {
 																name="name_p2"
 																type="checkbox"
 																className="cursor-pointer bg-slate-200 border-none checked:bg-emerald-500 checked:outline-none focus:outline-none mr-2"
-																onChange={handleFormChange}
+																checked={checkedId === relation.friend.username}
+																onChange={onlyOneCheckbox}
 																value={relation.friend.username}
 															/>
 															{relation.friend?.username}
@@ -174,7 +199,7 @@ const HomePage = () => {
 										<button
 											type="button"
 											className="mt-5 py-2 px-4 bg-gray-400 text-white rounded-md hover:bg-gray-500 cursor-pointer"
-											onClick={() => setShowEditModal(false)}
+											onClick={() => resestForm()}
 										>
 											Annuler
 										</button>

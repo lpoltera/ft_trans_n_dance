@@ -28,10 +28,10 @@ export class NotificationsController {
     return this.notificationsService.findAll(username);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.notificationsService.findOne(+id);
-  }
+  // @Get(':id')
+  // findOne(@Param('id') id: string) {
+  //   return this.notificationsService.findOne(+id);
+  // }
 
   @Patch(':id')
   update(

@@ -16,6 +16,7 @@ const Navbar = () => {
 	const {
 		unreadNotif,
 		notifModal,
+		notifsList,
 		setUnreadNotif,
 		setNotifModal,
 		unreadChat,
@@ -51,6 +52,8 @@ const Navbar = () => {
 		setNotifModal(!notifModal);
 	};
 
+	console.log("notifList :", notifsList);
+
 	return (
 		<>
 			<div className="fixed top-0 right-0 left-0 flex items-center justify-between pl-6 pr-4 h-16 z-40 bg-cyan-900">
@@ -64,9 +67,7 @@ const Navbar = () => {
 							icon={<BellAlertIcon />}
 							classCustom="w-10 h-10 p-2 rounded-lg hover:bg-neutral-800"
 						/>
-						{unreadNotif && (
-							<span className="bg-red-600 w-2 h-2 rounded-full absolute top-2 right-2 z-10"></span>
-						)}
+						<span className={`w-2 h-2 rounded-full absolute top-2 right-2 z-10 ${notifsList && notifsList.length > 0 || unreadNotif ? 'bg-red-600' : ''}`}></span>
 					</div>
 					<div className="relative">
 						<IconButton

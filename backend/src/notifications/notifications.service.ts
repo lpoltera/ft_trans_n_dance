@@ -40,9 +40,9 @@ export class NotificationsService {
     return userNotifs;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} notification`;
-  }
+  // findOne(id: number) {
+  //   return `This action returns a #${id} notification`;
+  // }
 
   update(id: number, updateNotificationDto: UpdateNotificationDto) {
     return `This action updates a #${id} notification`;
