@@ -151,16 +151,19 @@ export class UserService {
     if (userUpdate.avatar) {
       user.avatar = userUpdate.avatar;
     }
-    if (userUpdate.totalXP) {
-      user.totalXP = userUpdate.totalXP;
+    if (userUpdate.username) {
+      user.username = userUpdate.username;
     }
     return await this.userDB.save(user);
   }
 
-  async remove(id: number) {
-    //soft delete
-    // return await this.userDB.delete({ id });
-    return await this.userDB.softDelete({ id });
+  async remove(name: string) {
+    const userToDelete = await this.userDB.findOne({
+      where: { username: name },
+    });
+    if (userToDelete)
+      return await this.userDB.softDelete({ id: userToDelete.id });
+    return 'User not found';
   }
 
   async getpodium() {

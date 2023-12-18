@@ -37,11 +37,11 @@ export class MatchsHistoryService {
           game: match,
         });
         await this.notifsDB.save(notif);
-        return 'Game and notification created!';
+        return match.id;
       } else {
         match.status = 'en cours';
         await this.MatchDB.save(match);
-        return 'Game created!';
+        return match.id;
       }
     } catch (error) {
       throw new ConflictException('erreur service', error.message);
@@ -50,24 +50,18 @@ export class MatchsHistoryService {
 
   async findhistory(name: string) {
     try {
-      const games = await this.MatchDB.find({
-        where: [
-          {
-            user_p1: { username: name },
-            status: 'pending',
-          },
-          {
-            user_p2: { username: name },
-            status: 'pending',
-          },
-        ],
-      });
+      const games = await this.MatchDB.createQueryBuilder('match')
+        .where(
+          '(match.user_p1.username = :name OR match.user_p2.username = :name) AND match.status = :status AND match.tournament_name IS NULL',
+          { name: name, status: 'pending' },
+        )
+        .getMany();
 
-      games.sort((a: any, b: any) => b.updated_at - a.updated_at);
+      const gamesSortedbyUpdatedDate = games.sort(
+        (a: any, b: any) => b.updated_at - a.updated_at,
+      );
 
-      const lastTwoUpdates = games.slice(0, 3);
-
-      return lastTwoUpdates;
+      return gamesSortedbyUpdatedDate;
     } catch (error) {
       throw new ConflictException(error.message);
     }
@@ -116,9 +110,11 @@ export class MatchsHistoryService {
     }
   }
 
-  // findOne(id: number) {
-  //   return `This action returns a #${id} matchsHistory`;
-  // }
+  async findOne(id: number) {
+    const game = await this.MatchDB.findOne({ where: { id: id } });
+    return game;
+  }
+
   // remove(id: number) {
   //   return `This action removes a #${id} matchsHistory`;
   // }

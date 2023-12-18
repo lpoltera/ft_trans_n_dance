@@ -805,6 +805,14 @@ select {
   top: 100%;
 }
 
+.top-1 {
+  top: 0.25rem;
+}
+
+.right-1 {
+  right: 0.25rem;
+}
+
 .z-0 {
   z-index: 0;
 }
@@ -1130,6 +1138,10 @@ select {
   grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
+.grid-cols-5 {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
 .grid-cols-6 {
   grid-template-columns: repeat(6, minmax(0, 1fr));
 }
@@ -1336,6 +1348,10 @@ select {
   border-color: rgb(255 255 255 / var(--tw-border-opacity));
 }
 
+.bg-black\/60 {
+  background-color: rgb(0 0 0 / 0.6);
+}
+
 .bg-cyan-700 {
   --tw-bg-opacity: 1;
   background-color: rgb(14 116 144 / var(--tw-bg-opacity));
@@ -1521,6 +1537,16 @@ select {
 .py-6 {
   padding-top: 1.5rem;
   padding-bottom: 1.5rem;
+}
+
+.px-0 {
+  padding-left: 0px;
+  padding-right: 0px;
+}
+
+.px-1 {
+  padding-left: 0.25rem;
+  padding-right: 0.25rem;
 }
 
 .pb-1 {

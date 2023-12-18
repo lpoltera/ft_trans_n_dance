@@ -89,7 +89,7 @@ function App() {
 								}
 							></Route>
 							<Route
-								path="/profil/:id"
+								path="/profil/*"
 								element={
 									<PrivateRoute>
 										<ProfilPage />

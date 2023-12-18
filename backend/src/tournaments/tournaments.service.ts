@@ -75,8 +75,17 @@ export class TournamentsService {
     return `This action updates game #${gameId} to ${score_p1} - ${score_p2}`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} tournament`;
+  async remove(name: string) {
+    const TournamentToDelete = await this.MatchDB.find({
+      where: {
+        tournament_name: name,
+      },
+    });
+    if (TournamentToDelete.length > 0) {
+      const idsToDelete = TournamentToDelete.map((tournament) => tournament.id);
+      await this.MatchDB.delete(idsToDelete);
+    }
+    return `This action removes a #${name} tournament`;
   }
 
   async getRankings(name: string) {
@@ -111,7 +120,7 @@ export class TournamentsService {
         'matchs_history.tournament_creator',
         // 'matchs_history.status',
       ])
-      // .where('matchs_history.status = :status', { status: 'pending' })
+      .where('matchs_history.tournament_name IS NOT NULL')
       .groupBy('matchs_history.tournament_name')
       .addGroupBy('matchs_history.tournament_creator')
       // .addGroupBy('matchs_history.status')

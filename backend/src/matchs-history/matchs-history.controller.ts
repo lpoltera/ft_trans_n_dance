@@ -55,10 +55,11 @@ export class MatchsHistoryController {
     );
   }
 
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.matchsHistoryService.findOne(+id);
-  // }
+  @Get(':id') // TODO renvoie les infos d'un match
+  findOne(@Param('id') id: string) {
+    return this.matchsHistoryService.findOne(+id);
+  }
+
   // @Delete(':id')
   // remove(@Param('id') id: string) {
   //   return this.matchsHistoryService.remove(+id);

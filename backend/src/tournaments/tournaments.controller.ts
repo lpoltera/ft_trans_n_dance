@@ -54,8 +54,8 @@ export class TournamentsController {
     );
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.tournamentsService.remove(+id);
+  @Delete(':name')
+  remove(@Param('name') name: string) {
+    return this.tournamentsService.remove(name);
   }
 }
