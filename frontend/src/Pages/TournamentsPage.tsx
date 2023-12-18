@@ -13,6 +13,7 @@ import RankingPlayersRow from '../Components/RankingPlayerRow';
 
 
 const TournamentsPage: React.FC = () => {
+	const [update, setUpdate] = useState<boolean>(false);
 	const { user, userRelations } = useUserContext();
 	const [tournaments, setTournaments] = useState<string[][]>([]);
 	const [showEditModal, setShowEditModal] = useState(false);
@@ -54,14 +55,12 @@ const TournamentsPage: React.FC = () => {
 				setTournaments(response.data);
 				console.log("response.data : ", response.data);
 				console.log("Tournaments name : ", tournaments);
-
 			} catch (error) {
 				console.error("Erreur lors de la récupération des tournois :", error);
 			}
 		};
-
 		fetchTournaments();
-	}, []);
+	}, [update]);
 
 	const createTournament = async () => {
 		for (let i = 0; i < tournaments.length; i++) {
@@ -128,6 +127,14 @@ const TournamentsPage: React.FC = () => {
 		}
 	};
 
+	const handleTournamentListChange = async () => { // -> handleChange
+		if (update) {
+			setUpdate(false)
+		} else {
+			setUpdate(true)
+		}
+	}
+
 
 	const updatedUserRelations = [...userRelations, { friend: user }];
 
@@ -155,6 +162,7 @@ const TournamentsPage: React.FC = () => {
 										key={index}
 										tournoi={tournamentName}
 										handleStatsButtonClick={handleStatsButtonClick}
+										handleTournamentListChange={handleTournamentListChange}
 									/>
 								))}
 							</TabList>

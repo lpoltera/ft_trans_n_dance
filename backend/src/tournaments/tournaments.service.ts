@@ -81,7 +81,6 @@ export class TournamentsService {
         tournament_name: name,
       },
     });
-
     if (TournamentToDelete.length > 0) {
       const idsToDelete = TournamentToDelete.map((tournament) => tournament.id);
       await this.MatchDB.delete(idsToDelete);

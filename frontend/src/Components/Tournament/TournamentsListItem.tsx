@@ -5,11 +5,12 @@ import axios from 'axios';
 
 interface TournamentsListItemProps {
 	handleStatsButtonClick: (tournamentName: string) => void;
+	handleTournamentListChange: () => void;
 	tournoi: string[];
 }
 
 
-const TournamentsListItem: React.FC<TournamentsListItemProps> = ({ tournoi, handleStatsButtonClick }) => {
+const TournamentsListItem: React.FC<TournamentsListItemProps> = ({ tournoi, handleStatsButtonClick, handleTournamentListChange }) => {
 
 	console.log("tournoi name", tournoi[0])
 	console.log("tournoi creator", tournoi[1])
@@ -22,7 +23,8 @@ const TournamentsListItem: React.FC<TournamentsListItemProps> = ({ tournoi, hand
 			try {
 				await axios.delete(`/api/tournaments/${tournoi[0]}`);
 				console.log("Le tournois a bien pu être supprimé");
-				window.location.reload();
+				handleTournamentListChange();
+				// window.location.reload();
 			} catch (error) {
 				console.error("Erreur lors de la suppression du tournoi :", error);
 			}

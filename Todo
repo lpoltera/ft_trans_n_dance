@@ -1,6 +1,6 @@
 \*\* ChatPage
 [X] Backend ! Indiquer l'heure d'envoi lorsque l'on écrit un message (ne s'affiche actuellement que lorsque l'on recharche la page)
-[ ] Frontend ~ Afficher un message "écrivez votre premier message à XXX" lorsque la conversation est vide
+[X] Frontend ~ Afficher un message "écrivez votre premier message à XXX" lorsque la conversation est vide
 
 \*\* ProfilPage
 [ ] Backend ! Gérer modification du profil
@@ -42,9 +42,11 @@
 [ ] Backend !
 [ ] Backend !
 
-- blocage utilisateur -> asymétrique
-- TournamentPage bin/poubelle visible uniquement si user == creator
 - tournois visibles uniquement si user == participants[]
+- blocage utilisateur -> asymétrique
+
+- TournamentPage bin/poubelle visible uniquement si user == creator
 - supprimer son compte depuis boutton modifier profile
-- boutton actifs depuis profil
+- boutons actifs depuis profil
+
 - envoyer notif/chat "tu es attendu pour la prochaine partie"

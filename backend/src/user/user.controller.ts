@@ -153,7 +153,7 @@ export class UserController {
     else throw new NotFoundException('User not found');
   }
 
-  @Patch(':username')
+  @Patch(':username') // axios.patch('/api/username', {username: 'newUsername', avatar: 'newAvatar', password: 'newPassword'})
   async update(
     @Param('username') username: string,
     @Body() updateUserDto: UpdateUserDto,
@@ -161,8 +161,8 @@ export class UserController {
     return await this.userService.update(username, updateUserDto);
   }
 
-  @Delete(':id')
-  async remove(@Param('id') id: string) {
-    return await this.userService.remove(+id);
+  @Delete(':username')
+  async remove(@Param('username') name: string) {
+    return await this.userService.remove(name);
   }
 }

@@ -175,7 +175,7 @@ export class FriendsService {
   // }
 
   async update(userName: string, friendName: string, statusToUpdate: string) {
-    //indiquer qui a bloqué (rajouter blockedBy un champ dans la table) - remettre à null après déblocage
+    //indiquer qui a bloqué (rajouter un champ blockedBy dans la table) - remettre à null après déblocage
     const friendToUpdate = await this.friendRepository.findOne({
       where: [
         {
@@ -193,7 +193,8 @@ export class FriendsService {
       friendToUpdate.status = statusToUpdate;
       this.friendRepository.save(friendToUpdate);
       if (
-        friendToUpdate.status === 'valider' ||
+        (friendToUpdate.status === 'valider' &&
+          previous_status === 'pending') ||
         (friendToUpdate.status === 'refuser' && previous_status === 'pending')
       ) {
         const id = friendToUpdate.id;

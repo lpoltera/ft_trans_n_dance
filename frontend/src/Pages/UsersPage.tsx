@@ -14,6 +14,7 @@ const UsersPage = () => {
 	const [users, setAllUser] = useState<User[] | null>(null);
 	const [selectedUser, setSelectedUser] = useState<User | null>(null);
 	const [currentUser, setCurrentUser] = useState<User | null>(null);
+	const [update, setUpdate] = useState<boolean>(false);
 
 	const handleStatsButtonClick = (ami: User) => {
 		setSelectedUser((prevUser) => (prevUser === ami ? null : ami));
@@ -67,9 +68,15 @@ const UsersPage = () => {
 			}
 		}
 		fetchUserAndBlocked();
-	}, []);
+	}, [update]);
 
-
+	const handleBlockedListChange = async () => { // -> handleChange
+		if (update) {
+			setUpdate(false)
+		} else {
+			setUpdate(true)
+		}
+	}
 
 	return (
 		<>
@@ -137,7 +144,11 @@ const UsersPage = () => {
 							{blocked?.map(
 								(ami, index) =>
 									currentUser?.username !== ami.username && (
-										<BlockedProfilRow key={index} ami={ami} />
+										<BlockedProfilRow
+											key={index}
+											ami={ami}
+											handleBlockedListChange={handleBlockedListChange}
+										/>
 									)
 							)}
 						</div>
