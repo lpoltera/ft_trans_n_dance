@@ -20,14 +20,12 @@
 [ ] Front ! vérifier l'action des boutons dans ProfilPage et UserPage
 
 \*\* Tournois
-[X] Stocker les datas de la liste des tournois dans la db
-[X] Modal lecture seule qui s'affiche quand on clique sur l'oeil
-[X] Cliquer sur corbeille : message d'alerte, si oui DELETE toute la ligne correspondante dans la db
-[X] Modal création : afficher la liste des utilisateurs existants avec checkbox de sélection
-[X] Afficher le créateur du tournois
-[X] Backend ! tournois visibles uniquement si user == participants[]
-[X] Front ! Uniquement créateur du tournois et cliquer sur supprimer
-[ ] Front/Back ! envoyer notif/chat "tu es attendu pour la prochaine partie" - prêt voir ft sendNotifToParticipants in TournamentPage
+[ ] Stocker les datas de la liste des tournois dans la db
+[ ] Modal lecture seule qui s'affiche quand on clique sur l'oeil
+[ ] Uniquement créateur du tournois peut voir et cliquer sur modifier, va UPDATE les champs de la db
+[ ] Cliquer sur corbeille : message d'alerte, si oui DELETE toute la ligne correspondante dans la db
+[ ] Modal création : afficher la liste des utilisateurs existants avec checkbox de sélection
+[ ] Afficher le créateur du tournois
 
 \*\* FooterMain
 [ ] Frontend ! Changer le lien Github

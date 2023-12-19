@@ -10,6 +10,7 @@ import TabPanel from '../Components/Tab/TabPanel';
 import HistoryMatchRow from '../Components/HistoryMatchRow';
 import { TournamentGameProps, RankingProps } from '../models/Game';
 import RankingPlayersRow from '../Components/RankingPlayerRow';
+import './TournamentPage.css';
 
 
 const TournamentsPage: React.FC = () => {
@@ -49,6 +50,7 @@ const TournamentsPage: React.FC = () => {
 	};
 
 	useEffect(() => {
+
 		const fetchTournaments = async () => {
 			try {
 				const response = await axios.get("/api/tournaments/all");
@@ -154,7 +156,7 @@ const TournamentsPage: React.FC = () => {
 					</div>
 				</main>
 				{tournaments && tournaments.length !== 0 && user && (
-					<div className="flex justify-between rounded-md items-start">
+					<div className="flex flex-container justify-between rounded-md items-start">
 						<div className="bg-cyan-950 shrink-0 min-w-min rounded-md">
 							<TabList classCustom="py-2 w-full overflow-auto flex flex-col h-full">
 								{tournaments.map((tournamentName, index) => (
@@ -167,13 +169,13 @@ const TournamentsPage: React.FC = () => {
 								))}
 							</TabList>
 						</div>
-						<div className="relative h-full w-full ml-4">
+						<div className="w-full ml-4">
 							<TabPanel index={0}>
 								{selectedTournament && (
 									<>
 										<h2 className="text-xl mb-4">Liste des matches</h2>
 										<div className="overflow-hidden border border-cyan-700 rounded-xl">
-											<div className="grid grid-flow-col grid-cols-5 text-md text-center sticky py-2 border border-t-0 border-r-0 border-l-0 border-cyan-700 bg-cyan-700">
+											<div className="min-w-min grid grid-flow-col grid-cols-5 text-md text-center sticky py-2 border border-t-0 border-r-0 border-l-0 border-cyan-700 bg-cyan-700">
 												<div className="pl-4">Joueur 1</div>
 												<div className="pl-4">Joueur 2</div>
 												<div className="pl-4">Score</div>
@@ -189,13 +191,13 @@ const TournamentsPage: React.FC = () => {
 								)}
 							</TabPanel>
 						</div>
-						<div className="relative h-full w-full ml-4">
+						<div className="w-full ml-4">
 							<TabPanel index={0}>
 								{selectedTournament && (
 									<>
 										<h2 className="text-xl mb-4">Classement du tournoi</h2>
 										<div className="overflow-hidden border border-cyan-700 rounded-xl">
-											<div className="grid grid-flow-col grid-cols-6 text-md text-center sticky py-2 border border-t-0 border-r-0 border-l-0 border-cyan-700 bg-cyan-700">
+											<div className="min-w-min grid grid-flow-col grid-cols-6 text-md text-center sticky py-2 border border-t-0 border-r-0 border-l-0 border-cyan-700 bg-cyan-700">
 												<div className="pl-4">Pos.</div>
 												<div className="pl-4">Joueur</div>
 												<div className="pl-4">V</div>
@@ -337,4 +339,3 @@ const TournamentsPage: React.FC = () => {
 }
 
 export default TournamentsPage;
-

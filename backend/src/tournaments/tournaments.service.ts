@@ -118,6 +118,7 @@ export class TournamentsService {
       .select([
         'matchs_history.tournament_name',
         'matchs_history.tournament_creator',
+        // 'matchs_history.status',
       ])
       .where(
         'matchs_history.tournament_name IS NOT NULL AND \
@@ -126,6 +127,7 @@ export class TournamentsService {
       )
       .groupBy('matchs_history.tournament_name')
       .addGroupBy('matchs_history.tournament_creator')
+      // .addGroupBy('matchs_history.status')
       .getRawMany();
 
     console.log(tournaments);
@@ -133,6 +135,7 @@ export class TournamentsService {
     const tournaments_names = tournaments.map((tournament) => [
       tournament.matchs_history_tournament_name,
       tournament.matchs_history_tournament_creator,
+      // tournament.matchs_history_status,
     ]);
     return tournaments_names; //[[TitoTournoi, tito], [LucieTournoi, lucie]]
   }

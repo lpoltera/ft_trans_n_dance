@@ -1071,6 +1071,11 @@ select {
   max-width: 36rem;
 }
 
+.max-w-max {
+  max-width: -moz-max-content;
+  max-width: max-content;
+}
+
 .shrink {
   flex-shrink: 1;
 }
@@ -1139,6 +1144,10 @@ select {
 
 .flex-col {
   flex-direction: column;
+}
+
+.flex-wrap {
+  flex-wrap: wrap;
 }
 
 .items-start {
