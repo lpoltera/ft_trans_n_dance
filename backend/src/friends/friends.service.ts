@@ -263,4 +263,23 @@ export class FriendsService {
     console.log(friends);
     return friends;
   }
+
+  async removeFriend(userName: string, friendName: string) {
+    const friendToRemove = await this.friendRepository.findOne({
+      where: [
+        {
+          user: { username: userName },
+          friend: { username: friendName },
+        },
+        {
+          user: { username: friendName },
+          friend: { username: userName },
+        },
+      ],
+    });
+    if (friendToRemove) {
+      await this.friendRepository.delete(friendToRemove.id);
+      return `The relation between #${userName} and #${friendName} has been deleted`;
+    }
+  }
 }

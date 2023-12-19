@@ -4,10 +4,12 @@ import Navbar from "../Components/Navbar";
 import PageLayout from "../Components/PageLayout";
 import PodiumList from "../Components/PodiumList";
 import { useUserContext } from "../contexts/UserContext";
+import { useNavigate } from "react-router-dom";
 import { GameHistoryProps } from "../models/Game";
 import axios from "axios";
 
 const HomePage = () => {
+	const navigate = useNavigate();
 	const [checkedId, setCheckedId] = useState<string | null>(null);
 	const { user, loadingUser, userRelations } = useUserContext();
 	const [showEditModal, setShowEditModal] = useState(false);
@@ -89,6 +91,10 @@ const HomePage = () => {
 		});
 	}
 
+	const navigateToGame = () => {
+		navigate("/game");
+	}
+
 	return (
 		<>
 			<Navbar />
@@ -99,29 +105,26 @@ const HomePage = () => {
 						src="src/assets/homepage-bkg.png"
 						alt="background"
 					></img>
-					{/* <div
-						className="z-10"> */}
 					<h1 className="text text-5xl font-bold z-10">C'est là que tout commence !</h1>
-					<div className="flex gap-4 z-10 pt-80">
-						<a
-							href="/game"
-							className="bg-white text-black py-2 px-4 rounded-md border-4 border-white z-10 font-bold"
+					<div className="flex z-10 pt-80">
+						<button
+							// href="/game"
+							className="py-2 px-4 rounded-md border-4 text-black border-black z-10 font-bold hover:bg-[#f67539] hover:bg-opacity-70 hover:text-white"
 							type="button"
+							onClick={() => navigateToGame()}
 						>
 							Partie rapide
-						</a>
+						</button>
 						<button
 							// href="/new-game"
 							type="button"
-							className="py-2 px-4 rounded-md border-4 text-black border-black z-10 font-bold"
+							className="py-2 px-4 ml-4 rounded-md border-4 text-black border-black z-10 font-bold hover:bg-[#f67539] hover:bg-opacity-70 hover:text-white"
 							onClick={() => setShowEditModal(true)}
 						>
 							Nouvelle partie
 						</button>
 					</div>
-					{/* <PodiumList /> */}
 				</div>
-				{/* </div> */}
 				{/* --------------------------------------- Modal --------------------------------------- */}
 				{showEditModal && (
 					<div className="fixed inset-0 overflow-y-auto z-50 flex items-center justify-center bg-black/60">
