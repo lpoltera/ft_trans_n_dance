@@ -8,6 +8,7 @@ import InfosUsersRow from "../Components/InfosUsersRow";
 import Navbar from "../Components/Navbar";
 import PageLayout from "../Components/PageLayout";
 import { User } from "../models/User";
+import StatBloc from "../Components/StatBloc";
 
 const UsersPage = () => {
 	const [blocked, setBlocked] = useState<User[] | null>(null);
@@ -78,6 +79,14 @@ const UsersPage = () => {
 		}
 	}
 
+	const Stats = [
+		{ title: "Ratio", score: ((selectedUser?.win || 0) / (selectedUser?.totalGame || 0) * 100).toFixed(2) + '%' },
+		{ title: "Parties jouées", score: selectedUser?.totalGame },
+		{ title: "Victoires", score: selectedUser?.win },
+		{ title: "Défaites", score: selectedUser?.loss },
+		{ title: "Matchs nuls", score: selectedUser?.draw },
+	];
+
 	return (
 		<>
 			<Navbar />
@@ -106,13 +115,13 @@ const UsersPage = () => {
 							id="section-stats"
 							className="grid grid-flow-col grid-cols-6 gap-4"
 						>
-							{/* {Stats.map((stat, index) => (
-                <StatBloc
-                  key={index}
-                  title={stat.title}
-                  score={!stat.score ? 0 : stat.score}
-                />
-              ))} */}
+							{Stats.map((stat, index) => (
+								<StatBloc
+									key={index}
+									title={stat.title}
+									score={!stat.score ? 0 : stat.score}
+								/>
+							))}
 						</div>
 					</div>
 				)}

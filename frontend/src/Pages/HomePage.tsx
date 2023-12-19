@@ -93,12 +93,19 @@ const HomePage = () => {
 		<>
 			<Navbar />
 			<PageLayout>
-				<div className="w-full h-full grow flex flex-col items-center justify-center gap-12 pb-12">
-					<h1 className="text text-5xl">C'est là que tout commence !</h1>
-					<div className="flex gap-4">
+				<div className="w-full h-full grow flex flex-col items-center">
+					<img
+						className="absolute top-0 left-0 w-screen h-screen"
+						src="src/assets/homepage-bkg.png"
+						alt="background"
+					></img>
+					{/* <div
+						className="z-10"> */}
+					<h1 className="text text-5xl font-bold z-10">C'est là que tout commence !</h1>
+					<div className="flex gap-4 z-10 pt-80">
 						<a
 							href="/game"
-							className="bg-white text-black py-2 px-4 rounded-md border border-white"
+							className="bg-white text-black py-2 px-4 rounded-md border-4 border-white z-10 font-bold"
 							type="button"
 						>
 							Partie rapide
@@ -106,14 +113,15 @@ const HomePage = () => {
 						<button
 							// href="/new-game"
 							type="button"
-							className="py-2 px-4 rounded-md border border-white"
+							className="py-2 px-4 rounded-md border-4 text-black border-black z-10 font-bold"
 							onClick={() => setShowEditModal(true)}
 						>
 							Nouvelle partie
 						</button>
 					</div>
-					<PodiumList />
+					{/* <PodiumList /> */}
 				</div>
+				{/* </div> */}
 				{/* --------------------------------------- Modal --------------------------------------- */}
 				{showEditModal && (
 					<div className="fixed inset-0 overflow-y-auto z-50 flex items-center justify-center bg-black/60">

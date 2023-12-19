@@ -150,10 +150,12 @@ export class FriendsService {
         {
           user: { username: username }, // blockedBy === username
           status: 'blocked',
+          blockedBy: username,
         },
         {
           friend: { username: username },
           status: 'blocked',
+          blockedBy: username,
         },
       ],
     });
@@ -175,7 +177,6 @@ export class FriendsService {
   // }
 
   async update(userName: string, friendName: string, statusToUpdate: string) {
-    //indiquer qui a bloqué (rajouter un champ blockedBy dans la table) - remettre à null après déblocage
     const friendToUpdate = await this.friendRepository.findOne({
       where: [
         {
@@ -191,6 +192,12 @@ export class FriendsService {
     if (friendToUpdate) {
       const previous_status = friendToUpdate.status;
       friendToUpdate.status = statusToUpdate;
+      if (statusToUpdate === 'blocked') {
+        friendToUpdate.blockedBy = userName;
+      }
+      if (statusToUpdate === 'valider' && previous_status === 'blocked') {
+        friendToUpdate.blockedBy = null;
+      }
       this.friendRepository.save(friendToUpdate);
       if (
         (friendToUpdate.status === 'valider' &&

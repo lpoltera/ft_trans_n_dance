@@ -52,11 +52,15 @@ const Navbar = () => {
 		setNotifModal(!notifModal);
 	};
 
-	console.log("notifList :", notifsList);
+
+	const url = window.location.href;
+	const urlSegments = url.split("/");
+	let idURL: string | any = urlSegments[urlSegments.length - 1];
+
 
 	return (
 		<>
-			<div className="fixed top-0 right-0 left-0 flex items-center justify-between pl-6 pr-4 h-16 z-40 bg-cyan-900">
+			<div className={`fixed top-0 right-0 left-0 flex items-center justify-between pl-6 pr-4 h-16 z-40 ${idURL === "accueil" ? '' : 'bg-cyan-900'}`}>
 				<a href="/accueil" id="logoLink" className="text-white text-lg">
 					PONG<sup>42</sup>
 				</a>

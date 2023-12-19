@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Session,
 } from '@nestjs/common';
 import { TournamentsService } from './tournaments.service';
 import { CreateTournamentDto } from './dto/create-tournament.dto';
@@ -21,8 +22,8 @@ export class TournamentsController {
   }
 
   @Get('all')
-  findAllTournaments() {
-    return this.tournamentsService.findAll();
+  async findAllTournaments(@Session() session: Record<string, any>) {
+    return this.tournamentsService.findAll(session.user.username);
   }
 
   @Get('games/:name')
