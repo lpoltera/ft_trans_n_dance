@@ -97,3 +97,52 @@ export interface RankingProps {
   goals_conceded: number;
   point_difference: number;
 }
+
+export enum GameType {
+  POINTS = "points",
+  TIME = "time",
+  ORIGINAL = "1972",
+}
+
+export enum GameStatus {
+  PENDING = "pending",
+  IN_PROGRESS = "in_progress",
+  FINISHED = "finished",
+}
+
+export type GameCreation = {
+  creatorId: string;
+  opponentId?: string;
+  gameType: GameType;
+  value?: number;
+  powerUps?: boolean;
+  tournament?: boolean;
+  difficulty?: number;
+};
+
+export type GameUpdate = {
+  gameId: string;
+  scorePlayer1?: number;
+  scorePlayer2?: number;
+  winner?: string;
+  duration?: number;
+  status: GameStatus;
+};
+
+export type IGame = {
+  id: string;
+  player1: string;
+  player2: string | null;
+  scorePlayer1: number;
+  scorePlayer2: number;
+  difficulty: number;
+  winner: string | undefined;
+  duration: number;
+  status: GameStatus;
+  gameType: GameType;
+  value: number;
+  powerUps: boolean;
+  tournament: boolean;
+  updatedAt: Date;
+  createdAt: Date;
+};
