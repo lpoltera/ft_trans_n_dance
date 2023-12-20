@@ -23,11 +23,11 @@ export class MatchsHistory {
   @Column({ nullable: true })
   name_p2: string | null;
 
-  @ManyToOne(() => User)
+  @ManyToOne(() => User, { onUpdate: 'CASCADE' })
   @JoinColumn({ name: 'name_p1', referencedColumnName: 'username' })
   user_p1: User;
 
-  @ManyToOne(() => User, { nullable: true })
+  @ManyToOne(() => User, { nullable: true, onUpdate: 'CASCADE' })
   @JoinColumn({ name: 'name_p2', referencedColumnName: 'username' })
   user_p2: User | null;
 

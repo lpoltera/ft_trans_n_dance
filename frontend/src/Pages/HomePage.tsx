@@ -106,7 +106,7 @@ const HomePage = () => {
 						alt="background"
 					></img>
 					<h1 className="text text-5xl font-bold z-10">C'est là que tout commence !</h1>
-					<div className="flex z-10 pt-80">
+					<div className="h-screen flex items-center z-10 mt-24 ">
 						<button
 							// href="/game"
 							className="py-2 px-4 rounded-md border-4 text-black border-black z-10 font-bold hover:bg-[#f67539] hover:bg-opacity-70 hover:text-white"

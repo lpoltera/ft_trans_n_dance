@@ -92,7 +92,7 @@ const UsersPage = () => {
 			<Navbar />
 			<PageLayout>
 				{selectedUser && (
-					<div className="w-full h-full grow flex flex-col gap-8 pb-12">
+					<div className="w-full flex flex-col gap-8" >
 						<div id="section-title" className="flex shrink py-10">
 							<div className="flex items-center gap-2">
 								<img
@@ -113,7 +113,7 @@ const UsersPage = () => {
 						</div>
 						<div
 							id="section-stats"
-							className="grid grid-flow-col grid-cols-6 gap-4"
+							className="grid grid-flow-col grid-cols-5 gap-4"
 						>
 							{Stats.map((stat, index) => (
 								<StatBloc

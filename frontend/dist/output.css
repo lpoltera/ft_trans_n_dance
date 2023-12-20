@@ -829,10 +829,6 @@ select {
   z-index: 50;
 }
 
-.row-auto {
-  grid-row: auto;
-}
-
 .m-1 {
   margin: 0.25rem;
 }
@@ -937,12 +933,8 @@ select {
   margin-top: auto;
 }
 
-.mr-0 {
-  margin-right: 0px;
-}
-
-.ml-11 {
-  margin-left: 2.75rem;
+.mt-24 {
+  margin-top: 6rem;
 }
 
 .block {
@@ -1408,6 +1400,11 @@ select {
   background-color: rgb(255 255 255 / var(--tw-bg-opacity));
 }
 
+.bg-violet-800 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(91 33 182 / var(--tw-bg-opacity));
+}
+
 .bg-opacity-100 {
   --tw-bg-opacity: 1;
 }
@@ -1506,6 +1503,10 @@ select {
   padding-bottom: 1rem;
 }
 
+.pl-12 {
+  padding-left: 3rem;
+}
+
 .pl-16 {
   padding-left: 4rem;
 }
@@ -1566,8 +1567,8 @@ select {
   padding-top: 20rem;
 }
 
-.pl-12 {
-  padding-left: 3rem;
+.pb-32 {
+  padding-bottom: 8rem;
 }
 
 .text-left {
@@ -1803,9 +1804,9 @@ html {
   cursor: pointer;
 }
 
-.hover\:bg-emerald-500:hover {
+.hover\:bg-\[\#f67539\]:hover {
   --tw-bg-opacity: 1;
-  background-color: rgb(16 185 129 / var(--tw-bg-opacity));
+  background-color: rgb(246 117 57 / var(--tw-bg-opacity));
 }
 
 .hover\:bg-emerald-800:hover {
@@ -1848,39 +1849,6 @@ html {
   background-color: rgb(153 27 27 / var(--tw-bg-opacity));
 }
 
-.hover\:bg-cyan-950:hover {
-  --tw-bg-opacity: 1;
-  background-color: rgb(8 51 68 / var(--tw-bg-opacity));
-}
-
-.hover\:bg-cyan-900:hover {
-  --tw-bg-opacity: 1;
-  background-color: rgb(22 78 99 / var(--tw-bg-opacity));
-}
-
-.hover\:bg-sky-900:hover {
-  --tw-bg-opacity: 1;
-  background-color: rgb(12 74 110 / var(--tw-bg-opacity));
-}
-
-.hover\:bg-\[\#1c455b\]:hover {
-  --tw-bg-opacity: 1;
-  background-color: rgb(28 69 91 / var(--tw-bg-opacity));
-}
-
-.hover\:bg-\[\#f67539\]:hover {
-  --tw-bg-opacity: 1;
-  background-color: rgb(246 117 57 / var(--tw-bg-opacity));
-}
-
-.hover\:bg-\[\#f67539\.06\]:hover {
-  background-color: #f67539.06;
-}
-
-.hover\:bg-opacity-50:hover {
-  --tw-bg-opacity: 0.5;
-}
-
 .hover\:bg-opacity-70:hover {
   --tw-bg-opacity: 0.7;
 }
@@ -1892,10 +1860,6 @@ html {
 
 .hover\:opacity-100:hover {
   opacity: 1;
-}
-
-.hover\:opacity-50:hover {
-  opacity: 0.5;
 }
 
 .hover\:file\:bg-violet-100::file-selector-button:hover {

@@ -149,6 +149,7 @@ const TournamentsPage: React.FC = () => {
 			console.log(`tournamentGames[${i}].name_p2 : `, tournamentGames[i].name_p2);
 			// for (let j = 0; j < 2; j++) {
 			// 	if (j === 0) {
+			// user !== tournamentGames[i].name_p1
 			const message1 = {
 				sender: tournamentGames[i].tournament_creator,
 				receiver: tournamentGames[i].name_p1,
@@ -156,6 +157,7 @@ const TournamentsPage: React.FC = () => {
 			}
 			socket?.emit("sendMessage", message1);
 			// } else {
+			// user !== tournamentGames[i].name_p2
 			const message2 = {
 				sender: tournamentGames[i].tournament_creator,
 				receiver: tournamentGames[i].name_p2,

@@ -4,6 +4,7 @@ import {
 	TrophyIcon,
 	UserCircleIcon,
 	UserGroupIcon,
+	UserIcon,
 } from "@heroicons/react/24/outline";
 import { useNotificationContext } from "../contexts/NotificationContext";
 import IconButton from "./IconButton";
@@ -25,12 +26,12 @@ const Navbar = () => {
 	const navigate = useNavigate();
 
 	const profilLinks = [
-		{ title: "Profil", href: "/profil/" },
+		{ title: "Profil", href: "/profil" },
 		{ title: "Déconnexion", href: "/logout" },
 	];
 
 	const navigateToProfil = () => {
-		navigate(`/profil/`);
+		navigate(`/profil`);
 	};
 
 	const navigateToChat = () => {
