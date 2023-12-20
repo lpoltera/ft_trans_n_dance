@@ -9,7 +9,6 @@ import HomePage from "./Pages/HomePage";
 import LandingPage from "./Pages/LandingPage";
 import LoginPage from "./Pages/LoginPage";
 import LogoutPage from "./Pages/LogoutPage";
-import PongGamePage from "./Pages/PongGamePage";
 import ProfilPage from "./Pages/ProfilPage";
 import SigninPage from "./Pages/SigninPage";
 import TfaPage from "./Pages/TfaPage";
@@ -94,14 +93,6 @@ function App() {
 								element={
 									<PrivateRoute>
 										<ProfilPage />
-									</PrivateRoute>
-								}
-							></Route>
-							<Route
-								path="/game"
-								element={
-									<PrivateRoute>
-										<PongGamePage />
 									</PrivateRoute>
 								}
 							></Route>

@@ -27,7 +27,6 @@ const Game = ({ game, onFinish }: GameProps) => {
 		color: "WHITE",
 		score: 0,
 		speed: 0,
-		acceleration: 0.1,
 	});
 	const player2PaddleRef = useRef<Paddle>({
 		width: 10,
@@ -37,7 +36,7 @@ const Game = ({ game, onFinish }: GameProps) => {
 		color: "WHITE",
 		score: 0,
 		speed: 0,
-		acceleration: 0.1,
+
 	});
 	const [gameFinished, setGameFinished] = useState(false);
 	const [displayedTimer, setDisplayedTimer] = useState(0);
@@ -90,13 +89,13 @@ const Game = ({ game, onFinish }: GameProps) => {
 
 			const handleMovement = (event: KeyboardEvent) => {
 				if (event.key === "ArrowUp" && game.player2) {
-					player2PaddleRef.current.acceleration = -acceleration;
+					player2PaddleRef.current.speed = -moveSpeed;
 				} else if (event.key === "ArrowDown" && game.player2) {
-					player2PaddleRef.current.acceleration = acceleration;
+					player2PaddleRef.current.speed = moveSpeed;
 				} else if (event.key === "w") {
-					player1PaddleRef.current.acceleration = -acceleration;
+					player1PaddleRef.current.speed = -moveSpeed;
 				} else if (event.key === "s") {
-					player1PaddleRef.current.acceleration = acceleration;
+					player1PaddleRef.current.speed = moveSpeed;
 				} else if (event.key === " ") {
 					setIsPaused(!isPaused.current);
 				}
@@ -107,9 +106,9 @@ const Game = ({ game, onFinish }: GameProps) => {
 					(event.key === "ArrowUp" || event.key === "ArrowDown") &&
 					game.player2
 				) {
-					player2PaddleRef.current.acceleration = 0;
+					player2PaddleRef.current.speed = 0;
 				} else if (event.key === "w" || event.key === "s") {
-					player1PaddleRef.current.acceleration = 0;
+					player1PaddleRef.current.speed = 0;
 				}
 			};
 
@@ -257,10 +256,8 @@ const Game = ({ game, onFinish }: GameProps) => {
 					ballRef.current.y += ballRef.current.velocityY;
 
 					// In your game loop, update the paddle's speed based on its acceleration
-					player1PaddleRef.current.speed +=
-						player1PaddleRef.current.acceleration;
-					player2PaddleRef.current.speed +=
-						player2PaddleRef.current.acceleration;
+					player1PaddleRef.current.y += player1PaddleRef.current.speed;
+					player2PaddleRef.current.y += player2PaddleRef.current.speed;
 
 					// Limit the paddle's speed to the moveSpeed
 					player1PaddleRef.current.speed = Math.max(
