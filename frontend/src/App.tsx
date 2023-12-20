@@ -20,6 +20,7 @@ import NewGame from "./Pages/NewGame";
 import { NotificationProvider } from "./contexts/NotificationContext";
 import ErrorPage from "./Pages/ErrorPage";
 import TournamentsPage from "./Pages/TournamentsPage";
+import GamePage from "./Pages/GamePage";
 
 function App() {
 	return (
@@ -69,11 +70,11 @@ function App() {
 								}
 							/>
 							<Route
-								path="/game"
+								path="/game/:gameId"
 								element={
 									<GameProvider>
 										<PrivateRoute>
-											<PongGamePage />
+											<GamePage />
 										</PrivateRoute>
 									</GameProvider>
 								}

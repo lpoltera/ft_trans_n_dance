@@ -19,9 +19,10 @@ const HomePage = () => {
 		name_p2: "",
 		score_p1: 0,
 		score_p2: 0,
-		updated_at: "",
+		// updated_at: "",
 		difficulty: "facile",
 		mode: "1972",
+		mode_value: 0,
 		power_ups: false,
 		status: "pending",
 	});
@@ -42,6 +43,8 @@ const HomePage = () => {
 			setForm({ ...form, mode: event.target.value });
 		} else if (event.target.name === "power_ups") {
 			setForm({ ...form, power_ups: event.target.checked });
+		} else if (event.target.name === "mode_value") {
+			setForm({ ...form, mode_value: +event.target.value });
 		}
 	};
 
@@ -62,13 +65,15 @@ const HomePage = () => {
 		setShowEditModal(false);
 		if (user) {
 			form.name_p1 = user.username;
+			console.log("form : ", form);
 			try {
-				const response = await axios.post("/api/game/create", form, { // axios.post("api/games/create")
+				const response = await axios.post("/api/game/create", form, {
 					headers: {
 						"Content-Type": "application/json",
 					},
 				});
 				console.log("Partie enregistrée avec succès dans la base de données. id = ", response.data);
+				navigate("/game/" + response.data);
 			} catch (error) {
 				console.error("Erreur lors de l'enregistrement de la partie :", error);
 			}
@@ -83,9 +88,10 @@ const HomePage = () => {
 			name_p2: "",
 			score_p1: 0,
 			score_p2: 0,
-			updated_at: "",
+			// updated_at: "",
 			difficulty: "facile",
 			mode: "1972",
+			mode_value: 0,
 			power_ups: false,
 			status: "pending",
 		});
@@ -183,6 +189,18 @@ const HomePage = () => {
 												<option className="bg-neutral-800" value="time">Time</option>
 											</select>
 										</div>
+										{(form.mode === "points" || form.mode === "time") && (
+											<div onChange={handleFormChange} className="flex flex-col">
+												<p className="font-semibold mb-3">
+													Value
+												</p>
+												<input
+													name="mode_value"
+													type="number"
+													className="w-full bg-transparent border-white rounded-sm"
+												/>
+											</div>
+										)}
 										<div onChange={handleFormChange} className="flex flex-col">
 											<p className="font-semibold mb-3">
 												Difficulté

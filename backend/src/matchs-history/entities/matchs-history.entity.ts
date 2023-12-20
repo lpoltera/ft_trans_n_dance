@@ -31,12 +31,6 @@ export class MatchsHistory {
   @JoinColumn({ name: 'name_p2', referencedColumnName: 'username' })
   user_p2: User | null;
 
-  @CreateDateColumn()
-  readonly created_at: Date;
-
-  @UpdateDateColumn()
-  readonly updated_at: Date;
-
   @Column()
   score_p1: number;
 
@@ -58,6 +52,9 @@ export class MatchsHistory {
   @Column()
   mode: string;
 
+  @Column({ nullable: true })
+  mode_value: number;
+
   @Column()
   power_ups: string;
 
@@ -70,6 +67,11 @@ export class MatchsHistory {
   @OneToOne(() => Notification)
   notification: Notification;
 
+  @CreateDateColumn()
+  created_at: Date;
+
+  @UpdateDateColumn()
+  updated_at: Date;
   // 1               1/7.30min  * 10 = 1.36
   // 1               1/2.30min  * 10 = 4.34
 

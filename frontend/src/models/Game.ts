@@ -26,10 +26,11 @@ export interface GameHistoryProps {
   name_p2: string;
   score_p1: number;
   score_p2: number;
-  updated_at: string;
+  // updated_at: string;
   status: string;
   difficulty: string;
   mode: string;
+  mode_value: number;
   power_ups: boolean;
 }
 
@@ -44,6 +45,7 @@ export interface TournamentGameProps {
   participants: string[];
   difficulty: string;
   mode: string;
+  mode_value: number;
   power_ups: boolean;
   tournament_creator: string | undefined;
   status: string;
@@ -121,12 +123,10 @@ export type GameCreation = {
 };
 
 export type GameUpdate = {
-  gameId: string;
-  scorePlayer1?: number;
-  scorePlayer2?: number;
-  winner?: string;
-  duration?: number;
-  status: GameStatus;
+  score_p1?: number;
+  score_p2?: number;
+  time?: number;
+  status: string;
 };
 
 export type IGame = {
@@ -135,14 +135,14 @@ export type IGame = {
   player2: string | null;
   scorePlayer1: number;
   scorePlayer2: number;
-  difficulty: number;
-  winner: string | undefined;
+  difficulty: string;
+  // winner: string | undefined;
   duration: number;
-  status: GameStatus;
-  gameType: GameType;
-  value: number;
-  powerUps: boolean;
-  tournament: boolean;
+  status: string;
+  mode: string;
+  mode_value: number;
+  powerUps: string;
+  tournament: string;
   updatedAt: Date;
   createdAt: Date;
 };

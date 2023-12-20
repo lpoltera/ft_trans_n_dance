@@ -33,6 +33,7 @@ const TournamentsPage: React.FC = () => {
 		participants: [],
 		difficulty: "facile",
 		mode: "1972",
+		mode_value: 0,
 		power_ups: false,
 		tournament_creator: "",
 		status: "pending",
@@ -102,6 +103,7 @@ const TournamentsPage: React.FC = () => {
 				const games = await axios.get<TournamentGameProps[]>(`/api/tournaments/games/${newTournament.name}`);
 				console.log("Tournoi enregistré avec succès dans la base de données.");
 				sendNotifToParticipants(games.data);
+				// get next match if null -> podium
 			} catch (error) {
 				console.error("Erreur lors de l'enregistrement du tournoi :", error);
 			}
