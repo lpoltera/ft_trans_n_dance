@@ -76,7 +76,30 @@ const AvatarRadioSelect = ({ onChange }: Props) => {
 
       {/* Render file input for custom avatar */}
       {uploadedAvatar ? (
-        <div className="relative p-1">
+        <div className="flex items-center space-x-6">
+          <div className="flex flex-col items-center">ou</div>
+          <label htmlFor="upload-avatar" className="cursor-pointer">
+            <span
+              className="block w-full text-sm text-violet-500 bg-white py-2 px-4 rounded-full
+              file:mr-4 file:py-2 file:px-4
+              file:rounded-full file:border-0
+              file:text-sm file:font-semibold
+              file:bg-violet-50 file:text-violet-700
+              hover:file:bg-violet-100"
+              >
+            Téléverser un avatar
+            </span>
+          <input
+              type="file"
+              id="upload-avatar"
+              name="avatar"
+              accept="image/*"
+              onChange={handleFileChange}
+              style={{ display: "none" }}
+            />
+          </label>
+
+          <div className="relative p-1">
           <input
             type="radio"
             id="custom-avatar"
@@ -86,15 +109,17 @@ const AvatarRadioSelect = ({ onChange }: Props) => {
             onChange={handleAvatarChange}
             className="absolute top-0 left-0 w-full h-full appearance-none checked:bg-purple-500 indeterminate:bg-purple-500 hover:bg-purple-500 checked:hover:bg-purple-500"
           />
-          <label htmlFor="custom-avatar">
-            <img
-              src={uploadedAvatar}
-              alt="Custom avatar"
-              className="w-16 h-16 rounded-full relative"
-            />
-          </label>
+            <label htmlFor="custom-avatar">
+              <img
+                src={uploadedAvatar}
+                alt="Custom avatar"
+                className="w-16 h-16 rounded-full relative"
+                />
+            </label>
+          </div>
         </div>
       ) : (
+
         <div className="flex items-center space-x-6">
           <div className="flex flex-col items-center">ou</div>
           <label htmlFor="upload-avatar" className="cursor-pointer">
