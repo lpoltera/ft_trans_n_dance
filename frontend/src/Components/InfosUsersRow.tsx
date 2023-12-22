@@ -80,7 +80,7 @@ const InfosUsersRow = ({
 
   return (
     <>
-      <div className="flex justify-between items-center pr-4 hover:bg-neutral-800 rounded-md">
+      <div className="flex justify-between items-center pr-4 hover:bg-[#f67539] rounded-md">
         <a href={"/profil/" + ami.username} className="py-4 px-4">
           <div className="flex justify-center gap-4">
             <img

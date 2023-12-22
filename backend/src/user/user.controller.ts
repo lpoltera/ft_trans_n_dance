@@ -157,12 +157,13 @@ export class UserController {
   async update(
     @Param('username') username: string,
     @Body() updateUserDto: UpdateUserDto,
+    @Session() session: Record<string, any>,
   ) {
-    return await this.userService.update(username, updateUserDto);
+    return await this.userService.update(username, updateUserDto, session);
   }
 
   @Delete(':username')
-  async remove(@Param('username') name: string) {
-    return await this.userService.remove(name);
+  async remove(@Param('username') name: string,  @Session() session: Record<string, any>) {
+    return await this.userService.remove(name, session);
   }
 }

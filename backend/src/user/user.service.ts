@@ -137,32 +137,60 @@ export class UserService {
     return await this.userDB.findOneBy({ username });
   }
 
-  async update(username: string, userUpdate: UpdateUserDto) {
-    const user = await this.userDB.findOne({ where: { username: username } });
-    if (!user) {
-      throw new NotFoundException(
-        `L'utilisateur avec le nom d'utilisateur "${username}" n'a pas été trouvé.`,
+  async update(
+    username: string,
+    userUpdate: UpdateUserDto,
+    session: Record<string, any>,
+  ) {
+    try {
+      const user = await this.userDB.findOne({ where: { username: username } });
+      if (!user) {
+        throw new NotFoundException(
+          `L'utilisateur avec le nom d'utilisateur "${username}" n'a pas été trouvé.`,
+        );
+      }
+
+      if (userUpdate.password && userUpdate.password.length > 0) {
+        const hash = await bcrypt.hash(userUpdate.password, 10);
+        user.password = hash;
+        session.user = {
+          ...session.user,
+          password: user.password,
+        };
+      }
+      if (userUpdate.avatar) {
+        user.avatar = userUpdate.avatar;
+        session.user = {
+          ...session.user,
+          avatar: user.avatar,
+        }
+      }
+      if (userUpdate.username) {
+        user.username = userUpdate.username;
+        session.user = {
+          ...session.user,
+          username: user.username,
+        };
+      }
+      await this.userDB.save(user);
+      // const userResponse: UserResponseDto = user;
+      // session.connected = true;
+      return user.username;
+    } catch (error) {
+      throw new Error(
+        `Erreur lors de la sauvegarde de l'utilisateur : ${error.message}`,
       );
     }
-    if (userUpdate.password) {
-      const hash = await bcrypt.hash(userUpdate.password, 10);
-      user.password = hash;
-    }
-    if (userUpdate.avatar) {
-      user.avatar = userUpdate.avatar;
-    }
-    if (userUpdate.username) {
-      user.username = userUpdate.username;
-    }
-    return await this.userDB.save(user);
   }
 
-  async remove(name: string) {
+  async remove(name: string, session: Record<string, any>) {
     const userToDelete = await this.userDB.findOne({
       where: { username: name },
     });
-    if (userToDelete)
-      return await this.userDB.softDelete({ id: userToDelete.id });
+    if (userToDelete){
+    session.destroy();
+    return await this.userDB.softDelete({ id: userToDelete.id });
+    }
     return 'User not found';
   }
 
@@ -177,3 +205,5 @@ export class UserService {
     } else return 'erreur podium';
   }
 }
+
+// async getmy

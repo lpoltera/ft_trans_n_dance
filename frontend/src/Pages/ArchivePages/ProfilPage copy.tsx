@@ -201,7 +201,7 @@ const ProfilPage = () => {
                 <IconButton
                   onClick={editProfil}
                   icon={<PencilSquareIcon />}
-                  classCustom="w-10 h-10 p-2 rounded-md hover:bg-neutral-800"
+                  classCustom="w-10 h-10 p-2 rounded-md hover:bg-[#f67539]"
                   tooltip="Modifier le profil"
                   tooltipId="editProfil"
                 />
@@ -210,7 +210,7 @@ const ProfilPage = () => {
                   {relationStatus === "valider" ? (
                     <IconButton
                       icon={<UserMinusIcon />}
-                      classCustom="w-10 h-10 p-2 rounded-md hover:bg-neutral-800"
+                      classCustom="w-10 h-10 p-2 rounded-md hover:bg-[#f67539]"
                       onClick={removeFriend}
                       tooltip="Supprimer de la liste d'amis"
                       tooltipId="removeFriend"
@@ -218,7 +218,7 @@ const ProfilPage = () => {
                   ) : (
                     <IconButton
                       icon={<UserPlusIcon />}
-                      classCustom="w-10 h-10 p-2 rounded-md hover:bg-neutral-800"
+                      classCustom="w-10 h-10 p-2 rounded-md hover:bg-[#f67539]"
                       onClick={addFriend}
                       tooltip="Ajouter en ami"
                       tooltipId="addFriend"
@@ -227,7 +227,7 @@ const ProfilPage = () => {
                   <IconButton
                     onClick={blockUser}
                     icon={<NoSymbolIcon />}
-                    classCustom="w-10 h-10 p-2 rounded-md hover:bg-neutral-800"
+                    classCustom="w-10 h-10 p-2 rounded-md hover:bg-[#f67539]"
                     tooltip="Bloquer"
                     tooltipId="blockUser"
                   />

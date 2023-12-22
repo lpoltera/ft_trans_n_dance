@@ -70,7 +70,7 @@ const Navbar = () => {
 						<IconButton
 							onClick={showNotificationPanel}
 							icon={<BellAlertIcon />}
-							classCustom="w-10 h-10 p-2 rounded-lg hover:bg-neutral-800"
+							classCustom="w-10 h-10 p-2 rounded-lg hover:bg-[#f67539]"
 						/>
 						<span className={`px-1 rounded-full absolute top-1 right-1 z-10 text-xs ${unreadNotif ? 'bg-red-600' : 'bg-cyan-950'}`}>{notifsList?.length}</span>
 					</div>
@@ -78,7 +78,7 @@ const Navbar = () => {
 						<IconButton
 							onClick={navigateToChat}
 							icon={<ChatBubbleBottomCenterIcon />}
-							classCustom="w-10 h-10 p-2 rounded-lg hover:bg-neutral-800"
+							classCustom="w-10 h-10 p-2 rounded-lg hover:bg-[#f67539]"
 						/>
 						{unreadChat && (
 							<span className="bg-red-600 w-2 h-2 rounded-full absolute top-2 right-2 z-10"></span>
@@ -92,13 +92,13 @@ const Navbar = () => {
 					<IconButton
 						onClick={navigateToUsers}
 						icon={<UserGroupIcon />}
-						classCustom="w-10 h-10 p-2 rounded-lg hover:bg-neutral-800"
+						classCustom="w-10 h-10 p-2 rounded-lg hover:bg-[#f67539]"
 					/>
 					<MenuDropdown links={profilLinks}>
 						<IconButton
 							onClick={navigateToProfil}
 							icon={<UserCircleIcon />}
-							classCustom="w-10 h-10 p-2 rounded-lg hover:bg-neutral-800"
+							classCustom="w-10 h-10 p-2 rounded-lg hover:bg-[#f67539]"
 						/>
 					</MenuDropdown>
 				</nav>
@@ -193,7 +193,7 @@ export default Navbar;
 // 						<IconButton
 // 							onClick={showNotificationPanel}
 // 							icon={<BellAlertIcon />}
-// 							classCustom="w-10 h-10 p-2 rounded-lg hover:bg-neutral-800"
+// 							classCustom="w-10 h-10 p-2 rounded-lg hover:bg-[#f67539]"
 // 						/>
 // 						{unreadNotif && (
 // 							<span className="bg-red-600 w-2 h-2 rounded-full absolute top-2 right-2 z-10"></span>
@@ -203,7 +203,7 @@ export default Navbar;
 // 						<IconButton
 // 							onClick={navigateToChat}
 // 							icon={<ChatBubbleBottomCenterIcon />}
-// 							classCustom="w-10 h-10 p-2 rounded-lg hover:bg-neutral-800"
+// 							classCustom="w-10 h-10 p-2 rounded-lg hover:bg-[#f67539]"
 // 						/>
 // 						{unreadChat && (
 // 							<span className="bg-red-600 w-2 h-2 rounded-full absolute top-2 right-2 z-10"></span>
@@ -217,13 +217,13 @@ export default Navbar;
 // 					<IconButton
 // 						onClick={navigateToUsers}
 // 						icon={<UserGroupIcon />}
-// 						classCustom="w-10 h-10 p-2 rounded-lg hover:bg-neutral-800"
+// 						classCustom="w-10 h-10 p-2 rounded-lg hover:bg-[#f67539]"
 // 					/>
 // 					<MenuDropdown links={profilLinks}>
 // 						<IconButton
 // 							onClick={navigateToProfil}
 // 							icon={<UserCircleIcon />}
-// 							classCustom="w-10 h-10 p-2 rounded-lg hover:bg-neutral-800"
+// 							classCustom="w-10 h-10 p-2 rounded-lg hover:bg-[#f67539]"
 // 						/>
 // 					</MenuDropdown>
 // 				</nav>

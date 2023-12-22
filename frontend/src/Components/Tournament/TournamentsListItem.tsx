@@ -34,7 +34,7 @@ const TournamentsListItem: React.FC<TournamentsListItemProps> = ({ tournoi, user
 
 	return (
 		<>
-			<div className="flex justify-between items-center pr-4 m-1 hover:bg-neutral-800 rounded-md">
+			<div className="flex justify-between items-center pr-4 m-1 hover:bg-[#f67539] rounded-md">
 				<a href="#" className="py-4 px-4">
 					<div className="flex justify-center gap-4">
 						<div className="flex flex-col justify-start">

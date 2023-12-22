@@ -88,6 +88,7 @@ export interface Parties {
   difficulty: string;
   mode: string;
   power_ups: boolean;
+  mode_value: number;
 }
 
 export interface RankingProps {

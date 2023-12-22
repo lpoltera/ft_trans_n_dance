@@ -11,7 +11,7 @@ const PodiumUserRow = ({ currentUser }: Props) => {
     <a
       href={"/profil/" + currentUser.username}
       key={currentUser.id}
-      className="flex justify-between py-4 px-4 border border-white hover:bg-neutral-800 rounded-md"
+      className="flex justify-between py-4 px-4 border border-white hover:bg-[#f67539] rounded-md"
     >
       <div className="flex justify-center gap-4">
         <img

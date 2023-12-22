@@ -6,7 +6,7 @@ import {
 	UserPlusIcon,
 } from "@heroicons/react/24/outline";
 import axios from "axios";
-import { useEffect, useState, ChangeEvent } from "react";
+import { useEffect, useState, ChangeEvent, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import FooterMain from "../Components/FooterMain";
 import HistoryMatchRow from "../Components/HistoryMatchRow";
@@ -23,8 +23,15 @@ import { useUserContext } from "../contexts/UserContext";
 import { GameStatsProps, Parties } from "../models/Game";
 import { User, UserRelation } from "../models/User";
 
+
+interface Form {
+	avatar: string | null;
+	username: string | null;
+	password: string | null;
+}
+
 const ProfilPage = () => {
-	const { user, userRelations } = useUserContext();
+	const { userRelations } = useUserContext();
 	const [currentUser, setCurrentUser] = useState<User | null>(null);
 	const [userGames, setUserGames] = useState<Parties[] | null>(null);
 	const [userFriends, setUserFriends] = useState<User[] | null>(null);
@@ -34,12 +41,27 @@ const ProfilPage = () => {
 	const [isMyProfile, setIsMyProfile] = useState(false);
 	const [isMyFriend, setIsMyFriend] = useState(false);
 	const [showEditAccountModal, setEditAccountModal] = useState(false);
-	const [form, setForm] = useState({
-		id: 0,
-		username: "",
+	const [update, setUpdate] = useState(false);
+	const fileInputRef = useRef<HTMLInputElement>(null);
+	const [form, setForm] = useState<Form>({
 		avatar: "",
-		password: ""
+		username: "",
+		password: null
 	});
+
+	const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+		if (event.target.files && event.target.files[0]) {
+		const img = event.target.files[0];
+		const reader = new FileReader();
+		reader.onloadend = () => {
+			const result = reader.result as string;
+			setForm({ ...form, avatar: result });
+			console.log("imgs = ", result);
+		};
+
+		reader.readAsDataURL(img);
+		}
+	  };
 
 	const url = window.location.href; // Obtient l'URL actuelle
 	const urlSegments = url.split("/"); // Divise l'URL en segments
@@ -50,6 +72,7 @@ const ProfilPage = () => {
 			try {
 				const friends = await axios.get<UserRelation[]>("/api/friends/relations");
 				const response = await axios.get<User>("/api/my-name");
+				console.log("my name = ", response.data.username);
 				if (idURL === "profil" || idURL === "") {
 					idURL = response.data.username;
 					setIsMyProfile(true);
@@ -75,70 +98,99 @@ const ProfilPage = () => {
 		}
 
 		async function fetchUserAndFriend() {
-			const name = await fetchCurrent();
+			let name = await fetchCurrent();
 			console.log("name in fetchUserAndFriend =", name);
 			if (name) {
 				try {
+					console.log("name before api request : ", name)
 					const [userResponse, friendResponse, gamesResponse] =
 						await Promise.all([
-							axios.get<User>("/api/" + name),
+							axios.get<User>("/api/" + name ),
 							axios.get<User[]>("/api/friends/all/" + name),
 							axios.get<Parties[]>("/api/game/user-history/" + name),
 						]);
 					setCurrentUser(userResponse.data);
 					setUserFriends(friendResponse.data);
 					setUserGames(gamesResponse.data);
+					name = null;
 				} catch (err) { }
 			}
 		}
 		fetchUserAndFriend();
-	}, [idURL]);
+	}, [idURL, update]);
 
 
-	// try to update fields
 	const updateAccountSettings = async () => {
-		console.log("Profil mis à jour avec succès :");
-	  };
-	  
-	// const handleFormChange = (event: ChangeEvent<HTMLInputElement>) => {
-	// 	// console.log("handleFormChange called", event.target.value)
-	// 	if (event.target.name === "name") {
-	// 		setForm({ ...form, name: event.target.value });
-	// 	} else if (event.target.name === "difficulty") {
-	// 		setForm({ ...form, difficulty: event.target.value });
-	// 	} else if (event.target.name === "mode") {
-	// 		setForm({ ...form, mode: event.target.value });
-	// 	} else if (event.target.name === "power_ups") {
-	// 		setForm({ ...form, power_ups: event.target.checked });
-	// 	} else if (event.target.name === "participants") {
-	// 		if (event.target.checked) {
-	// 			let checkboxValue = event.target.value;
-	// 			console.log(`Participant ${checkboxValue} added`);
-	// 			setForm({ ...form, participants: [...form.participants, checkboxValue] });
-	// 		} else {
-	// 			let checkboxValue = event.target.value;
-	// 			if (checkboxValue !== user?.username) {
-	// 				console.log(`Particiapnt ${checkboxValue} removed`);
-	// 			}
-	// 			setForm({ ...form, participants: form.participants.filter((participant) => participant !== checkboxValue) });
-	// 		}
-	// 	}
-	// };
+		setEditAccountModal(false)
+		if (update === false)
+			setUpdate(true)
+		else
+			setUpdate(false)
+			// useEffect(() => {
+			console.log("form.username : " + form.username);
+			console.log("form.password : " + form.password);
+			console.log("form.avatar : " + form.avatar);
+			// await axios.patch('api/' + user?.username, form, {
+			await axios.patch('api/' + currentUser?.username, form, {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+					'Cache-Control': 'no-cache',
+        },
+      })
+			.then((response) => {
+				setForm({
+					avatar: "",
+					username: "",
+					password: null,
+				})
+				setCurrentUser(response.data);
+				console.log("response : " + response.data);
+			}
+			)
+			.catch((err) => {
+        if (err.response && err.response.data && err.response.data.message) {
+          const errorMessage = err.response.data.message;
+          return alert("Error: " + errorMessage);
+        } else {
+          return alert("Error: " + err.message);
+        }
+      });
+		// }, [user?.username]);
+	}
 
 	const editProfil = () => {
 		setEditAccountModal(true)
-	};		// TODO modal -> axios.patch update
-	const addFriend = () => { };		// TODO à copier
+	};	// TODO modal -> axios.patch update
+	const addFriend = () => { };	// TODO à copier
 	const removeFriend = () => { };	// TODO à créer ?
-	const blockUser = () => { };		// TODO à copier
+	const blockUser = () => { };	// TODO à copier
 	const unblockUser = () => { };	// TODO à copier
+
+	const handleFormChange = (event: ChangeEvent<HTMLInputElement>) => {
+		if (event.target.name === "avatar") {
+			setForm({ ...form, avatar: event.target.value });
+		}
+		if (event.target.name === "username") {
+			setForm({ ...form, username: event.target.value });
+		}
+		if (event.target.name === "password") {
+			setForm({ ...form, password: event.target.value });
+		}
+	};
+
+	const deleteAccount = async () => {
+		if (window.confirm("Voulez-vous vraiment supprimer votre compte ?")) {
+			await axios.delete("/api/" + currentUser?.username);
+			navigate("/login");
+		}
+	};
 
 	return (
 		<>
 			<Navbar />
 			<PageLayout>
 				<div className="w-full h-full grow flex flex-col gap-12">
-					<div className="flex w-full gap-10 justify-start items-center bg-red-500">
+					<div className="flex w-full gap-10 justify-start items-center">
 						<div className="flex shrink gap-4 items-center">
 							<img
 								src={currentUser?.avatar}
@@ -208,73 +260,98 @@ const ProfilPage = () => {
 
 					{/* [Main Modal] Update Profile Page */}
 					{showEditAccountModal && (
-										<div className="fixed inset-0 overflow-y-auto z-50 flex items-center justify-center bg-black/60">
-											<div className="relative p-8 bg-grey w-full max-w-md mx-auto rounded-md shadow-lg bg-neutral-800">
-												<div className="flex flex-col space-y-4">
-													<h3 className="text-2xl font-semibold text-center mb-4">Editer le profil</h3>
-													<form name="createTournamentForm" className="flex flex-col items-center">
-														<div className="cursor-pointer flex flex-wrap justify-center items-center content-center">
-															<img
-																src={currentUser?.avatar}
-																alt="Profile picture to update"
-																className="relative w-16 h-16 rounded-full hover:opacity-30 transition"
-															/>
-															<div className="transition text-xs ">John Doe</div>
-														</div>
+						<div className="fixed inset-0 overflow-y-auto z-50 flex items-center justify-center bg-black/60">
+							<div className="relative p-8  rounded-md shadow-lg bg-neutral-800">
+								<h3 className="text-2xl font-semibold text-center">Editer le profil</h3>
+								<form name="createTournamentForm" className="flex flex-col items-center">
+									<div className="relative group w-16 h-16 flex items-center m-5">
+										{/* <div className="opacity-0 group-hover:opacity-100 duration-300 absolute font-bold text-xs ">
+											Modifier
+										</div> */}
+										<img
+											src={currentUser?.avatar}
+											alt="Profile picture to update"
+											className="rounded-full absolute"
+										/>
+										{/* <input name="avatar" type="file" className="hidden" onChange={handleAvatarChange}/> */}
+									</div>
+									<div>
+									{/* <label htmlFor="upload-avatar" className="cursor-pointer"> */}
+										<span
+											className="block w-full text-sm text-violet-500 bg-white py-2 px-4 rounded-full
+												file:mr-4 file:py-2 file:px-4
+												file:rounded-full file:border-0
+												file:text-sm file:font-semibold
+												file:bg-violet-50 file:text-violet-700
+												hover:file:bg-violet-100
+												cursor-pointer"
+											onClick={() => {
+												// Déclenchez un clic sur l'élément d'entrée lorsque le span est cliqué
+												fileInputRef.current?.click();
+											}}>
+											Modifier
+										</span>
+										<input
+											type="file"
+											className="hidden"
+											onChange={handleImageUpload}
+											ref={fileInputRef}
+										/>
+									</div>
 
-														<label>
-															<span className="block text-sm font-medium text-slate-400">Pseudo</span>
-															<input
-																type="text"
-																className="bg-transparent rounded-md mt-1 mb-3"
-																id="username"
-																name="username"
-																placeholder="Pseudo"
-																// onChange={handleFormChange}
-															/>
-														</label>
+									<label>
+										<span className="block text-sm font-medium text-slate-400">Pseudo</span>
+										<input
+											type="text"
+											className="bg-transparent rounded-md mt-1 mb-3"
+											id="username"
+											name="username"
+											placeholder="Pseudo"
+											onChange={handleFormChange}
+										/>
+									</label>
 
-														<label>
-															<span className="block text-sm font-medium text-slate-400">Mot de passe</span>
-															<input
-																type="text"
-																className="bg-transparent rounded-md mt-1 mb-3"
-																id="password"
-																name="password"
-																placeholder="Mot de passe"
-																// onChange={handleFormChange}
-															/>
-														</label>
+									<label>
+										<span className="block text-sm font-medium text-slate-400">Mot de passe</span>
+										<input
+											type="text"
+											className="bg-transparent rounded-md mt-1 mb-3"
+											id="password"
+											name="password"
+											placeholder="Mot de passe"
+											onChange={handleFormChange}
+										/>
+									</label>
 
-														<div className="flex gap-4 text-sm">
-															<button
-																type="button"
-																className="mt-5 py-2 px-4 bg-emerald-600 text-white rounded-md hover:bg-emerald-800 cursor-pointer"
-																onClick={() => updateAccountSettings()}
-															>
-																Enregistrer les modifications
-															</button>
-															<button
-																type="button"
-																className="mt-5 py-2 px-4 bg-gray-400 text-white rounded-md hover:bg-gray-500 cursor-pointer"
-																onClick={() => setEditAccountModal(false)}
-															>
-																Annuler
-															</button>
-															<button
-																type="button"
-																className="mt-5 py-2 px-4 bg-red-600 text-white rounded-md hover:bg-red-800 cursor-pointer"
-																onClick={() => deleteAccount()}
-															>
-																Supprimer le compte
-															</button>
-														</div>
-													</form>
-												</div>
-											</div>
-										</div>
-									)}
-									{/* End Modal */}
+									<div className="flex flex-col text-sm">
+										<button
+											type="button"
+											className="mt-5 py-2 px-4 bg-emerald-600 text-white rounded-md hover:bg-emerald-800 cursor-pointer"
+											onClick={() => updateAccountSettings()}
+										>
+											Enregistrer les modifications
+										</button>
+										<button
+											type="button"
+											className="mt-2 py-2 px-4 bg-gray-400 text-white rounded-md hover:bg-gray-500 cursor-pointer"
+											onClick={() => setEditAccountModal(false)}
+										>
+											Annuler
+										</button>
+										<button
+											type="button"
+											className="mt-2 py-2 px-4 bg-red-600 text-white rounded-md hover:bg-red-800 cursor-pointer"
+											onClick={() => deleteAccount()}
+										>
+											Supprimer le compte
+										</button>
+									</div>
+
+								</form>
+							</div>
+						</div>
+					)}
+					{/* End Modal */}
 
 
 
@@ -396,7 +473,7 @@ const ProfilPage = () => {
 												{userRelations?.map(
 													(relation, index) =>
 														relation.status === "pending" &&
-														relation.sender !== user?.username && (
+														relation.sender !== currentUser?.username && (
 															<UserRow
 																key={index}
 																user={relation.friend}
@@ -408,7 +485,7 @@ const ProfilPage = () => {
 												{userRelations?.map(
 													(relation, index) =>
 														relation.status === "pending" &&
-														relation.sender === user?.username && (
+														relation.sender === currentUser?.username && (
 															<UserRow
 																key={index}
 																user={relation.friend}

@@ -20,7 +20,7 @@ const UserRow = ({ user, isMyProfile = false, isFriend = false }: Props) => {
   return (
     <a
       href={`/profil/${user.username}`}
-      className="flex w-full rounded-lg justify-between items-center py-4 px-6 bg-cyan-950 hover:bg-neutral-800"
+      className="flex w-full rounded-lg justify-between items-center py-4 px-6 bg-cyan-950 hover:bg-[#f67539]"
     >
       <div className="flex shrink gap-4 items-center">
         <img
@@ -38,7 +38,7 @@ const UserRow = ({ user, isMyProfile = false, isFriend = false }: Props) => {
           <>
             <IconButton
               icon={<UserMinusIcon />}
-              classCustom="w-10 h-10 p-2 rounded-md hover:bg-neutral-800"
+              classCustom="w-10 h-10 p-2 rounded-md hover:bg-[#f67539]"
               onClick={removeFriend}
               tooltip="Supprimer de la liste d'amis"
               tooltipId="removeFriend"
@@ -48,7 +48,7 @@ const UserRow = ({ user, isMyProfile = false, isFriend = false }: Props) => {
           <>
             <IconButton
               icon={<UserPlusIcon />}
-              classCustom="w-10 h-10 p-2 rounded-md hover:bg-neutral-800"
+              classCustom="w-10 h-10 p-2 rounded-md hover:bg-[#f67539]"
               onClick={addFriend}
               tooltip="Ajouter en ami"
               tooltipId="addFriend"
@@ -58,7 +58,7 @@ const UserRow = ({ user, isMyProfile = false, isFriend = false }: Props) => {
         <IconButton
           onClick={blockUser}
           icon={<NoSymbolIcon />}
-          classCustom="w-10 h-10 p-2 rounded-md hover:bg-neutral-800"
+          classCustom="w-10 h-10 p-2 rounded-md hover:bg-[#f67539]"
           tooltip="Bloquer"
           tooltipId="blockUser"
         />

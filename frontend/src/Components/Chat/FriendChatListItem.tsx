@@ -34,7 +34,7 @@ const FriendChatListItem = ({ ami, index }: Props) => {
     <>
       {!isBlocked && (
         <div
-          className={`flex flex-row items-center gap-10 p-4 hover:bg-neutral-800 rounded-l-xl rounded-r-none w-full hover:cursor-pointer 
+          className={`flex flex-row items-center gap-10 p-4 hover:bg-[#f67539] rounded-l-xl rounded-r-none w-full hover:cursor-pointer
           ${isActive ? "bg-neutral-800" : "bg-transparent"}`}
         >
           <div className="flex flex-row w-full gap-4">
