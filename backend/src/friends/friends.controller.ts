@@ -70,10 +70,10 @@ export class FriendsController {
     );
   }
 
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.friendsService.remove(+id);
-  // }
+  @Delete(':name')
+  remove(@Param('name') name: string, @Session() session: Record<string, any>) {
+    return this.friendsService.removeFriend(session.user.username, name);
+  }
 
   @Delete('delete_all')
   removeAll() {

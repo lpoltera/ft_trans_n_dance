@@ -6,6 +6,7 @@ import { CreateMatchsHistoryDto } from './dto/create-matchs-history.dto';
 import { MatchsHistory } from './entities/matchs-history.entity';
 import { pbkdf2 } from 'crypto';
 import { User } from '../user/entities/user.entity';
+import { MatchsHistoryDto } from './dto/matchs-histoty.dto';
 
 @Injectable()
 export class MatchsHistoryService {
@@ -17,6 +18,26 @@ export class MatchsHistoryService {
     @InjectRepository(User)
     private readonly userDB: Repository<User>,
   ) {}
+
+  toDto(game: MatchsHistory): MatchsHistoryDto {
+    return {
+      id: game.id,
+      player1: game.name_p1,
+      player2: game.name_p2 || null,
+      scorePlayer1: game.score_p1,
+      scorePlayer2: game.score_p2,
+      difficulty: game.difficulty,
+      duration: game.time,
+      status: game.status,
+      mode: game.mode,
+      mode_value: game.mode_value,
+      powerUps: game.power_ups,
+      tournament: game.tournament_name,
+      updatedAt: game.updated_at,
+      createdAt: game.created_at,
+    };
+  }
+
   async create(MatchsHistoryDto: CreateMatchsHistoryDto, name_p1: string) {
     try {
       const match = this.MatchDB.create({
@@ -112,7 +133,7 @@ export class MatchsHistoryService {
 
   async findOne(id: number) {
     const game = await this.MatchDB.findOne({ where: { id: id } });
-    return game;
+    return this.toDto(game);
   }
 
   // remove(id: number) {

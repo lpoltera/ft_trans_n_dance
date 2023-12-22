@@ -150,10 +150,12 @@ export class FriendsService {
         {
           user: { username: username }, // blockedBy === username
           status: 'blocked',
+          blockedBy: username,
         },
         {
           friend: { username: username },
           status: 'blocked',
+          blockedBy: username,
         },
       ],
     });
@@ -175,7 +177,6 @@ export class FriendsService {
   // }
 
   async update(userName: string, friendName: string, statusToUpdate: string) {
-    //indiquer qui a bloqué (rajouter un champ blockedBy dans la table) - remettre à null après déblocage
     const friendToUpdate = await this.friendRepository.findOne({
       where: [
         {
@@ -191,6 +192,12 @@ export class FriendsService {
     if (friendToUpdate) {
       const previous_status = friendToUpdate.status;
       friendToUpdate.status = statusToUpdate;
+      if (statusToUpdate === 'blocked') {
+        friendToUpdate.blockedBy = userName;
+      }
+      if (statusToUpdate === 'valider' && previous_status === 'blocked') {
+        friendToUpdate.blockedBy = null;
+      }
       this.friendRepository.save(friendToUpdate);
       if (
         (friendToUpdate.status === 'valider' &&
@@ -255,5 +262,24 @@ export class FriendsService {
     }
     console.log(friends);
     return friends;
+  }
+
+  async removeFriend(userName: string, friendName: string) {
+    const friendToRemove = await this.friendRepository.findOne({
+      where: [
+        {
+          user: { username: userName },
+          friend: { username: friendName },
+        },
+        {
+          user: { username: friendName },
+          friend: { username: userName },
+        },
+      ],
+    });
+    if (friendToRemove) {
+      await this.friendRepository.delete(friendToRemove.id);
+      return `The relation between #${userName} and #${friendName} has been deleted`;
+    }
   }
 }

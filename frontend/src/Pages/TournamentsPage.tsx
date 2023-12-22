@@ -11,11 +11,13 @@ import HistoryMatchRow from '../Components/HistoryMatchRow';
 import { TournamentGameProps, RankingProps } from '../models/Game';
 import RankingPlayersRow from '../Components/RankingPlayerRow';
 import './TournamentPage.css';
+import { useNotificationContext } from '../contexts/NotificationContext';
 
 
 const TournamentsPage: React.FC = () => {
 	const [update, setUpdate] = useState<boolean>(false);
 	const { user, userRelations } = useUserContext();
+	const { socket } = useNotificationContext();
 	const [tournaments, setTournaments] = useState<string[][]>([]);
 	const [showCreateTournamentModal, setCreateTournamentModal] = useState(false);
 	const [selectedTournament, setSelectedTournament] = useState<string | null>(null);
@@ -31,6 +33,7 @@ const TournamentsPage: React.FC = () => {
 		participants: [],
 		difficulty: "facile",
 		mode: "1972",
+		mode_value: 0,
 		power_ups: false,
 		tournament_creator: "",
 		status: "pending",
@@ -97,7 +100,10 @@ const TournamentsPage: React.FC = () => {
 						"Content-Type": "application/json",
 					},
 				});
+				const games = await axios.get<TournamentGameProps[]>(`/api/tournaments/games/${newTournament.name}`);
 				console.log("Tournoi enregistré avec succès dans la base de données.");
+				sendNotifToParticipants(games.data);
+				// get next match if null -> podium
 			} catch (error) {
 				console.error("Erreur lors de l'enregistrement du tournoi :", error);
 			}
@@ -137,6 +143,33 @@ const TournamentsPage: React.FC = () => {
 		}
 	}
 
+	const sendNotifToParticipants = async (tournamentGames: TournamentGameProps[]) => {
+		console.log("tournamentGames : ", tournamentGames);
+		console.log("tournamentGames length : ", tournamentGames.length);
+		for (let i = 0; i < tournamentGames.length; i++) {
+			console.log(`tournamentGames[${i}].name_p1 : `, tournamentGames[i].name_p1);
+			console.log(`tournamentGames[${i}].name_p2 : `, tournamentGames[i].name_p2);
+			// for (let j = 0; j < 2; j++) {
+			// 	if (j === 0) {
+			// user !== tournamentGames[i].name_p1
+			const message1 = {
+				sender: tournamentGames[i].tournament_creator,
+				receiver: tournamentGames[i].name_p1,
+				text: `${tournamentGames[i].name_p1} on t'attend pour ton match contre ${tournamentGames[i].name_p2} !`,
+			}
+			socket?.emit("sendMessage", message1);
+			// } else {
+			// user !== tournamentGames[i].name_p2
+			const message2 = {
+				sender: tournamentGames[i].tournament_creator,
+				receiver: tournamentGames[i].name_p2,
+				text: `${tournamentGames[i].name_p2} on t'attend pour ton match contre ${tournamentGames[i].name_p1} !`,
+			}
+			socket?.emit("sendMessage", message2);
+			// }
+		}
+	}
+
 
 	const updatedUserRelations = [...userRelations, { friend: user }];
 
@@ -165,6 +198,7 @@ const TournamentsPage: React.FC = () => {
 										tournoi={tournamentName}
 										handleStatsButtonClick={handleStatsButtonClick}
 										handleTournamentListChange={handleTournamentListChange}
+										username={user.username}
 									/>
 								))}
 							</TabList>

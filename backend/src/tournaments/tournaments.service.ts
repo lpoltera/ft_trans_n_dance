@@ -113,14 +113,18 @@ export class TournamentsService {
     return rankings;
   }
 
-  async findAll() {
+  async findAll(name: string) {
     const tournaments = await this.MatchDB.createQueryBuilder('matchs_history')
       .select([
         'matchs_history.tournament_name',
         'matchs_history.tournament_creator',
         // 'matchs_history.status',
       ])
-      .where('matchs_history.tournament_name IS NOT NULL')
+      .where(
+        'matchs_history.tournament_name IS NOT NULL AND \
+				(matchs_history.name_p1 = :name OR matchs_history.name_p2 = :name)',
+        { name: name },
+      )
       .groupBy('matchs_history.tournament_name')
       .addGroupBy('matchs_history.tournament_creator')
       // .addGroupBy('matchs_history.status')

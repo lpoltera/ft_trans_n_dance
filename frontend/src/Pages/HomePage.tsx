@@ -4,10 +4,12 @@ import Navbar from "../Components/Navbar";
 import PageLayout from "../Components/PageLayout";
 import PodiumList from "../Components/PodiumList";
 import { useUserContext } from "../contexts/UserContext";
+import { useNavigate } from "react-router-dom";
 import { GameHistoryProps } from "../models/Game";
 import axios from "axios";
 
 const HomePage = () => {
+	const navigate = useNavigate();
 	const [checkedId, setCheckedId] = useState<string | null>(null);
 	const { user, loadingUser, userRelations } = useUserContext();
 	const [showEditModal, setShowEditModal] = useState(false);
@@ -17,9 +19,10 @@ const HomePage = () => {
 		name_p2: "",
 		score_p1: 0,
 		score_p2: 0,
-		updated_at: "",
+		// updated_at: "",
 		difficulty: "facile",
 		mode: "1972",
+		mode_value: 0,
 		power_ups: false,
 		status: "pending",
 	});
@@ -40,6 +43,8 @@ const HomePage = () => {
 			setForm({ ...form, mode: event.target.value });
 		} else if (event.target.name === "power_ups") {
 			setForm({ ...form, power_ups: event.target.checked });
+		} else if (event.target.name === "mode_value") {
+			setForm({ ...form, mode_value: +event.target.value });
 		}
 	};
 
@@ -60,13 +65,15 @@ const HomePage = () => {
 		setShowEditModal(false);
 		if (user) {
 			form.name_p1 = user.username;
+			console.log("form : ", form);
 			try {
-				const response = await axios.post("/api/game/create", form, { // axios.post("api/games/create")
+				const response = await axios.post("/api/game/create", form, {
 					headers: {
 						"Content-Type": "application/json",
 					},
 				});
 				console.log("Partie enregistrée avec succès dans la base de données. id = ", response.data);
+				navigate("/game/" + response.data);
 			} catch (error) {
 				console.error("Erreur lors de l'enregistrement de la partie :", error);
 			}
@@ -81,38 +88,48 @@ const HomePage = () => {
 			name_p2: "",
 			score_p1: 0,
 			score_p2: 0,
-			updated_at: "",
+			// updated_at: "",
 			difficulty: "facile",
 			mode: "1972",
+			mode_value: 0,
 			power_ups: false,
 			status: "pending",
 		});
+	}
+
+	const navigateToGame = () => {
+		navigate("/game");
 	}
 
 	return (
 		<>
 			<Navbar />
 			<PageLayout>
-				<div className="w-full h-full grow flex flex-col items-center justify-center gap-12 pb-12">
-					<h1 className="text text-5xl">C'est là que tout commence !</h1>
-					<div className="flex gap-4">
-						<a
-							href="/game"
-							className="bg-white text-black py-2 px-4 rounded-md border border-white"
+				<div className="w-full h-full grow flex flex-col items-center">
+					<img
+						className="absolute top-0 left-0 w-screen h-screen"
+						src="src/assets/homepage-bkg.png"
+						alt="background"
+					></img>
+					<h1 className="text text-5xl font-bold z-10">C'est là que tout commence !</h1>
+					<div className="h-screen flex items-center z-10 mt-24 ">
+						<button
+							// href="/game"
+							className="py-2 px-4 rounded-md border-4 text-black border-black z-10 font-bold hover:bg-[#f67539] hover:bg-opacity-70 hover:text-white"
 							type="button"
+							onClick={() => navigateToGame()}
 						>
 							Partie rapide
-						</a>
+						</button>
 						<button
 							// href="/new-game"
 							type="button"
-							className="py-2 px-4 rounded-md border border-white"
+							className="py-2 px-4 ml-4 rounded-md border-4 text-black border-black z-10 font-bold hover:bg-[#f67539] hover:bg-opacity-70 hover:text-white"
 							onClick={() => setShowEditModal(true)}
 						>
 							Nouvelle partie
 						</button>
 					</div>
-					<PodiumList />
 				</div>
 				{/* --------------------------------------- Modal --------------------------------------- */}
 				{showEditModal && (
@@ -172,6 +189,18 @@ const HomePage = () => {
 												<option className="bg-neutral-800" value="time">Time</option>
 											</select>
 										</div>
+										{(form.mode === "points" || form.mode === "time") && (
+											<div onChange={handleFormChange} className="flex flex-col">
+												<p className="font-semibold mb-3">
+													Value
+												</p>
+												<input
+													name="mode_value"
+													type="number"
+													className="w-full bg-transparent border-white rounded-sm"
+												/>
+											</div>
+										)}
 										<div onChange={handleFormChange} className="flex flex-col">
 											<p className="font-semibold mb-3">
 												Difficulté

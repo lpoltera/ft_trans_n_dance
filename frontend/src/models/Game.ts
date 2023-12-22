@@ -26,10 +26,11 @@ export interface GameHistoryProps {
   name_p2: string;
   score_p1: number;
   score_p2: number;
-  updated_at: string;
+  // updated_at: string;
   status: string;
   difficulty: string;
   mode: string;
+  mode_value: number;
   power_ups: boolean;
 }
 
@@ -44,6 +45,7 @@ export interface TournamentGameProps {
   participants: string[];
   difficulty: string;
   mode: string;
+  mode_value: number;
   power_ups: boolean;
   tournament_creator: string | undefined;
   status: string;
@@ -72,7 +74,7 @@ export interface Paddle {
   color: string;
   score: number;
   speed: number;
-  acceleration: number;
+  // acceleration: number;
 }
 
 export interface Parties {
@@ -97,3 +99,50 @@ export interface RankingProps {
   goals_conceded: number;
   point_difference: number;
 }
+
+export enum GameType {
+  POINTS = "points",
+  TIME = "time",
+  ORIGINAL = "1972",
+}
+
+export enum GameStatus {
+  PENDING = "pending",
+  IN_PROGRESS = "in_progress",
+  FINISHED = "finished",
+}
+
+export type GameCreation = {
+  creatorId: string;
+  opponentId?: string;
+  gameType: GameType;
+  value?: number;
+  powerUps?: boolean;
+  tournament?: boolean;
+  difficulty?: number;
+};
+
+export type GameUpdate = {
+  score_p1?: number;
+  score_p2?: number;
+  time?: number;
+  status: string;
+};
+
+export type IGame = {
+  id: string;
+  player1: string;
+  player2: string | null;
+  scorePlayer1: number;
+  scorePlayer2: number;
+  difficulty: string;
+  // winner: string | undefined;
+  duration: number;
+  status: string;
+  mode: string;
+  mode_value: number;
+  powerUps: string;
+  tournament: string;
+  updatedAt: Date;
+  createdAt: Date;
+};

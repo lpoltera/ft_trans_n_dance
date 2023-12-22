@@ -11,11 +11,14 @@ const NotificationPanel = () => {
 	useEffect(() => {
 		async function getNotifs() {
 			try {
-				const response = await axios.get("api/notifications/my");
-
-				if (response.data.length === 0) {
+				const response = await axios.get<Notifs[] | null>("api/notifications/my");
+				console.log("Response:", response);
+				if (!response.data || response.data.length === 0) {
+					console.log("No notifications");
 					setNotifications(null);
 				} else {
+					console.log("Notifications:", response.data);
+					console.log("Notifications length :", response.data.length);
 					setNotifications(response.data);
 				}
 			} catch (error) {
@@ -43,7 +46,7 @@ const NotificationPanel = () => {
 		>
 			<div className="w-96 grid-row-auto ml-auto">
 				{notifications ? (
-					notifications?.map((notification, index) => (
+					notifications.map((notification, index) => (
 						<div key={index} className="mb-2">
 							<NotificationCard
 								message={notification.message}

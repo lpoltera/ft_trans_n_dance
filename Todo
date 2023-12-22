@@ -3,50 +3,34 @@
 [X] Frontend ~ Afficher un message "écrivez votre premier message à XXX" lorsque la conversation est vide
 
 \*\* ProfilPage
-[ ] Backend ! Gérer modification du profil
-[ ] Backend ! Gérer le "isFriend"
-[ ] Backend ! Ajouter / bloquer / retirer l'utilisateur
-[ ] Backend ! Charger les invitations pending
-[ ] Backend ! Charger les personnes bloquées
-[ ] Backend !! Revoir les data des matchHistory: Ajouter le type de partie, la durée, etc…
-[ ] Back/Front ? Bouton "inviter l'utilisateur à démarrer une partie"
-[x] Frontend ! HistoryMatchRow
-[ ] Frontend ? HistoryMatchRow: N'afficher que l'adversaire ? + autres data
-[ ] Frontend ! UserRow: meme row pour bloqué / amis / pending
+[X] Backend ! Gérer modification du profil
+[X] Backend ! Gérer le "isFriend"
+[X] Backend ! Ajouter / bloquer / retirer l'utilisateur
+[X] Backend ! Charger les invitations pending
+[X] Backend ! Charger les personnes bloquées
+[X] Backend !! Revoir les data des matchHistory: Ajouter le type de partie, la durée, etc…
+[X] Frontend ! HistoryMatchRow
+[X] Frontend ? HistoryMatchRow: N'afficher que l'adversaire ? + autres data
+[X] Frontend ! UserRow: meme row pour bloqué / amis / pending
+[X] Dans sa page profil, quand on clique sur la cloche des notifs, erreur "Uncaught TypeError: notifications?.map is not a function"
+[X] Backend ! blocage utilisateur -> asymétrique
 [ ] Back/Front ! Intégrer les tournois
-[ ] Dans sa page profil, quand on clique sur la cloche des notifs, erreur "Uncaught TypeError: notifications?.map is not a function"
+[ ] Back/Front ? Bouton "inviter l'utilisateur à démarrer une partie"
+[ ] Front ! supprimer son compte depuis bouton modifier profile
+[ ] Front ! vérifier l'action des boutons dans ProfilPage et UserPage
 
 \*\* Tournois
-[x] Stocker les datas de la liste des tournois dans la db
-[x] Modal lecture seule qui s'affiche quand on clique sur l'oeil
-[ ] Afficher le créateur du tournois
-[ ] Uniquement créateur du tournois peut voir et cliquer sur modifier, va UPDATE les champs de la db
-[ ] Cliquer sur corbeille : message d'alerte, si oui DELETE toute la ligne correspondante dans la db
-[x] Modal création : afficher la liste des utilisateurs existants avec checkbox de sélection
+[X] Stocker les datas de la liste des tournois dans la db
+[X] Modal lecture seule qui s'affiche quand on clique sur l'oeil
+[X] Cliquer sur corbeille : message d'alerte, si oui DELETE toute la ligne correspondante dans la db
+[X] Modal création : afficher la liste des utilisateurs existants avec checkbox de sélection
+[X] Afficher le créateur du tournois
+[X] Backend ! tournois visibles uniquement si user == participants[]
+[X] Front ! Uniquement créateur du tournois et cliquer sur supprimer
+[ ] Front/Back ! envoyer notif/chat "tu es attendu pour la prochaine partie" - prêt voir ft sendNotifToParticipants in TournamentPage
 
 \*\* FooterMain
 [ ] Frontend ! Changer le lien Github
 
 \*\* App
-[ ] Frontend ! Faire que la Page Users soit /profil sans id ou faire users/:id
-
----
-
----
-
----
-
-[ ] Backend !
-[ ] Backend !
-[ ] Backend !
-[ ] Backend !
-[ ] Backend !
-
-- tournois visibles uniquement si user == participants[]
-- blocage utilisateur -> asymétrique
-
-- TournamentPage bin/poubelle visible uniquement si user == creator
-- supprimer son compte depuis boutton modifier profile
-- boutons actifs depuis profil
-
-- envoyer notif/chat "tu es attendu pour la prochaine partie"
+[X] Frontend ! Faire que la Page Users soit /profil sans id ou faire users/:name

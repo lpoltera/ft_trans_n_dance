@@ -39,6 +39,9 @@ export class Friendship {
   @Column()
   status: string;
 
+  @Column({ nullable: true })
+  blockedBy: string;
+
   @OneToOne(() => Notification)
   notification: Notification;
   // ..
