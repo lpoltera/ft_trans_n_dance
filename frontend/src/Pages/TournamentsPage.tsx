@@ -17,7 +17,7 @@ const TournamentsPage: React.FC = () => {
 	const [update, setUpdate] = useState<boolean>(false);
 	const { user, userRelations } = useUserContext();
 	const [tournaments, setTournaments] = useState<string[][]>([]);
-	const [showEditModal, setShowEditModal] = useState(false);
+	const [showCreateTournamentModal, setCreateTournamentModal] = useState(false);
 	const [selectedTournament, setSelectedTournament] = useState<string | null>(null);
 	const [tournamentGames, setTournamentGames] = useState<TournamentGameProps[] | any>();
 	const [form, setForm] = useState<TournamentGameProps>({
@@ -81,7 +81,7 @@ const TournamentsPage: React.FC = () => {
 			window.alert(`Le nombre de participants doit être compris entre 3 et 8`);
 			return;
 		}
-		setShowEditModal(false);
+		setCreateTournamentModal(false);
 		if (user) {
 			const newTournament: TournamentGameProps = { ...form, participants: [...form.participants, user.username], tournament_creator: user.username };
 			setTournaments([...tournaments, [newTournament.name, user.username]]);
@@ -149,7 +149,7 @@ const TournamentsPage: React.FC = () => {
 					<div className="w-1/3 h-250">
 						<button
 							className="bg-emerald-700 hover:bg-emerald-950 rounded-md p-3 mb-5"
-							onClick={() => setShowEditModal(true)}
+							onClick={() => setCreateTournamentModal(true)}
 						>
 							Ajouter un nouveau tournois
 						</button>
@@ -220,8 +220,8 @@ const TournamentsPage: React.FC = () => {
 					</div>
 				)}
 
-				{/* [Main Modal] Edit */}
-				{showEditModal && (
+				{/* [Main Modal] Create Tournament */}
+				{showCreateTournamentModal && (
 					<div className="fixed inset-0 overflow-y-auto z-50 flex items-center justify-center bg-black/60">
 						<div className="relative p-8 bg-grey w-full max-w-2xl mx-auto rounded-md shadow-lg bg-neutral-800">
 							<div className="flex flex-col space-y-4">
@@ -322,7 +322,7 @@ const TournamentsPage: React.FC = () => {
 										<button
 											type="button"
 											className="mt-5 py-2 px-4 bg-gray-400 text-white rounded-md hover:bg-gray-500 cursor-pointer"
-											onClick={() => setShowEditModal(false)}
+											onClick={() => setCreateTournamentModal(false)}
 										>
 											Annuler
 										</button>
