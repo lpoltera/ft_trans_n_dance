@@ -62,7 +62,7 @@ const Navbar = () => {
 	return (
 		<>
 			<div className={`fixed top-0 right-0 left-0 flex items-center justify-between pl-6 pr-4 h-16 z-40 ${idURL === "accueil" ? '' : 'bg-cyan-900'}`}>
-				<a href="/accueil" id="logoLink" className="text-white text-lg">
+				<a href="/accueil" id="logoLink" className="text-white text-lg hover:text-[#f67539]">
 					PONG<sup>42</sup>
 				</a>
 				<nav className="flex text-white">

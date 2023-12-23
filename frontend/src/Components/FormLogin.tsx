@@ -17,8 +17,8 @@ const FormLogin = () => {
 				},
 			})
 			.then((response) => {
-				const twoFaEnable = response.data.user;
-				console.log("session.twoFaEnable = ", twoFaEnable);
+				const twoFaEnable = response.data.usertwoFA;
+				console.log("session.twoFaEnable = ", response.data.usertwoFA);
 				if (twoFaEnable === true) navigate("/twofa-verify");
 				else {
 					navigate("/accueil");

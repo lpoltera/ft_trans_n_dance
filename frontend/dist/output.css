@@ -945,6 +945,18 @@ select {
   margin-top: auto;
 }
 
+.mr-24 {
+  margin-right: 6rem;
+}
+
+.mr-10 {
+  margin-right: 2.5rem;
+}
+
+.mr-8 {
+  margin-right: 2rem;
+}
+
 .block {
   display: block;
 }
@@ -1868,6 +1880,16 @@ html {
 .hover\:text-white:hover {
   --tw-text-opacity: 1;
   color: rgb(255 255 255 / var(--tw-text-opacity));
+}
+
+.hover\:text-blue-600:hover {
+  --tw-text-opacity: 1;
+  color: rgb(37 99 235 / var(--tw-text-opacity));
+}
+
+.hover\:text-\[\#f67539\]:hover {
+  --tw-text-opacity: 1;
+  color: rgb(246 117 57 / var(--tw-text-opacity));
 }
 
 .hover\:opacity-100:hover {

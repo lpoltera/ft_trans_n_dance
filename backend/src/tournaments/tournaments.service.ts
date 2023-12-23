@@ -39,7 +39,6 @@ export class TournamentsService {
         .sort((a, b) => a.sort - b.sort)
         .map(({ value }) => value);
       for (let game of shuffledGames) await this.MatchDB.save(game);
-
       return 'Tournament created!';
     } catch (error) {
       throw new ConflictException('erreur creation tournoi', error.message);
@@ -60,7 +59,6 @@ export class TournamentsService {
       throw new ConflictException(error.message);
     }
   }
-
   findOne(id: number) {
     return `This action returns a #${id} tournament`;
   }
@@ -118,7 +116,6 @@ export class TournamentsService {
       .select([
         'matchs_history.tournament_name',
         'matchs_history.tournament_creator',
-        // 'matchs_history.status',
       ])
       .where(
         'matchs_history.tournament_name IS NOT NULL AND \
@@ -127,7 +124,6 @@ export class TournamentsService {
       )
       .groupBy('matchs_history.tournament_name')
       .addGroupBy('matchs_history.tournament_creator')
-      // .addGroupBy('matchs_history.status')
       .getRawMany();
 
     console.log(tournaments);
@@ -135,31 +131,7 @@ export class TournamentsService {
     const tournaments_names = tournaments.map((tournament) => [
       tournament.matchs_history_tournament_name,
       tournament.matchs_history_tournament_creator,
-      // tournament.matchs_history_status,
     ]);
     return tournaments_names; //[[TitoTournoi, tito], [LucieTournoi, lucie]]
   }
 }
-
-// liste match tournoi [] utilisant tournamentName
-// [] participants
-
-// Tito    2-0 10-5
-// Laurent 1-1 7-6
-// Lucas   1-1 2-8
-
-//table tournament
-// id | tournamentName    | participants | win | loss | PointAfaveur | PointContre
-// ---+-------------------+--------------+-----+------+--------------+-------------
-// 1  |  mytournamenetname| lucie        | 0   | 1    | 4		         | 5
-// 2  |  mytournamenetname|  drem        | 0   | 0    | 0		         | 0
-// 3  |  mytournamenetname|  tito        | 1   | 0    | 5		         | 4
-// 1  | mytournamenetname2| lucie        | 0   | 0    | 0		         | 0
-// 2  | mytournamenetname2|  drem        | 0   | 0    | 0		         | 0
-// 3  | mytournamenetname2|  tito        | 0   | 0    | 0		         | 0
-
-// id | nameP1 | nameP2   |         created_at           |         updated_at          | scoreP1 | scoreP2 | status   |  difficulty | mode | powerUps |   TournamentName
-
-// 11 |"tito"	|"lucas"   |	"2023-12-08 10:50:43.597724"|"2023-12-08 11:29:51.690556" |   5	     |    4   |"terminer"|	  "facile" |"1972"|"false"   |	"LucasTournoi
-// 12 |"tito"	|"laurent" | "2023-12-08 10:50:43.606585" |"2023-12-08 10:50:43.606585" |   4      |   	5	  |"terminer"|    "facile" |"1972"|"false"	 |  "LucasTournoi"
-// 13 |"lucas"	|"laurent" |"2023-12-08 10:50:43.609272"  |"2023-12-08 10:50:43.609272" |   5	     |    2   |"terminer"|    "facile" |"1972"|"false" 	 |  "LucasTournoi"

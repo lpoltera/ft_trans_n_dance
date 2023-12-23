@@ -37,6 +37,11 @@ export class User {
   })
   matchsHistory: MatchsHistory[];
 
+  @OneToMany(() => MatchsHistory, (matchs) => matchs.tournament_creator, {
+    cascade: true,
+  })
+  tournament_creator: MatchsHistory[];
+
   @Column()
   twoFaEnable: boolean;
 
