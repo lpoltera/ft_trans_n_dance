@@ -1,6 +1,6 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, Not } from 'typeorm';
 import { Notification } from '../notifications/entities/notifications.entity';
 import { CreateMatchsHistoryDto } from './dto/create-matchs-history.dto';
 import { MatchsHistory } from './entities/matchs-history.entity';
@@ -112,7 +112,10 @@ export class MatchsHistoryService {
 
   async updateScore(gameid: number, scoreP1: number, scoreP2: number) {
     try {
-      const gameToUpdate = await this.MatchDB.findOneBy({ id: gameid });
+      const gameToUpdate = await this.MatchDB.findOneBy({
+        id: gameid,
+        status: Not('terminer'),
+      });
       if (gameToUpdate) {
         gameToUpdate.score_p1 = scoreP1;
         gameToUpdate.score_p2 = scoreP2;
@@ -128,6 +131,16 @@ export class MatchsHistoryService {
           this.userDB.increment({ username: gameToUpdate.name_p2 }, 'win', 1);
           this.userDB.increment({ username: gameToUpdate.name_p1 }, 'loss', 1);
         }
+        this.userDB.increment(
+          { username: gameToUpdate.name_p1 },
+          'totalGame',
+          1,
+        );
+        this.userDB.increment(
+          { username: gameToUpdate.name_p2 },
+          'totalGame',
+          1,
+        );
         return `This action updates a #${gameid} matchsHistory to ${scoreP1} - ${scoreP2}`;
       }
     } catch (error) {

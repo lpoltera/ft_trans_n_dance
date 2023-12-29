@@ -1,23 +1,17 @@
-import { PartialType } from "@nestjs/mapped-types";
-import { CreateUserDto } from "./create-user.dto";
-import {
-  IsOptional,
-  IsString,
-  IsStrongPassword,
-  ValidateIf,
-} from "class-validator";
+import { IsOptional, IsStrongPassword, Length } from 'class-validator';
 
-// export class UpdateUserDto extends PartialType(CreateUserDto) {
 export class UpdateUserDto {
-  @IsOptional()
+  // @IsOptional()
   readonly avatar?: string;
 
-  //   @IsOptional()
+  @IsOptional()
+  @Length(3, 15, {
+    message:
+      'Name length must be between $constraint1 and $constraint2 characters\n',
+  })
   readonly username?: string;
 
-  // @IsOptional({ each: true })
-  // @ValidateIf(o => o.otherProperty !== 'empty')
   @IsOptional()
-  @IsStrongPassword({}, { message: "Invalid password\n" })
+  @IsStrongPassword({}, { message: 'Invalid password\n' })
   readonly password?: string | null;
 }
