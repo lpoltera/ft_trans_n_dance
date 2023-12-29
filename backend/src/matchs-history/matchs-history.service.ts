@@ -111,23 +111,27 @@ export class MatchsHistoryService {
   }
 
   async updateScore(gameid: number, scoreP1: number, scoreP2: number) {
-    const gameToUpdate = await this.MatchDB.findOneBy({ id: gameid });
-    if (gameToUpdate) {
-      gameToUpdate.score_p1 = scoreP1;
-      gameToUpdate.score_p2 = scoreP2;
-      gameToUpdate.status = 'terminer';
-      await this.MatchDB.save(gameToUpdate);
-      console.log('gameToUpdate', gameToUpdate);
-      if (gameToUpdate.score_p1 > gameToUpdate.score_p2) {
-        console.log('p1 win');
-        this.userDB.increment({ username: gameToUpdate.name_p1 }, 'win', 1);
-        this.userDB.increment({ username: gameToUpdate.name_p2 }, 'loss', 1);
-      } else {
-        console.log('p2 win');
-        this.userDB.increment({ username: gameToUpdate.name_p2 }, 'win', 1);
-        this.userDB.increment({ username: gameToUpdate.name_p1 }, 'loss', 1);
+    try {
+      const gameToUpdate = await this.MatchDB.findOneBy({ id: gameid });
+      if (gameToUpdate) {
+        gameToUpdate.score_p1 = scoreP1;
+        gameToUpdate.score_p2 = scoreP2;
+        gameToUpdate.status = 'terminer';
+        await this.MatchDB.save(gameToUpdate);
+        console.log('gameToUpdate', gameToUpdate);
+        if (scoreP1 > scoreP2) {
+          console.log('p1 win');
+          this.userDB.increment({ username: gameToUpdate.name_p1 }, 'win', 1);
+          this.userDB.increment({ username: gameToUpdate.name_p2 }, 'loss', 1);
+        } else {
+          console.log('p2 win');
+          this.userDB.increment({ username: gameToUpdate.name_p2 }, 'win', 1);
+          this.userDB.increment({ username: gameToUpdate.name_p1 }, 'loss', 1);
+        }
+        return `This action updates a #${gameid} matchsHistory to ${scoreP1} - ${scoreP2}`;
       }
-      return `This action updates a #${gameid} matchsHistory to ${scoreP1} - ${scoreP2}`;
+    } catch (error) {
+      console.error('Error while finding match:', error);
     }
   }
 

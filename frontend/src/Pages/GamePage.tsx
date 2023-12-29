@@ -8,63 +8,77 @@ import FooterMain from "../Components/FooterMain.tsx";
 import axios from "axios";
 
 const GamePage = () => {
-	const navigate = useNavigate();
-	const { gameId } = useParams<{ gameId: string }>();
-	const [game, setGame] = useState<IGame | null>(null);
+  const navigate = useNavigate();
+  const { gameId } = useParams<{ gameId: string }>();
+  const [game, setGame] = useState<IGame | null>(null);
+  const [gameFinished, setGameFinished] = useState<boolean>(true);
+  const [updating, setUpdating] = useState(false);
 
+  console.log("gameId", gameId);
+  useEffect(() => {
+    if (!gameId) {
+      return;
+    }
+    const fetchGame = async () => {
+      try {
+        const response = await axios.get(
+          "https://localhost:8000/api/game/" + gameId
+        );
+        if (response) {
+          setGame(response.data);
+          console.log("response data", response.data);
+        }
+        console.log(response.data);
+      } catch (error) {
+        console.log("failed to fetch game");
+      }
+    };
+    fetchGame();
+  }, [gameId]);
 
-	console.log("gameId", gameId);
-	useEffect(() => {
-		if (!gameId) {
-			return;
-		}
-		const fetchGame = async () => {
-			try {
-				const response = await axios.get('https://localhost:8000/api/game/' + gameId);
-				if (response) {
-					setGame(response.data);
-					console.log("response data", response.data);
-				}
-				console.log(response.data);
-			} catch (error) {
-				console.log("failed to fetch game")
-			}
-		};
-		fetchGame();
-	}, [gameId]);
+  const handleGameUpdate = async (updatedGame: GameUpdate, gameId: string) => {
+    if (updating) return;
 
-	const handleGameUpdate = async (updatedGame: GameUpdate, gameId: string) => {
-		try {
-			await axios.patch('https://localhost:8000/api/game/update-score/' + gameId, updatedGame);
-			if (game?.tournament) {
-				const next_game = await axios.get('https://localhost:8000/api/tournaments/next_game/' + game?.tournament);
-				if (next_game) {
-					navigate('/game' + next_game.data)
-				} else {
-					// navigate('/podium');
-				}
-			} else {
-				navigate('/accueil')
-			}
-		} catch (error) {
-		}
-	};
+    setUpdating(true);
+    try {
+      setGameFinished(false);
+      await axios.patch(
+        "https://localhost:8000/api/game/update-score/" + gameId,
+        updatedGame
+      );
+      if (game?.tournament) {
+        const next_game = await axios.get(
+          "https://localhost:8000/api/tournaments/next_game/" + game?.tournament
+        );
+        if (next_game) {
+          navigate("/game" + next_game.data);
+        } else {
+          // navigate('/podium');
+        }
+      } else {
+        navigate("/accueil");
+      }
+    } catch (error) {
+    } finally {
+      setUpdating(false);
+    }
+  };
 
-	return (
-		<>
-			<Navbar />
-			<PageLayout>
-				<div>
-					{game ? (
-						<Game game={game} onFinish={handleGameUpdate} />
-					) : (
-						<div>Unable to load the game</div>
-					)}
-				</div>
-			</PageLayout>
-			<FooterMain />
-		</>
-	);
+  return (
+    <>
+      <Navbar />
+      <PageLayout>
+        <div>
+          {gameFinished && game ? (
+            <Game game={game} onFinish={handleGameUpdate} />
+          ) : (
+            <div>Unable to load the game</div>
+          )}
+        </div>
+      </PageLayout>
+      <FooterMain />
+    </>
+  );
 };
 
 export default GamePage;
