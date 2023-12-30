@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Patch,
@@ -60,8 +61,8 @@ export class MatchsHistoryController {
     return this.matchsHistoryService.findOne(+id);
   }
 
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.matchsHistoryService.remove(+id);
-  // }
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.matchsHistoryService.remove(+id);
+  }
 }

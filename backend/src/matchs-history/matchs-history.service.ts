@@ -19,24 +19,24 @@ export class MatchsHistoryService {
     private readonly userDB: Repository<User>,
   ) {}
 
-  toDto(game: MatchsHistory): MatchsHistoryDto {
-    return {
-      id: game.id,
-      player1: game.name_p1,
-      player2: game.name_p2 || null,
-      scorePlayer1: game.score_p1,
-      scorePlayer2: game.score_p2,
-      difficulty: game.difficulty,
-      duration: game.time,
-      status: game.status,
-      mode: game.mode,
-      mode_value: game.mode_value,
-      powerUps: game.power_ups,
-      tournament: game.tournament_name,
-      updatedAt: game.updated_at,
-      createdAt: game.created_at,
-    };
-  }
+  // toDto(game: MatchsHistory): MatchsHistoryDto {
+  //   return {
+  //     id: game.id,
+  //     player1: game.name_p1,
+  //     player2: game.name_p2 || null,
+  //     scorePlayer1: game.score_p1,
+  //     scorePlayer2: game.score_p2,
+  //     difficulty: game.difficulty,
+  //     duration: game.time,
+  //     status: game.status,
+  //     mode: game.mode,
+  //     mode_value: game.mode_value,
+  //     powerUps: game.power_ups,
+  //     tournament: game.tournament_name,
+  //     updatedAt: game.updated_at,
+  //     createdAt: game.created_at,
+  //   };
+  // }
 
   async create(MatchsHistoryDto: CreateMatchsHistoryDto, name_p1: string) {
     try {
@@ -58,11 +58,11 @@ export class MatchsHistoryService {
           game: match,
         });
         await this.notifsDB.save(notif);
-        return match.id;
+        return [match.id, notif];
       } else {
         match.status = 'en cours';
         await this.MatchDB.save(match);
-        return match.id;
+        return [match.id];
       }
     } catch (error) {
       throw new ConflictException('erreur service', error.message);
@@ -150,10 +150,12 @@ export class MatchsHistoryService {
 
   async findOne(id: number) {
     const game = await this.MatchDB.findOne({ where: { id: id } });
-    return this.toDto(game);
+    // return this.toDto(game);
+    return game;
   }
 
-  // remove(id: number) {
-  //   return `This action removes a #${id} matchsHistory`;
-  // }
+  async remove(id: number) {
+    await this.MatchDB.delete({ id });
+    return `This action removes a #${id} matchsHistory`;
+  }
 }

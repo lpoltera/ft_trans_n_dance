@@ -30,7 +30,7 @@ export class Notification {
 
   // se // game tournament friend
 
-  @OneToOne(() => MatchsHistory)
+  @OneToOne(() => MatchsHistory, { onDelete: 'CASCADE' })
   @JoinColumn()
   game: MatchsHistory;
 

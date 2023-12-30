@@ -132,18 +132,18 @@ export type GameUpdate = {
 
 export type IGame = {
   id: string;
-  player1: string;
-  player2: string | null;
-  scorePlayer1: number;
-  scorePlayer2: number;
+  name_p1: string;
+  name_p2: string | null;
+  score_p1: number;
+  score_p2: number;
   difficulty: string;
   // winner: string | undefined;
-  duration: number;
+  time: number;
   status: string;
   mode: string;
   mode_value: number;
-  powerUps: string;
-  tournament: string;
-  updatedAt: Date;
-  createdAt: Date;
+  power_ups: string;
+  tournament_name: string;
+  updated_at: Date;
+  created_at: Date;
 };

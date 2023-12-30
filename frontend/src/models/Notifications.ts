@@ -1,9 +1,10 @@
+import { Parties } from "./Game";
 export interface Notifs {
   sender: string;
   receiver: string;
   message: string;
   status: string;
-  game: number;
+  game: Parties;
   createdAt?: string;
 }
 

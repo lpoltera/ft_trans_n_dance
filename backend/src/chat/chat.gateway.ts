@@ -11,8 +11,9 @@ import { Chat } from './entities/chat.entity';
 
 // import { Session } from '@nestjs/common';
 import { Notification } from '../notifications/entities/notifications.entity';
-// import { NotificationsService } from '../notifications/notifications.service';
+import { CreateMatchsHistoryDto } from '../matchs-history/dto/create-matchs-history.dto'; // import { NotificationsService } from '../notifications/notifications.service';
 import { FriendsService } from '../friends/friends.service';
+import { MatchsHistoryService } from '../matchs-history/matchs-history.service';
 
 @WebSocketGateway()
 export class ChatGateway {
@@ -20,6 +21,7 @@ export class ChatGateway {
   constructor(
     private readonly chatService: ChatService,
     private readonly FriendsService: FriendsService,
+    private readonly matchHistoryService: MatchsHistoryService,
   ) {}
 
   @WebSocketServer() server: Server;
@@ -31,7 +33,7 @@ export class ChatGateway {
   }
 
   @SubscribeMessage('sendFriendNotif') // sendFriendNotif
-  async createNotif(client: Socket, @MessageBody() notif: Notification) {
+  async createFriendNotif(client: Socket, @MessageBody() notif: Notification) {
     console.log('sendNotifs called');
     try {
       await this.FriendsService.addFriend(notif.sender, notif.receiver);
@@ -41,12 +43,29 @@ export class ChatGateway {
     }
   }
 
-  // @SubscribeMessage('sendGameNotifs')
-  // async createNotif(client: Socket, @MessageBody() notif: Notification) {
-  //   console.log('sendNotifs called');
-  //   await this.NotifsService.create(notif); // game service
-  //   this.server.emit('myNotifs', notif);
-  // }
+  @SubscribeMessage('sendGameInvitationResponse')
+  async sendGameInvitationResponse(
+    client: Socket,
+    @MessageBody() response: string,
+  ) {
+    console.log('sendGameInvitationResponse called');
+    this.server.emit('gameInvitationResponse', response);
+  }
+
+  @SubscribeMessage('sendGameNotifs')
+  async createGameNotif(
+    client: Socket,
+    @MessageBody() data: { game: CreateMatchsHistoryDto; name_p1: string },
+  ) {
+    console.log('sendGameNotif called');
+    const response = await this.matchHistoryService.create(
+      data.game,
+      data.name_p1,
+    );
+    // const notif = response.notif;
+    // const gameid = response.matchId;
+    this.server.emit('recGameNotifs', response);
+  }
 
   afterInit(server: Server) {
     console.log(server);

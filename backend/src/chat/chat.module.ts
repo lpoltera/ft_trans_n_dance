@@ -10,10 +10,26 @@ import { Friendship } from '../friends/entities/friends.entity';
 import { FriendsService } from '../friends/friends.service';
 import { User } from '../user/entities/user.entity';
 import { UserService } from '../user/user.service';
+import { MatchsHistoryService } from '../matchs-history/matchs-history.service';
+import { MatchsHistory } from '../matchs-history/entities/matchs-history.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Chat, Friendship, Notification, User])],
-  providers: [ChatGateway, ChatService, FriendsService, NotificationsService],
+  imports: [
+    TypeOrmModule.forFeature([
+      Chat,
+      Friendship,
+      Notification,
+      User,
+      MatchsHistory,
+    ]),
+  ],
+  providers: [
+    ChatGateway,
+    ChatService,
+    FriendsService,
+    NotificationsService,
+    MatchsHistoryService,
+  ],
   controllers: [ChatController],
 })
 export class ChatModule {}

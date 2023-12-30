@@ -65,7 +65,7 @@ export class MatchsHistory {
   @JoinColumn({ name: 'tournament_creator', referencedColumnName: 'username' })
   user_tournament_creator: User | null;
 
-  @OneToOne(() => Notification)
+  @OneToOne(() => Notification, { cascade: true })
   notification: Notification;
 
   @CreateDateColumn()
