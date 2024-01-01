@@ -52,6 +52,7 @@ export const NotificationProvider = ({
   const [socket, setSocket] = useState<Socket | null>(null);
   const { user } = useUserContext();
   const [socketLoading, setSocketLoading] = useState(true);
+  const [length, setLength] = useState(false);
 
   useEffect(() => {
     if (!user) return;
@@ -86,11 +87,19 @@ export const NotificationProvider = ({
         toast(`${response[1].sender} t'invite à une partie`);
       }
     });
+    socket.on("gameInvitationResponse", (response: any) => {
+      console.log("gameinvit : ", response);
+      if (response.receiver === user?.username) {
+        setUnreadNotif(false);
+        setLength(true);
+      }
+    });
 
     return () => {
       socket.off("myNotifs");
       socket.off("recMessage");
       socket.off("recGameNotifs");
+      socket.off("gameInvitationResponse");
     };
   }, [socket, user]);
 
@@ -105,7 +114,7 @@ export const NotificationProvider = ({
       }
     };
     fetchUnreadNotifs();
-  }, [user, socket, unreadNotif]);
+  }, [user, socket, unreadNotif, length]);
 
   return (
     <NotificationContext.Provider

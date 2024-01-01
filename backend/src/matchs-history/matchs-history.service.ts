@@ -73,8 +73,8 @@ export class MatchsHistoryService {
     try {
       const games = await this.MatchDB.createQueryBuilder('match')
         .where(
-          '(match.user_p1.username = :name OR match.user_p2.username = :name) AND match.status = :status AND match.tournament_name IS NULL',
-          { name: name, status: 'pending' },
+          '(match.user_p1.username = :name OR match.user_p2.username = :name) AND match.tournament_name IS NULL',
+          { name: name },
         )
         .getMany();
 

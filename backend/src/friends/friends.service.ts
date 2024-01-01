@@ -200,17 +200,27 @@ export class FriendsService {
       }
       this.friendRepository.save(friendToUpdate);
       if (
-        (friendToUpdate.status === 'valider' &&
-          previous_status === 'pending') ||
-        (friendToUpdate.status === 'refuser' && previous_status === 'pending')
+        friendToUpdate.status === 'valider' &&
+        previous_status === 'pending'
       ) {
         const id = friendToUpdate.id;
         const msgToDelete = await this.notifsDB.findOne({
           where: { friend: { id: id } },
         });
         await this.notifsDB.delete(msgToDelete);
-        //envoi notification au sender que la demande a ete acceptée
       }
+      if (
+        friendToUpdate.status === 'refuser' &&
+        previous_status === 'pending'
+      ) {
+        const id = friendToUpdate.id;
+        const msgToDelete = await this.notifsDB.findOne({
+          where: { friend: { id: id } },
+        });
+        await this.notifsDB.delete(msgToDelete);
+        await this.friendRepository.delete(friendToUpdate.id);
+      }
+
       return `The relation between #${userName} and #${friendName} has been updated to ${statusToUpdate}`;
     }
   }
