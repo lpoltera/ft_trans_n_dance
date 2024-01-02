@@ -27,30 +27,6 @@ const GamePage = () => {
   const { socket } = useNotificationContext();
   const [invitationRefused, setInvitationRefused] = useState(false);
 
-  useEffect(() => {
-    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
-      event.preventDefault();
-      // La norme moderne pour afficher une boîte de dialogue de confirmation personnalisée
-      event.returnValue = "Êtes-vous sûr de vouloir quitter le jeu ?";
-    };
-
-    window.addEventListener("beforeunload", handleBeforeUnload);
-
-    // Supprimez l'écouteur d'événements lorsque le composant est démonté
-    return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-    };
-  }, []);
-
-  //   useBlocker((transition) => {
-  //     if (
-  //       !gameFinished &&
-  //       !window.confirm("Êtes-vous sûr de vouloir quitter le jeu ?")
-  //     ) {
-  //       transition.retry();
-  //     }
-  //   }, !gameFinished);
-
   console.log("gameId", gameId);
   useEffect(() => {
     if (!gameId) {

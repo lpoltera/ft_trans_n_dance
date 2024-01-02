@@ -1,10 +1,10 @@
 import {
-	BellAlertIcon,
-	ChatBubbleBottomCenterIcon,
-	TrophyIcon,
-	UserCircleIcon,
-	UserGroupIcon,
-	UserIcon,
+  BellAlertIcon,
+  ChatBubbleBottomCenterIcon,
+  TrophyIcon,
+  UserCircleIcon,
+  UserGroupIcon,
+  UserIcon,
 } from "@heroicons/react/24/outline";
 import { useNotificationContext } from "../contexts/NotificationContext";
 import IconButton from "./IconButton";
@@ -14,102 +14,173 @@ import { useNavigate } from "react-router-dom";
 import ButtonIcon from "./ArchivedComponent/ButtonIcon";
 
 const Navbar = () => {
-	const {
-		unreadNotif,
-		notifModal,
-		notifsList,
-		setUnreadNotif,
-		setNotifModal,
-		unreadChat,
-		setUnreadChat,
-	} = useNotificationContext();
-	const navigate = useNavigate();
+  const {
+    unreadNotif,
+    notifModal,
+    notifsList,
+    setUnreadNotif,
+    setNotifModal,
+    unreadChat,
+    setUnreadChat,
+  } = useNotificationContext();
+  const navigate = useNavigate();
 
-	const profilLinks = [
-		{ title: "Profil", href: "/profil" },
-		{ title: "Déconnexion", href: "/logout" },
-	];
+  const profilLinks = [
+    { title: "Profil", href: "/profil" },
+    { title: "Déconnexion", href: "/logout" },
+  ];
 
-	const navigateToProfil = () => {
-		navigate(`/profil`);
-	};
+  const checkIfGame = () => {
+    return /\/game\/\d+/.test(location.pathname);
+  };
+  const navigateToProfil = () => {
+    if (checkIfGame()) {
+      const isConfirm = window.confirm(
+        "Êtes-vous sûr de vouloir quitter le jeu ?"
+      );
+      if (isConfirm) {
+        navigate("/profil");
+      } else {
+        return;
+      }
+    } else {
+      navigate("/profil");
+    }
+  };
+  const navigateToAccueil = () => {
+    if (checkIfGame()) {
+      const isConfirm = window.confirm(
+        "Êtes-vous sûr de vouloir quitter le jeu ?"
+      );
+      if (isConfirm) {
+        navigate("/accueil");
+      } else {
+        return;
+      }
+    } else {
+      navigate("/accueil");
+    }
+  };
 
-	const navigateToChat = () => {
-		navigate("/chat");
-		setUnreadChat(false);
-	};
+  const navigateToChat = () => {
+    if (checkIfGame()) {
+      const isConfirm = window.confirm(
+        "Êtes-vous sûr de vouloir quitter le jeu ?"
+      );
+      if (isConfirm) {
+        navigate("/chat");
+        setUnreadChat(false);
+      } else {
+        return;
+      }
+    } else {
+      navigate("/chat");
+      setUnreadChat(false);
+    }
+  };
 
-	const navigateToTournaments = () => {
-		window.location.href = "/tournaments";
-		setUnreadChat(false);
-	};
+  const navigateToTournaments = () => {
+    if (checkIfGame()) {
+      const isConfirm = window.confirm(
+        "Êtes-vous sûr de vouloir quitter le jeu ?"
+      );
+      if (isConfirm) {
+        navigate("/tournaments");
+      } else {
+        return;
+      }
+    } else {
+      navigate("/tournaments");
+    }
+  };
+  const navigateToUsers = () => {
+    if (checkIfGame()) {
+      const isConfirm = window.confirm(
+        "Êtes-vous sûr de vouloir quitter le jeu ?"
+      );
+      if (isConfirm) {
+        navigate("/users");
+      } else {
+        return;
+      }
+    } else {
+      navigate("/users");
+    }
+  };
 
-	const navigateToUsers = () => {
-		navigate("/users");
-	};
+  const showNotificationPanel = () => {
+    setUnreadNotif(false);
+    setNotifModal(!notifModal);
+  };
 
-	const showNotificationPanel = () => {
-		setUnreadNotif(false);
-		setNotifModal(!notifModal);
-	};
+  const url = window.location.href;
+  const urlSegments = url.split("/");
+  let idURL: string | any = urlSegments[urlSegments.length - 1];
 
-
-	const url = window.location.href;
-	const urlSegments = url.split("/");
-	let idURL: string | any = urlSegments[urlSegments.length - 1];
-
-
-	return (
-		<>
-			<div className={`fixed top-0 right-0 left-0 flex items-center justify-between pl-6 pr-4 h-16 z-40 ${idURL === "accueil" ? '' : 'bg-cyan-900'}`}>
-				<a href="/accueil" id="logoLink" className="text-white text-lg hover:text-[#f67539]">
-					PONG<sup>42</sup>
-				</a>
-				<nav className="flex text-white">
-					<div className="relative">
-						<IconButton
-							onClick={showNotificationPanel}
-							icon={<BellAlertIcon />}
-							classCustom="w-10 h-10 p-2 rounded-lg hover:bg-[#f67539]"
-						/>
-						<span className={`px-1 rounded-full absolute top-1 right-1 z-10 text-xs ${unreadNotif ? 'bg-red-600' : 'bg-cyan-950'}`}>{notifsList?.length}</span>
-					</div>
-					<div className="relative">
-						<IconButton
-							onClick={navigateToChat}
-							icon={<ChatBubbleBottomCenterIcon />}
-							classCustom="w-10 h-10 p-2 rounded-lg hover:bg-[#f67539]"
-						/>
-						{unreadChat && (
-							<span className="bg-red-600 w-2 h-2 rounded-full absolute top-2 right-2 z-10"></span>
-						)}
-					</div>
-					<div className="relative">
-						<ButtonIcon onClick={navigateToTournaments}>
-							<TrophyIcon />
-						</ButtonIcon>
-					</div>
-					<IconButton
-						onClick={navigateToUsers}
-						icon={<UserGroupIcon />}
-						classCustom="w-10 h-10 p-2 rounded-lg hover:bg-[#f67539]"
-					/>
-					<MenuDropdown links={profilLinks}>
-						<IconButton
-							onClick={navigateToProfil}
-							icon={<UserCircleIcon />}
-							classCustom="w-10 h-10 p-2 rounded-lg hover:bg-[#f67539]"
-						/>
-					</MenuDropdown>
-				</nav>
-				<NotificationPanel></NotificationPanel>
-			</div>
-		</>
-	);
+  return (
+    <>
+      <div
+        className={`fixed top-0 right-0 left-0 flex items-center justify-between pl-6 pr-4 h-16 z-40 ${
+          idURL === "accueil" ? "" : "bg-cyan-900"
+        }`}
+      >
+        <button
+          onClick={navigateToAccueil}
+          id="logoLink"
+          className="text-white text-lg hover:text-[#f67539]"
+        >
+          PONG<sup>42</sup>
+        </button>
+        <nav className="flex text-white">
+          <div className="relative">
+            <IconButton
+              onClick={showNotificationPanel}
+              icon={<BellAlertIcon />}
+              classCustom="w-10 h-10 p-2 rounded-lg hover:bg-[#f67539]"
+            />
+            <span
+              className={`px-1 rounded-full absolute top-1 right-1 z-10 text-xs ${
+                unreadNotif ? "bg-red-600" : "bg-cyan-950"
+              }`}
+            >
+              {notifsList?.length}
+            </span>
+          </div>
+          <div className="relative">
+            <IconButton
+              onClick={navigateToChat}
+              icon={<ChatBubbleBottomCenterIcon />}
+              classCustom="w-10 h-10 p-2 rounded-lg hover:bg-[#f67539]"
+            />
+            {unreadChat && (
+              <span className="bg-red-600 w-2 h-2 rounded-full absolute top-2 right-2 z-10"></span>
+            )}
+          </div>
+          <div className="relative">
+            <ButtonIcon onClick={navigateToTournaments}>
+              <TrophyIcon />
+            </ButtonIcon>
+          </div>
+          <IconButton
+            onClick={navigateToUsers}
+            icon={<UserGroupIcon />}
+            classCustom="w-10 h-10 p-2 rounded-lg hover:bg-[#f67539]"
+          />
+          <MenuDropdown links={profilLinks}>
+            <IconButton
+              onClick={navigateToProfil}
+              icon={<UserCircleIcon />}
+              classCustom="w-10 h-10 p-2 rounded-lg hover:bg-[#f67539]"
+            />
+          </MenuDropdown>
+        </nav>
+        <NotificationPanel></NotificationPanel>
+      </div>
+    </>
+  );
 };
 
 export default Navbar;
-
 
 // import {
 // 	BellAlertIcon,
