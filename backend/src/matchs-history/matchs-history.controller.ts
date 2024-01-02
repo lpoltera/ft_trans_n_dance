@@ -11,6 +11,7 @@ import {
 import { CreateMatchsHistoryDto } from './dto/create-matchs-history.dto';
 import { UpdateMatchsHistoryDto } from './dto/update-matchs-history.dto';
 import { MatchsHistoryService } from './matchs-history.service';
+import { revengeDTO } from './dto/revenge.dto';
 
 @Controller('api/game')
 export class MatchsHistoryController {
@@ -25,6 +26,14 @@ export class MatchsHistoryController {
       createMatchDto,
       sessionUser.user.username,
     );
+  }
+  @Post('/revenge')
+  async revenge(
+    @Body() gameId: revengeDTO,
+    // @Session() sessionUser: Record<string, any>,
+  ) {
+    const gameid = gameId.id.valueOf();
+    return await this.matchsHistoryService.revenge(gameid);
   }
 
   @Get('/user-history/:user')

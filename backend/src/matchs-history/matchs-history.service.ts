@@ -69,6 +69,45 @@ export class MatchsHistoryService {
     }
   }
 
+  async revenge(previousId: number) {
+    try {
+      console.log('previousId', previousId);
+      const previousGame = await this.MatchDB.findOneBy({
+        id: previousId,
+      });
+      const game = previousGame;
+      game.id = null;
+      game.score_p1 = 0;
+      game.score_p2 = 0;
+      game.status = 'en cours';
+
+      await this.MatchDB.save(game);
+      return [game.id];
+      // const previousGameDto = this.toDto(previousGame);
+      // const match = this.MatchDB.create({
+      //   ...previousGameDto,
+      //   name_p1: previousGameDto.player2,
+      //   name_p2: previousGameDto.player1,
+      //   score_p1: 0,
+      //   score_p2: 0,
+      //   time: 0,
+      //   status: 'pending',
+      // });
+      // await this.MatchDB.save(match);
+      // const notif = this.notifsDB.create({
+      //   sender: previousGameDto.player2,
+      //   receiver: previousGameDto.player1,
+      //   message: `${previousGameDto.player2} t'invite à le rejoindre pour faire une partie`,
+      //   status: 'pending',
+      //   game: match,
+      // });
+      // await this.notifsDB.save(notif);
+      // return [match.id, notif];
+    } catch (error) {
+      throw new ConflictException('erreur service', error.message);
+    }
+  }
+
   async findhistory(name: string) {
     try {
       const games = await this.MatchDB.createQueryBuilder('match')
