@@ -16,7 +16,8 @@ const Chat = ({ ami }: Props) => {
 	const [newMessage, setNewMessage] = useState("");
 	const { socket, socketLoading } = useNotificationContext();
 	const messagesEndRef = useRef<HTMLDivElement | null>(null);
-	const { user, loadingUser } = useUserContext();
+	const [currentUser, setCurrentUser] = useState<User | null>(null);
+	// const { user, loadingUser } = useUserContext();
 	const scrollToBottom = () => {
 		if (messagesEndRef.current) {
 			messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
@@ -26,12 +27,25 @@ const Chat = ({ ami }: Props) => {
 	useEffect(scrollToBottom, [messages]);
 
 	useEffect(() => {
-		if (loadingUser) return;
-		if (socketLoading) return;
-		console.log("socket :", socket);
+
+		async function fetchCurrent() {
+			try {
+				const response = await axios.get<User>("/api/my-name");
+				setCurrentUser(response.data);
+				console.log("my name :", response.data.username);
+				return response.data.username;
+			} catch (err) {
+				console.error(err);
+				return null;
+			}
+		}
+
+		// if (loadingUser) return;
+		// if (socketLoading) return;
+		// console.log("socket :", socket);
 
 		async function fetchMessages() {
-			const name = user?.username;
+			const name = await fetchCurrent();
 			if (name) {
 				try {
 					const response = await axios.get(
@@ -49,15 +63,15 @@ const Chat = ({ ami }: Props) => {
 		return () => {
 			if (socket) socket.off("recMessage");
 		};
-	}, [loadingUser, ami]);
+	}, [ami]);
 
 	useEffect(() => {
-		if (socket && user?.username && ami.username) {
+		if (socket && currentUser?.username && ami.username) {
 			if (!socket.hasListeners("recMessage")) {
 				socket.on("recMessage", (message) => {
-					if ((message.sender === ami.username && message.receiver === user.username) ||
-						(message.sender === user.username && message.receiver === ami.username)) {
-						if (message.sender !== user.username) {
+					if ((message.sender === ami.username && message.receiver === currentUser.username) ||
+						(message.sender === currentUser.username && message.receiver === ami.username)) {
+						if (message.sender !== currentUser.username) {
 
 							setMessages((prevMessages) => [...prevMessages, message]);
 						}
@@ -71,14 +85,14 @@ const Chat = ({ ami }: Props) => {
 				socket.off("recMessage");
 			}
 		};
-	}, [socket, user?.username, ami.username]);
+	}, [socket, currentUser?.username, ami.username]);
 
 	// Update messages state when a message is sent
 	const sendMessage = (e: FormEvent, messageContent: string) => {
 		e.preventDefault();
-		if (user?.username) {
+		if (currentUser?.username) {
 			const message = {
-				sender: user.username,
+				sender: currentUser.username,
 				receiver: ami.username,
 				text: messageContent,
 			};
@@ -96,8 +110,8 @@ const Chat = ({ ami }: Props) => {
 				<ul className="px-2 mt-auto w-full">
 					{messages.map((message, index) => (
 						<li key={index}>
-							{message.sender === user?.username ? (
-								<RightMessageContainer user={user} message={message} />
+							{message.sender === currentUser?.username ? (
+								<RightMessageContainer user={currentUser} message={message} />
 							) : (
 								<LeftMessageContainer user={ami} message={message} />
 							)}

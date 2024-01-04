@@ -9,28 +9,31 @@ import TabContainer from "../Components/Tab/TabContainer";
 import TabList from "../Components/Tab/TabList";
 import TabPanel from "../Components/Tab/TabPanel";
 import { useUserContext } from "../contexts/UserContext";
-import { User } from "../models/User";
+import { User, UserRelation } from "../models/User";
+import axios from "axios";
 
 const ChatPage = () => {
 	const [friends, setFriends] = useState<User[] | null>(null);
-	const { user, loadingUser, userRelations } = useUserContext();
-	const [loadingFriends, setLoadingFriends] = useState(true);
+	const { user } = useUserContext();
+	// const [loadingFriends, setLoadingFriends] = useState(true);
+	const [userRelations, setUserRelations] = useState<UserRelation[]>([]);
 
 	useEffect(() => {
-		if (loadingUser && userRelations) return;
-		const getFriends = async () => {
-			setLoadingFriends(true);
+		const getRelations = async () => {
+			const response = await axios.get("/api/friends/relations");
+			const relations: UserRelation[] = response.data;
+			setUserRelations(response.data);
 			const userFriends: User[] = [];
-			userRelations.forEach((relation) => {
+			relations?.forEach((relation) => {
 				if (relation.status === "valider") {
 					userFriends.push(relation.friend);
 				}
 			});
 			setFriends(userFriends);
-			setLoadingFriends(false);
 		};
-		getFriends();
-	}, [loadingUser, userRelations]);
+		getRelations();
+	}, [])
+
 
 	console.log("friendsList length =" + friends?.length);
 
@@ -58,9 +61,7 @@ const ChatPage = () => {
 							</div>
 							<div className="bg-neutral-800 h-full grow relative z-0">
 								<div className="absolute top-10 left-8">
-									{loadingFriends ? (
-										<div className="text-2xl">Loading friends...</div>
-									) : friends && friends.length === 1 ? (
+									{friends && friends.length === 0 ? (
 										<div className="text-2xl">
 											Ajoutez des amis pour discuter !
 										</div>
