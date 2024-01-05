@@ -182,6 +182,7 @@ export class MatchsHistoryService {
         );
         return `This action updates a #${gameid} matchsHistory to ${scoreP1} - ${scoreP2}`;
       }
+      return `Nothing to do`;
     } catch (error) {
       console.error('Error while finding match:', error);
     }

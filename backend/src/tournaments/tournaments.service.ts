@@ -27,6 +27,7 @@ export class TournamentsService {
             status: 'pending',
             difficulty: create.difficulty,
             mode: create.mode,
+            mode_value: create.mode_value,
             power_ups: create.power_ups,
             tournament_name: create.name,
             tournament_creator: create.tournament_creator,
@@ -133,5 +134,21 @@ export class TournamentsService {
       tournament.matchs_history_tournament_creator,
     ]);
     return tournaments_names; //[[TitoTournoi, tito], [LucieTournoi, lucie]]
+  }
+
+  async findNextGame(name: string) {
+    const nextGame = await this.MatchDB.findOne({
+      where: [
+        {
+          tournament_name: name,
+          status: 'pending',
+        },
+      ],
+    });
+    if (!nextGame) {
+      return null;
+    }
+    console.log('nextgame', nextGame.id);
+    return nextGame.id;
   }
 }

@@ -5,6 +5,9 @@ import PrivateRoute from "./Components/PrivateRoute";
 import PublicRoute from "./Components/PublicRoute";
 import AddPage from "./Pages/AddPage";
 import ChatPage from "./Pages/ChatPage";
+import ErrorPage from "./Pages/ErrorPage";
+import GamePage from "./Pages/GamePage";
+import GamePageTournament from "./Pages/GamePageTournament";
 import HomePage from "./Pages/HomePage";
 import LandingPage from "./Pages/LandingPage";
 import LoginPage from "./Pages/LoginPage";
@@ -12,14 +15,11 @@ import LogoutPage from "./Pages/LogoutPage";
 import ProfilPage from "./Pages/ProfilPage";
 import SigninPage from "./Pages/SigninPage";
 import TfaPage from "./Pages/TfaPage";
-import UsersPage from "./Pages/UsersPage";
-import { UserProvider } from "./contexts/UserContext";
-import { GameProvider } from "./contexts/GameContext";
-import NewGame from "./Pages/NewGame";
-import { NotificationProvider } from "./contexts/NotificationContext";
-import ErrorPage from "./Pages/ErrorPage";
 import TournamentsPage from "./Pages/TournamentsPage";
-import GamePage from "./Pages/GamePage";
+import UsersPage from "./Pages/UsersPage";
+import { GameProvider } from "./contexts/GameContext";
+import { NotificationProvider } from "./contexts/NotificationContext";
+import { UserProvider } from "./contexts/UserContext";
 
 function App() {
   return (
@@ -63,9 +63,9 @@ function App() {
               <Route
                 path="/tournaments"
                 element={
-                  // <PrivateRoute>
-                  <TournamentsPage />
-                  // </PrivateRoute>
+                  <PrivateRoute>
+                    <TournamentsPage />
+                  </PrivateRoute>
                 }
               />
               <Route
@@ -78,16 +78,16 @@ function App() {
                   </GameProvider>
                 }
               ></Route>
-              {/* <Route
-                path="/new-game"
+              <Route
+                path="/tournaments/:gameId"
                 element={
                   <GameProvider>
                     <PrivateRoute>
-                      <GamePage />
+                      <GamePageTournament />
                     </PrivateRoute>
                   </GameProvider>
                 }
-              ></Route> */}
+              ></Route>
               <Route
                 path="/profil/*"
                 element={
@@ -99,9 +99,9 @@ function App() {
               <Route
                 path="logout"
                 element={
-                  <PrivateRoute>
-                    <LogoutPage />
-                  </PrivateRoute>
+                  // <PrivateRoute>
+                  <LogoutPage />
+                  // {/* </PrivateRoute> */}
                 }
               />
               <Route
@@ -115,9 +115,9 @@ function App() {
               <Route
                 path="/chat"
                 element={
-                  // <PrivateRoute>
-                  <ChatPage />
-                  // </PrivateRoute>
+                  <PrivateRoute>
+                    <ChatPage />
+                  </PrivateRoute>
                 }
               />
               <Route

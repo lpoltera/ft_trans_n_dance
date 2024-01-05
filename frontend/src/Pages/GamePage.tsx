@@ -60,6 +60,7 @@ const GamePage = () => {
     setUpdating(true);
     try {
       setGameFinished(true);
+      console.log("update game called - gamedId = ", gameId);
       await axios.patch(
         "https://localhost:8000/api/game/update-score/" + gameId,
         updatedGame
@@ -178,21 +179,21 @@ const GamePage = () => {
                 <h3 className="text-2xl font-semibold text-center mb-4">
                   {titleModal}
                 </h3>
-                <div className="flex justify-center">
-                  <span style={{ fontSize: "100px" }}>🏆</span>
+                <div className="flex justify-center animate-bounce">
+                  <span style={{ fontSize: "100px" }}>🥳</span>
                 </div>
                 <div className="flex justify-around mt-7">
                   <div className="flex justify-end gap-4 text-sm">
                     <button
                       type="button"
-                      className="mt-5 py-2 px-4 bg-gray-400 text-white rounded-md hover:bg-gray-500 cursor-pointer"
+                      className="mt-5 py-2 px-4 bg-cyan-700  text-white rounded-md hover:bg-[#f67539] cursor-pointer"
                       onClick={() => navigateToHome()}
                     >
                       Quitter
                     </button>
                     <button
                       type="button"
-                      className="mt-5 py-2 px-4 bg-gray-400 text-white rounded-md hover:bg-gray-500 cursor-pointer"
+                      className="mt-5 py-2 px-4 bg-cyan-700  text-white rounded-md hover:bg-[#f67539] cursor-pointer"
                       onClick={() => revengeGame()}
                     >
                       Revanche

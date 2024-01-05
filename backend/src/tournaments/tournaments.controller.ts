@@ -31,10 +31,10 @@ export class TournamentsController {
     return this.tournamentsService.findTournamentGames(name);
   }
 
-  // @Get('next_game/:name') // get next match renvois uniquement l'id du match
-  // findNext(@Param('name') name: string) {
-  //   return this.tournamentsService.findNextGame(name);
-  // }
+  @Get('next_game/:name') // get next match renvois uniquement l'id du match
+  findNext(@Param('name') name: string) {
+    return this.tournamentsService.findNextGame(name);
+  }
 
   @Get('ranking/:name')
   getRanking(@Param('name') name: string) {

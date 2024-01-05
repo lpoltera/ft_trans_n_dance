@@ -121,6 +121,7 @@ const Game = ({ game, onFinish }: GameProps) => {
           time: timer.current,
           status: "terminer",
         };
+        console.log("match terminé !");
         onFinish(updateGame, game.id);
         return;
       };
@@ -335,7 +336,7 @@ const Game = ({ game, onFinish }: GameProps) => {
         clearInterval(interval);
       };
     }
-  }, [game, isPaused, gameFinished, setGameFinished, navigate]);
+  }, [game, isPaused]);
 
   const drawPaddle = (context: CanvasRenderingContext2D, paddle: Paddle) => {
     context.fillStyle = paddle.color;

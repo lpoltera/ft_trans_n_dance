@@ -13,6 +13,8 @@ export class CreateTournamentDto {
   @IsNotEmpty({ message: 'Please choose a mode\n' })
   mode: string;
 
+  mode_value: number;
+
   @IsNotEmpty({ message: 'Please choose a powerUps\n' })
   power_ups: string;
 
