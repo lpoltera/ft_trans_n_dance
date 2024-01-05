@@ -4,3 +4,4 @@ struct.drawio
 */node_modules
 archives/
 backend/src/user/dto/.prettierrc
+frontend/package-lock.json
