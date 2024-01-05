@@ -1,4 +1,4 @@
-import { useNavigate, useParams, useBlocker } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { IGame, GameUpdate } from "../models/Game.ts";
 import { useEffect, useState } from "react";
 import Game from "../Components/Game/SingleGame.tsx";
