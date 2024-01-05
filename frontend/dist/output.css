@@ -1401,11 +1401,6 @@ select {
   background-color: rgb(5 150 105 / var(--tw-bg-opacity));
 }
 
-.bg-emerald-700 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(4 120 87 / var(--tw-bg-opacity));
-}
-
 .bg-gray-400 {
   --tw-bg-opacity: 1;
   background-color: rgb(156 163 175 / var(--tw-bg-opacity));
@@ -1478,6 +1473,10 @@ select {
 
 .p-2 {
   padding: 0.5rem;
+}
+
+.p-20 {
+  padding: 5rem;
 }
 
 .p-3 {
@@ -1890,14 +1889,14 @@ html {
   background-color: rgb(246 117 57 / var(--tw-bg-opacity));
 }
 
+.hover\:bg-\[\#fa5a45\]:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(250 90 69 / var(--tw-bg-opacity));
+}
+
 .hover\:bg-emerald-800:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(6 95 70 / var(--tw-bg-opacity));
-}
-
-.hover\:bg-emerald-950:hover {
-  --tw-bg-opacity: 1;
-  background-color: rgb(2 44 34 / var(--tw-bg-opacity));
 }
 
 .hover\:bg-gray-500:hover {
@@ -1923,11 +1922,6 @@ html {
 .hover\:bg-red-800:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(153 27 27 / var(--tw-bg-opacity));
-}
-
-.hover\:bg-\[\#fa5a45\]:hover {
-  --tw-bg-opacity: 1;
-  background-color: rgb(250 90 69 / var(--tw-bg-opacity));
 }
 
 .hover\:bg-opacity-50:hover {
@@ -2005,3 +1999,4 @@ html {
     padding-right: 2rem;
   }
 }
+
