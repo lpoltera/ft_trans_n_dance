@@ -2,39 +2,76 @@ import {
   NoSymbolIcon,
   UserMinusIcon,
   UserPlusIcon,
+  CheckIcon,
+  UserIcon,
 } from "@heroicons/react/24/outline";
 import { User } from "../models/User";
 import IconButton from "./IconButton";
+import axios from "axios";
+import { useUserContext } from "../contexts/UserContext";
+
+
 
 interface Props {
-  user: User;
+  selectedUser: User;
   isMyProfile?: boolean;
   isFriend?: boolean;
+  relationStatus: string | null;
+  handleBlockedListChange: () => void;
 }
 
-const UserRow = ({ user, isMyProfile = false, isFriend = false }: Props) => {
-  // TOBEDELETED
-  const addFriend = () => {};
-  const removeFriend = () => {};
-  const blockUser = () => {};
+const UserRow = ({ selectedUser, isMyProfile = false, isFriend = false, relationStatus, handleBlockedListChange }: Props) => {
+const { user } = useUserContext()
+
+  const removeFriend = async () => {
+		try {
+			await axios.delete('api/friends/' + selectedUser.username)
+		} catch (error) {
+				console.log("Erreur lors de la suppression de l'ami")
+		}
+	}
+
+
+  const unBlockUser = async () => {
+      await axios.patch("api/friends/" + selectedUser.username, { status: "valider" });
+      handleBlockedListChange();
+      // window.location.reload();
+    };
+
+  const blockUser = async () => {
+    const isConfirmed = window.confirm(
+      "Êtes-vous sûr de vouloir bloquer cet utilisateur?"
+    );
+    if (isConfirmed) {
+      await axios.patch("api/friends/" + selectedUser.username, { status: "blocked" });
+      // setIsBlocked(true);
+    }
+  };
+
+  const navigateToProfil = async () =>{
+  if(user?.username !== selectedUser.username)
+    window.location.href = "/profil/" + selectedUser.username;
+  else
+    window.location.href = "/profil/";
+  }
+
   return (
-    <a
-      href={`/profil/${user.username}`}
-      className="flex w-full rounded-lg justify-between items-center py-4 px-6 bg-cyan-950 hover:bg-[#f67539]"
-    >
+    <div className="cursor-default flex w-full rounded-lg justify-between items-center py-4 px-6 bg-cyan-950 hover:bg-[#f67539]">
+    {/* <a href={`/profil/${user.username}`} className="py-4 px-4"    > */}
       <div className="flex shrink gap-4 items-center">
         <img
-          src={user.avatar}
+          src={selectedUser.avatar}
           alt="Profile picture"
           className="w-12 h-12 rounded-full"
         />
         <div className="flex flex-col gap-1 pt-1">
-          <h1 className="text-lg leading-none">{user.username}</h1>
-          <span className="text-neutral-400 text-sm">{user.connected}</span>
+          <div className="text-xl">{selectedUser.username}</div>
+          <div className="text-sm text-gray-400">{selectedUser.connected}</div>
         </div>
       </div>
+      {/* </a> */}
       <div className="flex gap-0 items-center">
-        {isMyProfile || isFriend ? (
+        {/* {isMyProfile || isFriend ? ( */}
           <>
             <IconButton
               icon={<UserMinusIcon />}
@@ -44,7 +81,7 @@ const UserRow = ({ user, isMyProfile = false, isFriend = false }: Props) => {
               tooltipId="removeFriend"
             />
           </>
-        ) : (
+        {/* ) : (
           <>
             <IconButton
               icon={<UserPlusIcon />}
@@ -54,16 +91,34 @@ const UserRow = ({ user, isMyProfile = false, isFriend = false }: Props) => {
               tooltipId="addFriend"
             />
           </>
-        )}
+        )} */}
+{relationStatus !== "blocked" ? (
+<>
         <IconButton
-          onClick={blockUser}
           icon={<NoSymbolIcon />}
+          onClick={blockUser}
           classCustom="w-10 h-10 p-2 rounded-md hover:bg-[#f67539]"
           tooltip="Bloquer"
           tooltipId="blockUser"
         />
+        </>) : (
+          <>
+         <IconButton
+         icon={<CheckIcon />}
+         classCustom="w-10 h-10 p-2 rounded-md hover:bg-[#f67539]"
+         tooltip="Débloquer"
+         onClick={unBlockUser}
+         tooltipId="unblockUser" />
+         </>)}
+      <IconButton
+              icon={<UserIcon />}
+              classCustom="w-10 h-10 p-2 rounded-md hover:bg-[#f67539]"
+              onClick={navigateToProfil}
+              tooltip="Voir le profil"
+              tooltipId="navigateToProfil"
+              />
+              </div>
       </div>
-    </a>
   );
 };
 
