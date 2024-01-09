@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import "react-toastify/dist/ReactToastify.css";
 import { io, Socket } from "socket.io-client";
 import { User } from "../models/User";
+import IconButton from "./IconButton";
 
 interface Props {
   ami: User;
@@ -93,23 +94,22 @@ const InfosUsersRow = ({
               <div className="text-sm text-gray-400">{ami.connected}</div>
             </div>
           </div>
-          <div className="text-xl flex justify-end items-center"></div>
         </a>
         <div className="grid grid-flow-col grid-cols-3 gap-2">
-          <button
-            type="button"
-            className="w-6 h-6 opacity-100 hover:opacity-100"
+          <IconButton
+            icon={<UserPlusIcon />}
+            classCustom="w-10 h-10 p-2 rounded-md hover:bg-[#f67539]"
             onClick={() => changeFriendshipStatus()}
-          >
-            <UserPlusIcon />
-          </button>
-          <button
-            type="button"
-            className="w-6 h-6 opacity-100 hover:opacity-100"
+            tooltip="Ajouter en ami"
+            tooltipId="addFriend"
+          />
+          <IconButton
+            icon={<InformationCircleIcon />}
+            classCustom="w-10 h-10 p-2 rounded-md hover:bg-[#f67539]"
             onClick={() => handleStatsButtonClick(ami)}
-          >
-            <InformationCircleIcon />
-          </button>
+            tooltip="Afficher les stats du joueur"
+            tooltipId="displayUserStats"
+          />
         </div>
       </div>
     </>
