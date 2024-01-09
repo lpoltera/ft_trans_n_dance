@@ -21,13 +21,13 @@ const LandingPage = () => {
 		var ballRadius = 15;
 		var x = canvas.width / 3;
 		var y = canvas.height - 40;
-		var dx = 3;
-		var dy = -3;
+		var dx = 5;
+		var dy = -5;
 
-		var x2 = 140;
+		var x2 = 701;
 		var y2 = 20;
-		var dx2 = 3;
-		var dy2 = -3;
+		var dx2 = 5;
+		var dy2 = -5;
 
 		function drawBall() {
 			if (!ctx) {
@@ -69,14 +69,14 @@ const LandingPage = () => {
 
 			buttonCoords.forEach((coords) => {
 				if (
-					x < coords.x &&
+					x <= coords.x &&
 					x + dx > coords.x &&
 					y + dy > coords.y &&
 					y + dy < coords.y + coords.height
 				) {
 					dx = -dx;
 				} else if (
-					x > coords.x + coords.width &&
+					x >= coords.x + coords.width &&
 					x + dx < coords.x + coords.width &&
 					y + dy > coords.y &&
 					y + dy < coords.y + coords.height
@@ -84,14 +84,14 @@ const LandingPage = () => {
 					dx = -dx;
 				}
 				if (
-					y < coords.y &&
+					y <= coords.y &&
 					y + dy > coords.y &&
 					x + dx > coords.x &&
 					x + dx < coords.x + coords.width
 				) {
 					dy = -dy;
 				} if (
-					y > coords.y + coords.height &&
+					y >= coords.y + coords.height &&
 					y + dy < coords.y + coords.height &&
 					x + dx > coords.x &&
 					x + dx < coords.x + coords.width
@@ -99,28 +99,28 @@ const LandingPage = () => {
 					dy = -dy;
 				}
 				if (
-					x2 < coords.x &&
+					x2 <= coords.x &&
 					x2 + dx2 > coords.x &&
 					y2 + dy2 > coords.y &&
 					y2 + dy2 < coords.y + coords.height
 				) {
 					dx2 = -dx2;
 				} if (
-					x2 > coords.x + coords.width &&
+					x2 >= coords.x + coords.width &&
 					x2 + dx2 < coords.x + coords.width &&
 					y2 + dy2 > coords.y &&
 					y2 + dy2 < coords.y + coords.height
 				) {
 					dx2 = -dx2;
 				} if (
-					y2 < coords.y &&
+					y2 <= coords.y &&
 					y2 + dy2 > coords.y &&
 					x2 + dx2 > coords.x &&
 					x2 + dx2 < coords.x + coords.width
 				) {
 					dy2 = -dy2;
 				} if (
-					y2 > coords.y + coords.height &&
+					y2 >= coords.y + coords.height &&
 					y2 + dy2 < coords.y + coords.height &&
 					x2 + dx2 > coords.x &&
 					x2 + dx2 < coords.x + coords.width

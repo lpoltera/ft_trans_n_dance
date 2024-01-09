@@ -69,28 +69,28 @@ const LoginPage = () => {
 
 			buttonCoords.forEach((coords) => {
 				if (
-					x < coords.x &&
+					x <= coords.x &&
 					x + dx > coords.x &&
 					y + dy > coords.y &&
 					y + dy < coords.y + coords.height
 				) {
 					dx = -dx;
 				} else if (
-					x > coords.x + coords.width &&
+					x >= coords.x + coords.width &&
 					x + dx < coords.x + coords.width &&
 					y + dy > coords.y &&
 					y + dy < coords.y + coords.height
 				) {
 					dx = -dx;
 				} else if (
-					y < coords.y &&
+					y <= coords.y &&
 					y + dy > coords.y &&
 					x + dx > coords.x &&
 					x + dx < coords.x + coords.width
 				) {
 					dy = -dy;
 				} else if (
-					y > coords.y + coords.height &&
+					y >= coords.y + coords.height &&
 					y + dy < coords.y + coords.height &&
 					x + dx > coords.x &&
 					x + dx < coords.x + coords.width
@@ -98,28 +98,28 @@ const LoginPage = () => {
 					dy = -dy;
 				}
 				if (
-					x2 < coords.x &&
+					x2 <= coords.x &&
 					x2 + dx2 > coords.x &&
 					y2 + dy2 > coords.y &&
 					y2 + dy2 < coords.y + coords.height
 				) {
 					dx2 = -dx2;
 				} else if (
-					x2 > coords.x + coords.width &&
+					x2 >= coords.x + coords.width &&
 					x2 + dx2 < coords.x + coords.width &&
 					y2 + dy2 > coords.y &&
 					y2 + dy2 < coords.y + coords.height
 				) {
 					dx2 = -dx2;
 				} else if (
-					y2 < coords.y &&
+					y2 <= coords.y &&
 					y2 + dy2 > coords.y &&
 					x2 + dx2 > coords.x &&
 					x2 + dx2 < coords.x + coords.width
 				) {
 					dy2 = -dy2;
 				} else if (
-					y2 > coords.y + coords.height &&
+					y2 >= coords.y + coords.height &&
 					y2 + dy2 < coords.y + coords.height &&
 					x2 + dx2 > coords.x &&
 					x2 + dx2 < coords.x + coords.width
