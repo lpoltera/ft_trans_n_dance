@@ -1,4 +1,3 @@
-import { PencilSquareIcon } from "@heroicons/react/24/outline";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
@@ -92,7 +91,7 @@ const UsersPage = () => {
 			<Navbar />
 			<PageLayout>
 				{selectedUser && (
-					<div className="w-full flex flex-col gap-8" >
+					<div className="w-full flex flex-col gap-8">
 						<div id="section-title" className="flex shrink py-10">
 							<div className="flex items-center gap-2">
 								<img
@@ -103,12 +102,6 @@ const UsersPage = () => {
 								<h1 className="text-3xl leading-none">
 									{selectedUser?.username}
 								</h1>
-								<button
-									type="button"
-									className="w-5 h-5 mt-1 opacity-50 hover:opacity-100"
-								>
-									<PencilSquareIcon />
-								</button>
 							</div>
 						</div>
 						<div
