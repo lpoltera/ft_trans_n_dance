@@ -1,6 +1,8 @@
 import { CheckIcon, UserMinusIcon } from "@heroicons/react/24/outline";
 import axios from "axios";
 import { User } from "../../models/User";
+import IconButton from "../IconButton";
+
 
 interface Props {
 	ami: User;
@@ -8,6 +10,15 @@ interface Props {
 }
 
 const FriendProfilRow = ({ ami, handleBlockedListChange }: Props) => {
+
+	const removeFriend = async () => {
+		try {
+			await axios.delete('api/friends/' + ami.username)
+		} catch (error) {
+				console.log("Erreur lors de la suppression de l'ami")
+		}
+	}
+
 	const changeFriendshipStatus = async () => {
 		await axios.patch("api/friends/" + ami.username, { status: "valider" });
 		handleBlockedListChange();
@@ -32,19 +43,20 @@ const FriendProfilRow = ({ ami, handleBlockedListChange }: Props) => {
 					<div className="text-xl flex justify-end items-center"></div>
 				</a>
 				<div className="grid grid-flow-col grid-cols-3 gap-2">
-					<button
-						type="button"
-						className="w-6 h-6 opacity-50 hover:opacity-100"
+					<IconButton
+						icon={<CheckIcon />}
+						classCustom="w-10 h-10 p-2 rounded-md hover:bg-[#f67539]"
 						onClick={() => changeFriendshipStatus()}
-					>
-						<CheckIcon />
-					</button>
-					<button
-						type="button"
-						className="w-6 h-6 opacity-50 hover:opacity-100"
-					>
-						<UserMinusIcon />
-					</button>
+						tooltip="Débloquer"
+						tooltipId="unblockFriend"
+					/>
+					<IconButton
+						icon={<UserMinusIcon />}
+						classCustom="w-10 h-10 p-2 rounded-md hover:bg-[#f67539]"
+						onClick={() => removeFriend()}
+						tooltip="Supprimer"
+						tooltipId="removeFriend"
+					/>
 				</div>
 			</div>
 		</>
