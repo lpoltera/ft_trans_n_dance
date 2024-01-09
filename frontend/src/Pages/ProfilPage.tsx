@@ -22,6 +22,8 @@ import UserRow from "../Components/UserRow";
 import { useUserContext } from "../contexts/UserContext";
 import { GameStatsProps, Parties } from "../models/Game";
 import { User, UserRelation } from "../models/User";
+import { useNotificationContext } from "../contexts/NotificationContext";
+import { toast } from "react-toastify";
 
 interface Form {
   avatar: string;
@@ -30,7 +32,7 @@ interface Form {
 }
 
 const ProfilPage = () => {
-  const { userRelations } = useUserContext();
+  const { userRelations, user } = useUserContext();
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [userGames, setUserGames] = useState<Parties[] | null>(null);
   const [userFriends, setUserFriends] = useState<User[] | null>(null);
@@ -47,6 +49,7 @@ const ProfilPage = () => {
     username: null,
     password: null,
   });
+  const { socket } = useNotificationContext();
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
@@ -159,10 +162,6 @@ const ProfilPage = () => {
   const editProfil = () => {
     setEditAccountModal(true);
   }; // TODO modal -> axios.patch update
-  const addFriend = () => {}; // TODO à copier
-  const removeFriend = () => {}; // TODO à créer ?
-  const blockUser = () => {}; // TODO à copier
-  const unblockUser = () => {}; // TODO à copier
 
   const handleFormChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.name === "avatar") {
@@ -191,6 +190,56 @@ const ProfilPage = () => {
     });
     setEditAccountModal(false);
   };
+
+  const handleBlockedListChange = async () => { // -> handleChange
+		if (update) {
+			setUpdate(false)
+		} else {
+			setUpdate(true)
+		}
+	}
+
+
+  const addFriend = async () => {
+    console.log("send notif");
+    if (socket) {
+      socket.emit("sendFriendNotif", {
+        sender: user?.username,
+        receiver: currentUser?.username,
+        message: `Tu as reçu une demande d'ami de ${user?.username}`,
+      });
+    }
+    toast("Demande d'ami envoyée !");
+  };
+
+  const removeFriend = async () => {
+		try {
+			await axios.delete('api/friends/' + currentUser?.username)
+		} catch (error) {
+				console.log("Erreur lors de la suppression de l'ami")
+		}
+	}
+
+
+
+  const unblockUser = async () => {
+    await axios.patch("https://localhost:8000/api/friends/" + currentUser?.username, { status: "valider" });
+    handleBlockedListChange();
+  };
+
+const blockUser = async () => {
+  const isConfirmed = window.confirm(
+    "Êtes-vous sûr de vouloir bloquer cet utilisateur?"
+  );
+  if (isConfirmed) {
+    await axios.patch("https://localhost:8000/api/friends/" + currentUser?.username, { status: "blocked" });
+    // setIsBlocked(true);
+  }
+};
+
+
+
+
 
   return (
     <>
@@ -369,7 +418,7 @@ const ProfilPage = () => {
           {/* End Modal */}
 
           <div className="grow">
-            {relationStatus === "blocked" ? (
+            {relationStatus === "blocked" && !isMyProfile ? (
               <div>Débloquez le joueur pour voir son profil</div>
             ) : (
               <TabContainer>
@@ -458,8 +507,10 @@ const ProfilPage = () => {
                             relation.status === "valider" && (
                               <UserRow
                                 key={index}
-                                user={relation.friend}
+                                selectedUser={relation.friend}
                                 isMyProfile={true}
+                                relationStatus={relation.status}
+                                handleBlockedListChange={handleBlockedListChange}
                               />
                             )
                         )}
@@ -469,8 +520,10 @@ const ProfilPage = () => {
                         {userFriends?.map((relation, index) => (
                           <UserRow
                             key={index}
-                            user={relation}
+                            selectedUser={relation}
                             isMyProfile={false}
+                            relationStatus={null}
+                            handleBlockedListChange={handleBlockedListChange}
                           />
                         ))}
                       </div>
@@ -489,8 +542,10 @@ const ProfilPage = () => {
                             relation.sender !== currentUser?.username && (
                               <UserRow
                                 key={index}
-                                user={relation.friend}
+                                selectedUser={relation.friend}
                                 isMyProfile={true}
+                                relationStatus={relation.status}
+                                handleBlockedListChange={handleBlockedListChange}
                               />
                             )
                         )}
@@ -501,8 +556,10 @@ const ProfilPage = () => {
                             relation.sender === currentUser?.username && (
                               <UserRow
                                 key={index}
-                                user={relation.friend}
+                                selectedUser={relation.friend}
                                 isMyProfile={true}
+                                relationStatus={relation.status}
+                                handleBlockedListChange={handleBlockedListChange}
                               />
                             )
                         )}
@@ -515,8 +572,10 @@ const ProfilPage = () => {
                             relation.status === "blocked" && (
                               <UserRow
                                 key={index}
-                                user={relation.friend}
+                                selectedUser={relation.friend}
                                 isMyProfile={true}
+                                relationStatus={relation.status}
+                                handleBlockedListChange={handleBlockedListChange}
                               />
                             )
                         )}
