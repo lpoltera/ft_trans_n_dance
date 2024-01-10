@@ -1115,12 +1115,12 @@ select {
   animation: none;
 }
 
-.cursor-pointer {
-  cursor: pointer;
-}
-
 .cursor-default {
   cursor: default;
+}
+
+.cursor-pointer {
+  cursor: pointer;
 }
 
 .list-none {
@@ -1815,6 +1815,14 @@ html {
   border-color: #0e7490 !important;
   border-width: 4px !important;
   box-shadow: none !important;
+}
+
+.custom-input-confirm:focus {
+  outline: none !important;
+  border-color: #EF4444 !important;
+  border-width: 4px !important;
+  box-shadow: none !important;
+  color: #EF4444 !important;
 }
 
 .file\:mr-4::file-selector-button {

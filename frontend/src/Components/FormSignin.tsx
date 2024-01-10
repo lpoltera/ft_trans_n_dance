@@ -7,6 +7,7 @@ const FormSignin = () => {
 	const navigate = useNavigate();
 	const [qrLink, setQrLink] = useState<string | undefined>(undefined);
 	const [showEditModal, setShowEditModal] = useState(false);
+	const [passwordConfirmed, setPasswordConfirmed] = useState(false);
 	const [form, setForm] = useState({
 		username: "",
 		password: "",
@@ -23,6 +24,9 @@ const FormSignin = () => {
 	}
 
 	const createUser = async () => {
+		if (passwordConfirmed === false) {
+			return alert("Les mots de passe ne correspondent pas");
+		}
 		await axios
 			.post("/api/signup", form, {
 				headers: {
@@ -67,6 +71,12 @@ const FormSignin = () => {
 			console.log("username state : " + form.username);
 		} else if (e.target.name === "password") {
 			setForm({ ...form, password: e.target.value });
+		} else if (e.target.name === "confirmPassword") {
+			if (e.target.value === form.password) {
+				setPasswordConfirmed(true);
+			} else {
+				setPasswordConfirmed(false);
+			}
 		} else if (e.target.name === "avatar") {
 			setForm({ ...form, avatar: e.target.value });
 		} else if (e.target.name === "twoFaEnable") {
@@ -115,6 +125,13 @@ const FormSignin = () => {
 								name="password"
 								className="border-2 border-[#f67539] px-3 py-2 bg-transparent text-white rounded-md custom-input"
 								placeholder="Mot de passe"
+								onChange={handleFormChange}
+							/>
+							<input
+								type="password"
+								name="confirmPassword"
+								className={`border-2 border-[#f67539] px-3 py-2 bg-transparent rounded-md custom-input ${passwordConfirmed ? "text-white border-[#f67539]" : "custom-input-confirm"}`}
+								placeholder="Confirmer le mot de passe"
 								onChange={handleFormChange}
 							/>
 							<div className="flex gap-3 items-center py-6">
