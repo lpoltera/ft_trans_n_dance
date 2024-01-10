@@ -21,7 +21,8 @@ const FormLogin = () => {
 				console.log("session.twoFaEnable = ", response.data.usertwoFA);
 				if (twoFaEnable === true) navigate("/twofa-verify");
 				else {
-					navigate("/accueil");
+					window.location.href = "/accueil";
+					// navigate("/loading");
 				}
 			})
 			.catch((err) => {
