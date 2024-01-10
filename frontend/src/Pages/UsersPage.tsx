@@ -17,7 +17,11 @@ const UsersPage = () => {
 	const [update, setUpdate] = useState<boolean>(false);
 
 	const handleStatsButtonClick = (ami: User) => {
-		setSelectedUser((prevUser) => (prevUser === ami ? null : ami));
+		// setSelectedUser((prevUser) => (prevUser === ami ? null : ami));
+		if (selectedUser === ami) {
+			setSelectedUser(null);
+		} else
+			setSelectedUser(ami);
 	};
 
 	const notify = (socket: any) => {
@@ -78,8 +82,10 @@ const UsersPage = () => {
 		}
 	}
 
+
+
 	const Stats = [
-		{ title: "Ratio", score: ((selectedUser?.win || 0) / (selectedUser?.totalGame || 0) * 100).toFixed(2) + '%' },
+		{ title: "Ratio", score: selectedUser?.totalGame === 0 ? 0 : ((selectedUser?.win || 0) / (selectedUser?.totalGame || 0) * 100).toFixed(0) + '%' },
 		{ title: "Parties jouées", score: selectedUser?.totalGame },
 		{ title: "Victoires", score: selectedUser?.win },
 		{ title: "Défaites", score: selectedUser?.loss },
@@ -135,6 +141,7 @@ const UsersPage = () => {
 												handleStatsButtonClick={handleStatsButtonClick}
 												currentUser={currentUser}
 												displayToast={notify}
+												selectedUser={selectedUser}
 											/>
 										)
 								)}
