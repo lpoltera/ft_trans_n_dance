@@ -16,8 +16,7 @@ const AvatarRadioSelect = ({ onChange }: Props) => {
 		{ id: "avatar-3", path: avatar4 },
 	];
 	const [selectedAvatar, setSelectedAvatar] = useState<
-		string | ArrayBuffer | null
-	>("avatar-1");
+		string | ArrayBuffer | null>(null);
 	const [uploadedAvatar, setUploadedAvatar] = useState<string | null>(null);
 
 	const handleAvatarChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -51,26 +50,29 @@ const AvatarRadioSelect = ({ onChange }: Props) => {
 	};
 
 	return (
-		<div className="flex flex-row gap-4">
+		<div className="flex flex-row gap-4 items-center">
 			{/* Render predefined avatars */}
 			{avatars.map((avatar, index) => (
-				<div key={index} className="relative p-1">
-					<input
-						type="radio"
-						id={`avatar-${index}`}
-						name="avatar"
-						value={avatar.path}
-						checked={selectedAvatar === avatar.id}
-						onChange={handleAvatarChange}
-						className="absolute top-0 left-0 w-full h-full appearance-none checked:bg-purple-500 indeterminate:bg-purple-500 hover:bg-purple-500 checked:hover:bg-purple-500"
-					/>
-					<label htmlFor={`avatar-${index}`}>
-						<img
-							src={avatar.path}
-							alt={`Avatar ${index}`}
-							className="w-16 h-16 rounded-full relative"
+				<div key={index} className="relative">
+					<div className={`${selectedAvatar === avatar.id ? "p-2 " : "p-1 "} relative`}>
+						<input
+							type="radio"
+							id={`avatar-${index}`}
+							name="avatar"
+							value={avatar.path}
+							checked={selectedAvatar === avatar.id}
+							onChange={handleAvatarChange}
+							className="absolute inset-0 w-full h-full  border hover:bg-purple-500 custom-checked"
 						/>
-					</label>
+						{/* <div className="p-1"> */}
+						<label htmlFor={`avatar-${index}`} >
+							<img
+								src={avatar.path}
+								alt={`Avatar ${index}`}
+								className="w-16 h-16 rounded-full relative"
+							/>
+						</label>
+					</div>
 				</div>
 			))}
 
@@ -107,7 +109,7 @@ const AvatarRadioSelect = ({ onChange }: Props) => {
 							value={uploadedAvatar}
 							checked={selectedAvatar === "custom"}
 							onChange={handleAvatarChange}
-							className="absolute top-0 left-0 w-full h-full appearance-none checked:bg-purple-500 indeterminate:bg-purple-500 hover:bg-purple-500 checked:hover:bg-purple-500"
+							className="absolute top-0 left-0 w-full h-full appearance-none checked:bg-[#f67539]"
 						/>
 						<label htmlFor="custom-avatar">
 							<img

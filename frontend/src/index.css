@@ -27,3 +27,19 @@ html {
 	box-shadow: none !important;
 	color: #EF4444 !important;
 }
+
+.custom-checked:checked {
+	/* outline: none !important; */
+	background-color: #f67539 !important;
+	border-color: #f67539 !important;
+	box-shadow: none !important;
+	/* border-width: 20px !important; */
+}
+
+.custom-radio[type="radio"] {
+	outline: none !important;
+	background-color: #EF4444 !important;
+	border-color: #EF4444 !important;
+	box-shadow: none !important;
+	border-width: 0px !important;	
+}

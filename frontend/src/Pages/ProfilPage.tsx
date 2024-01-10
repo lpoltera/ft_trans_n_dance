@@ -24,6 +24,7 @@ import { GameStatsProps, Parties } from "../models/Game";
 import { User, UserRelation } from "../models/User";
 import { useNotificationContext } from "../contexts/NotificationContext";
 import { toast } from "react-toastify";
+import AvatarRadioSelect from "../Components/AvatarRadioSelect";
 
 interface Form {
 	avatar: string;
@@ -127,7 +128,8 @@ const ProfilPage = () => {
 	}, [idURL, update]);
 
 	const updateAccountSettings = async () => {
-		if (passwordConfirmed === false) {
+		console.log("password = ", form.password);
+		if (form.password !== null && passwordConfirmed === false) {
 			return alert("Les mots de passe ne correspondent pas");
 		}
 		if (update === false) setUpdate(true);
@@ -137,6 +139,7 @@ const ProfilPage = () => {
 		console.log("form.password : " + form.password);
 		console.log("form.avatar : " + form.avatar);
 		// await axios.patch('api/' + user?.username, form, {
+
 		await axios
 			.patch("api/" + currentUser?.username, form, {
 				headers: {
@@ -175,9 +178,16 @@ const ProfilPage = () => {
 		}
 		if (event.target.name === "username") {
 			setForm({ ...form, username: event.target.value });
+			if (event.target.value === "") {
+				setForm({ ...form, username: null });
+			}
 		}
 		if (event.target.name === "password") {
 			setForm({ ...form, password: event.target.value });
+			if (event.target.value === "") {
+				setForm({ ...form, password: null });
+			}
+			console.log(form.password)
 		} if (event.target.name === "confirmPassword") {
 			if (event.target.value === form.password) {
 				setPasswordConfirmed(true);
@@ -249,9 +259,12 @@ const ProfilPage = () => {
 		}
 	};
 
-
-
-
+	const handleAvatarChange = (avatar: string) => {
+		setForm({
+			...form,
+			avatar,
+		});
+	};
 
 	return (
 		<>
@@ -336,21 +349,20 @@ const ProfilPage = () => {
 									name="createTournamentForm"
 									className="flex flex-col items-center"
 								>
-									<div className="relative group w-16 h-16 flex items-center m-5">
-										{/* <div className="opacity-0 group-hover:opacity-100 duration-300 absolute font-bold text-xs ">
-											Modifier
-										</div> */}
+									{/* <div className="relative group w-16 h-16 flex items-center m-5">
 										<img
 											src={form.avatar ? form.avatar : currentUser?.avatar}
 											alt="Profile picture to update"
 											className="rounded-full absolute"
 										/>
-										{/* <input name="avatar" type="file" className="hidden" onChange={handleAvatarChange}/> */}
+									</div> */}
+									<div className="flex flex-row gap-4 mb-10 mt-10">
+										<AvatarRadioSelect
+											onChange={handleAvatarChange}
+										></AvatarRadioSelect>
 									</div>
-									<div>
-										{/* <label htmlFor="upload-avatar" className="cursor-pointer"> */}
-										<span
-											// className="py-2 px-4 rounded-md bg-cyan-700  text-white hover:bg-[#f67539] hover:border-none
+									{/* <div> */}
+									{/* <span
 											className="block w-full text-sm text-white-500 bg-cyan-700 py-2 px-4 rounded-md hover:bg-[#f67539] 
 												file:mr-4 file:py-2 file:px-4
 												file:rounded-full file:border-0
@@ -364,14 +376,14 @@ const ProfilPage = () => {
 											}}
 										>
 											Modifier
-										</span>
-										<input
+										</span> */}
+									{/* <input
 											type="file"
 											className="hidden"
 											onChange={handleImageUpload}
 											ref={fileInputRef}
-										/>
-									</div>
+										/> */}
+									{/* </div> */}
 
 									<label>
 										<span className="block text-sm font-medium text-slate-400">
@@ -415,21 +427,23 @@ const ProfilPage = () => {
 									<div className="flex flex-col text-sm">
 										<button
 											type="button"
-											className="mt-5 py-2 px-4 bg-emerald-600 text-white rounded-md hover:bg-emerald-800 cursor-pointer"
+											className="mt-8 py-2 px-4 bg-cyan-700 text-white rounded-md hover:bg-[#f67539] cursor-pointer"
 											onClick={() => updateAccountSettings()}
 										>
 											Enregistrer les modifications
 										</button>
 										<button
 											type="button"
-											className="mt-2 py-2 px-4 bg-gray-400 text-white rounded-md hover:bg-gray-500 cursor-pointer"
+											className="mt-2 py-2 px-4 bg-gray-400  text-white rounded-md hover:bg-[#f67539] cursor-pointer"
 											onClick={() => clearForm()}
 										>
 											Annuler
 										</button>
+										<div className="flex flex-col gap-2 border border-x-0 border-t-0 border-gray-400 py-4">
+										</div>
 										<button
 											type="button"
-											className="mt-2 py-2 px-4 bg-red-600 text-white rounded-md hover:bg-red-800 cursor-pointer"
+											className=" mt-8 py-2 px-4 bg-red-600 text-white rounded-md hover:bg-red-800 cursor-pointer"
 											onClick={() => deleteAccount()}
 										>
 											Supprimer le compte
