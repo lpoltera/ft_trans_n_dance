@@ -20,7 +20,6 @@ import UsersPage from "./Pages/UsersPage";
 import { GameProvider } from "./contexts/GameContext";
 import { NotificationProvider } from "./contexts/NotificationContext";
 import { UserProvider } from "./contexts/UserContext";
-import LoadingPage from "./Pages/LoadingPage";
 
 function App() {
 	return (
@@ -48,14 +47,6 @@ function App() {
 								element={
 									<PublicRoute>
 										<LoginPage />
-									</PublicRoute>
-								}
-							></Route>
-							<Route
-								path="/loading"
-								element={
-									<PublicRoute>
-										<LoadingPage />
 									</PublicRoute>
 								}
 							></Route>
