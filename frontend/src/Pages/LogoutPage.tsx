@@ -1,13 +1,21 @@
 import axios from "axios";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 
 const Postlogout = () => {
-  axios.post("/api/logout");
-  return (
-    <div>
-      <Navigate to="/" replace={true} />
-    </div>
-  );
+	const navigate = useNavigate();
+
+	axios.post("/api/logout")
+		.then((res) => {
+			console.log(res);
+			navigate("/");
+		})
+
+
+	return (
+		<div>
+			{/* <Navigate to="/" replace={true} /> */}
+		</div>
+	);
 };
 
 export default Postlogout;
