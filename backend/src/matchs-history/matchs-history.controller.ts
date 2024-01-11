@@ -74,4 +74,9 @@ export class MatchsHistoryController {
   remove(@Param('id') id: string) {
     return this.matchsHistoryService.remove(+id);
   }
+
+  @Get('/check/:id')
+  async check(@Param('id') id: string) {
+    return await this.matchsHistoryService.check(+id);
+  }
 }

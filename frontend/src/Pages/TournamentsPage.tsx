@@ -94,6 +94,7 @@ const TournamentsPage: React.FC = () => {
       return;
     }
     setCreateTournamentModal(false);
+    localStorage.setItem("canAccessTournament", "true");
     if (user) {
       const newTournament: TournamentGameProps = {
         ...form,

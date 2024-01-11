@@ -1,26 +1,21 @@
-import { useNavigate, useParams, useBlocker } from "react-router-dom";
-import { IGame, GameUpdate } from "../models/Game.ts";
+import axios from "axios";
 import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import FooterMain from "../Components/FooterMain.tsx";
 import Game from "../Components/Game/SingleGame.tsx";
+import HistoryMatchRow from "../Components/HistoryMatchRow.tsx";
 import Navbar from "../Components/Navbar.tsx";
 import PageLayout from "../Components/PageLayout.tsx";
-import FooterMain from "../Components/FooterMain.tsx";
-import axios from "axios";
-import { SyncLoader } from "react-spinners";
-import { useNotificationContext } from "../contexts/NotificationContext.tsx";
-import { TournamentGameProps, RankingProps } from "../models/Game";
-import HistoryMatchRow from "../Components/HistoryMatchRow.tsx";
 import RankingPlayersRow from "../Components/RankingPlayerRow.tsx";
+import { useNotificationContext } from "../contexts/NotificationContext.tsx";
+import { RankingProps, TournamentGameProps } from "../models/Game";
+import { GameUpdate, IGame } from "../models/Game.ts";
 
-interface GameInvitationResponse {
-  // move to models
-  message: string;
-  sender: string;
-  receiver: string;
-}
-
-const GamePage = () => {
+const GamePageTournament = () => {
   const navigate = useNavigate();
+
+  let showAlert = true;
+
   let { gameId } = useParams<{ gameId: string }>();
   const [game, setGame] = useState<IGame | null>(null);
   const [gameFinished, setGameFinished] = useState<boolean>(false);
@@ -29,7 +24,6 @@ const GamePage = () => {
   const [showEditModal, setShowEditModal] = useState(true);
   const [showEditModalEnd, setShowEditModalEnd] = useState(false);
   const { socket } = useNotificationContext();
-  const [invitationRefused, setInvitationRefused] = useState(false);
   const [tournamentGames, setTournamentGames] = useState<
     TournamentGameProps[] | any
   >();
@@ -60,28 +54,54 @@ const GamePage = () => {
     if (!gameId) {
       return;
     }
-    const fetchGame = async () => {
-      try {
-        const response = await axios.get(
-          "https://localhost:8000/api/game/" + gameId
+
+    const checkAccess = async () => {
+      const canAccessGame = localStorage.getItem("canAccessTournament");
+
+      if (!canAccessGame && showAlert) {
+        localStorage.removeItem("canAccessTournament");
+        showAlert = false;
+        alert(
+          "Vous n'avez pas accès à cette partie via l'URL. Veuillez passer par l'interface."
         );
-        if (response) {
-          // console.log("response GAME ", response);
+        navigate("/accueil");
+      }
+      fetchGame();
+    };
+
+    const checkId = async () => {
+      await axios
+        .get("https://localhost:8000/api/game/check/" + gameId)
+        .then((response) => {
+          console.log("response check ", response.data);
+          // setReponseCheck(response.data);
+          if (response.data === false || response.data === "false") {
+            console.log("GAME NOT FOUND");
+            navigate("/404");
+          } else {
+            checkAccess();
+          }
+        });
+    };
+
+    const fetchGame = async () => {
+      await axios
+        .get("https://localhost:8000/api/game/" + gameId)
+        .then((response) => {
+          console.log("response GAME ", response);
           settitleModal(
             `${response.data.name_p1} contre ${response.data.name_p2}`
           );
           setGame(response.data);
           sendNotifToParticipants(response.data);
           // console.log("response data", response.data);
-        }
-        // console.log(response.data);
-      } catch (error) {
-        // console.log("failed to fetch game");
-      }
+        })
+        .catch((error) => {
+          navigate("/404");
+        });
     };
-
-    fetchGame();
-  }, [socket, gameId]);
+    checkId();
+  }, [gameId]);
 
   const handleGameUpdate = async (updatedGame: GameUpdate, gameId: string) => {
     if (updating && gameFinished && tournamentFinished) return;
@@ -152,6 +172,8 @@ const GamePage = () => {
     }
   };
 
+  localStorage.removeItem("canAccessTournament");
+
   return (
     <>
       <Navbar />
@@ -185,10 +207,10 @@ const GamePage = () => {
           </div>
         )}
         <div>
-          {!gameFinished && game ? (
+          {!gameFinished && game && !showEditModal ? (
             <Game game={game} onFinish={handleGameUpdate} />
           ) : (
-            <div>Unable to load the game</div>
+            <div></div>
           )}
         </div>
         {showEditModalEnd && game && (
@@ -289,4 +311,4 @@ const GamePage = () => {
   );
 };
 
-export default GamePage;
+export default GamePageTournament;

@@ -41,10 +41,10 @@ export class TournamentsController {
     return this.tournamentsService.getRankings(name);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.tournamentsService.findOne(+id);
-  }
+  // @Get(':id')
+  // findOne(@Param('id') id: string) {
+  //   return this.tournamentsService.findOne(+id);
+  // }
 
   @Patch('update-score/:id')
   update(

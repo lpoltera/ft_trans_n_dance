@@ -1,4 +1,8 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Not } from 'typeorm';
 import { Notification } from '../notifications/entities/notifications.entity';
@@ -190,12 +194,22 @@ export class MatchsHistoryService {
 
   async findOne(id: number) {
     const game = await this.MatchDB.findOne({ where: { id: id } });
-    // return this.toDto(game);
+    if (!game) {
+      throw new NotFoundException('Game not found');
+    }
     return game;
   }
 
   async remove(id: number) {
     await this.MatchDB.delete({ id });
     return `This action removes a #${id} matchsHistory`;
+  }
+
+  async check(id: number) {
+    const game = await this.MatchDB.findOne({ where: { id: id } });
+    if (!game) {
+      return 'false';
+    }
+    return 'true';
   }
 }

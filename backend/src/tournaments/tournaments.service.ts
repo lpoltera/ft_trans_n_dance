@@ -60,9 +60,9 @@ export class TournamentsService {
       throw new ConflictException(error.message);
     }
   }
-  findOne(id: number) {
-    return `This action returns a #${id} tournament`;
-  }
+  // findOne(id: number) {
+  //   return `This action returns a #${id} tournament`;
+  // }
 
   async update_score(gameId: number, score_p1: number, score_p2: number) {
     const gameToUpdate = await this.MatchDB.findOneBy({ id: gameId });
