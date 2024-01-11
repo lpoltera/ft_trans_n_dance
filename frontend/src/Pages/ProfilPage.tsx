@@ -121,7 +121,9 @@ const ProfilPage = () => {
 					setUserFriends(friendResponse.data);
 					setUserGames(gamesResponse.data);
 					name = null;
-				} catch (err) { }
+				} catch (err) {
+					navigate("/404");
+				}
 			}
 		}
 		fetchUserAndFriend();
@@ -386,9 +388,9 @@ const ProfilPage = () => {
 									{/* </div> */}
 
 									<label>
-										<span className="block text-sm font-medium text-slate-400">
+										{/* <span className="block text-sm font-medium text-slate-400">
 											Pseudo
-										</span>
+										</span> */}
 										<input
 											type="text"
 											className=" border-2 border-[#f67539] bg-transparent rounded-md mt-1 mb-3 custom-input"
@@ -400,9 +402,9 @@ const ProfilPage = () => {
 									</label>
 
 									<label>
-										<span className="block text-sm font-medium text-slate-400">
+										{/* <span className="block text-sm font-medium text-slate-400">
 											Mot de passe
-										</span>
+										</span> */}
 										<input
 											type="password"
 											className="border-2 border-[#f67539] bg-transparent rounded-md mt-1 mb-3 custom-input"
@@ -411,12 +413,15 @@ const ProfilPage = () => {
 											placeholder="Mot de passe"
 											onChange={handleFormChange}
 										/>
-										<span className="block text-sm font-medium text-slate-400">
+									</label>
+
+									<label>
+										{/* <span className="block text-sm font-medium text-slate-400">
 											Confirmer le mot de passe
-										</span>
+										</span> */}
 										<input
 											type="password"
-											className={`border-2 border-[#f67539] px-3 py-2 bg-transparent rounded-md custom-input ${passwordConfirmed ? "text-white border-[#f67539]" : "custom-input-confirm"}`}
+											className={`border-2 border-[#f67539] bg-transparent rounded-md mt-1 mb-3 custom-input ${passwordConfirmed ? "text-white border-[#f67539]" : "custom-input-confirm"}`}
 											id="confirmPassword"
 											name="confirmPassword"
 											placeholder="Confirmer le mot de passe"
@@ -427,14 +432,14 @@ const ProfilPage = () => {
 									<div className="flex flex-col text-sm">
 										<button
 											type="button"
-											className="mt-8 py-2 px-4 bg-cyan-700 text-white rounded-md hover:bg-[#f67539] cursor-pointer"
+											className="mt-5 py-2 px-4 bg-cyan-700 text-white rounded-md hover:bg-[#f67539] cursor-pointer"
 											onClick={() => updateAccountSettings()}
 										>
 											Enregistrer les modifications
 										</button>
 										<button
 											type="button"
-											className="mt-2 py-2 px-4 bg-gray-400  text-white rounded-md hover:bg-[#f67539] cursor-pointer"
+											className="mt-3 py-2 px-4 bg-gray-400  text-white rounded-md hover:bg-[#f67539] cursor-pointer"
 											onClick={() => clearForm()}
 										>
 											Annuler

@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import PageLayout from "../Components/PageLayout";
 
 interface Props {
 	statusCode: string;
@@ -22,41 +23,64 @@ const ErrorPage = ({ statusCode }: Props) => {
 		}
 
 		var ballRadius = 15;
-		var x = canvas.width / 3;
-		var y = canvas.height - 40;
-		var dx = 5;
-		var dy = -5;
+		var x = canvas.width / 2 + 10;
+		var y = canvas.height / 2 + 10;
+		var dx = 3;
+		var dy = -3;
 
-		var x2 = 701;
-		var y2 = 20;
-		var dx2 = 5;
-		var dy2 = -5;
+		var x2 = canvas.width / 2;
+		var y2 = canvas.height / 2;
+		var dx2 = -3;
+		var dy2 = 3;
+
+		let angle = 0;
 
 		function drawBall() {
 			if (!ctx) {
 				return;
 			}
+			ctx.save(); // Save the current state of the canvas
+			ctx.translate(x, y); // Move the canvas to the point where you want to draw the text
+			ctx.rotate(angle); // Rotate the canvas
 			ctx.beginPath();
-			ctx.arc(x, y, ballRadius, 0, Math.PI * 2);
+			ctx.font = "bold 40px Arial";
 			ctx.fillStyle = "#f67539";
-			ctx.fill();
+			ctx.fillText("?", 0, 0); // Draw the text at the coordinates (0, 0)
 			ctx.closePath();
+			ctx.restore(); // Restore the canvas to its original state
+			angle += 0.05; // Increase the angle for the next frame
 		}
 
 		function drawBall2() {
 			if (!ctx) {
 				return;
 			}
+			ctx.save(); // Save the current state of the canvas
+			ctx.translate(x2, y2); // Move the canvas to the point where you want to draw the text
+			ctx.rotate(angle); // Rotate the canvas
 			ctx.beginPath();
-			ctx.arc(x2, y2, ballRadius, 0, Math.PI * 2);
+			ctx.font = "bold 40px Arial";
 			ctx.fillStyle = "#0e7490";
-			ctx.fill();
+			ctx.fillText("?", 0, 0); // Draw the text at the coordinates (0, 0)
 			ctx.closePath();
+			ctx.restore(); // Restore the canvas to its original state
+			angle += 0.05; // Increase the angle for the next frame
 		}
 
-		var buttons = Array.from(document.querySelectorAll("#border"));
-		var buttonCoords = buttons.map((button) => {
-			var rect = button.getBoundingClientRect();
+		var elements = Array.from(document.querySelectorAll("button, h1, h2"));
+		var elementsCoords = elements.map((element) => {
+			var rect = element.getBoundingClientRect();
+			return {
+				x: rect.left - canvas.offsetLeft,
+				y: rect.top - canvas.offsetTop,
+				width: rect.width,
+				height: rect.height,
+			};
+		});
+
+		var borders = Array.from(document.querySelectorAll("main"));
+		var bordersCoords = borders.map((border) => {
+			var rect = border.getBoundingClientRect();
 			return {
 				x: rect.left - canvas.offsetLeft,
 				y: rect.top - canvas.offsetTop,
@@ -70,7 +94,7 @@ const ErrorPage = ({ statusCode }: Props) => {
 			drawBall();
 			drawBall2();
 
-			buttonCoords.forEach((coords) => {
+			elementsCoords.forEach((coords) => {
 				if (
 					x <= coords.x &&
 					x + dx > coords.x &&
@@ -109,24 +133,21 @@ const ErrorPage = ({ statusCode }: Props) => {
 					y2 + dy2 < coords.y + coords.height
 				) {
 					dx2 = -dx2;
-				}
-				if (
+				} else if (
 					x2 >= coords.x + coords.width &&
 					x2 + dx2 < coords.x + coords.width &&
 					y2 + dy2 > coords.y &&
 					y2 + dy2 < coords.y + coords.height
 				) {
 					dx2 = -dx2;
-				}
-				if (
+				} else if (
 					y2 <= coords.y &&
 					y2 + dy2 > coords.y &&
 					x2 + dx2 > coords.x &&
 					x2 + dx2 < coords.x + coords.width
 				) {
 					dy2 = -dy2;
-				}
-				if (
+				} else if (
 					y2 >= coords.y + coords.height &&
 					y2 + dy2 < coords.y + coords.height &&
 					x2 + dx2 > coords.x &&
@@ -136,19 +157,21 @@ const ErrorPage = ({ statusCode }: Props) => {
 				}
 			});
 
-			if (x + dx > canvas.width - ballRadius || x + dx < ballRadius) {
-				dx = -dx;
-			}
-			if (y + dy > canvas.height - ballRadius || y + dy < ballRadius) {
-				dy = -dy;
-			}
+			bordersCoords.forEach((coords) => {
+				if (x + dx > coords.x + coords.width - ballRadius || x + dx < coords.x) {
+					dx = -dx;
+				}
+				if (y + dy > coords.y + coords.height - ballRadius || y + dy < coords.y) {
+					dy = -dy;
+				}
 
-			if (x2 + dx2 > canvas.width - ballRadius || x2 + dx2 < ballRadius) {
-				dx2 = -dx2;
-			}
-			if (y2 + dy2 > canvas.height - ballRadius || y2 + dy2 < ballRadius) {
-				dy2 = -dy2;
-			}
+				if (x2 + dx2 > coords.x + coords.width - ballRadius || x2 + dx2 < coords.x) {
+					dx2 = -dx2;
+				}
+				if (y2 + dy2 > coords.y + coords.height - ballRadius || y2 + dy2 < coords.y) {
+					dy2 = -dy2;
+				}
+			});
 
 			x += dx;
 			y += dy;
@@ -164,33 +187,73 @@ const ErrorPage = ({ statusCode }: Props) => {
 			clearInterval(interval);
 		};
 	}, []);
+
+
 	return (
 		<>
-			<div className="pt-24 pb-20 pr-16 pl-16 bg-cyan-900 h-screen w-screen flex flex-col text-white">
+			<PageLayout>
 				<canvas
 					id="myCanvas"
 					className="absolute top-0 left-0 w-full h-full"
 				></canvas>
-				<div className="h-full w-full grow flex flex-col justify-center  items-center z-10">
-					<div
-						id="border"
-						className="min-w-fit w-96 flex flex-col border-2 border-white rounded-md p-20 gap-4"
-					>
+				<div className="flex justify-center items-center">
+					<main
+						className="min-w-fit w-72 flex flex-col border border-white rounded-md p-20 gap-4">
 						<h1 className="text-9xl font-bold text-[#f67539]">{statusCode}</h1>
 						<h2 className="text-4xl font-bold text-[#f67539]">
 							Page Not Found
 						</h2>
 						<button
 							onClick={() => navigate("/")}
-							className="py-2 px-4 bg-cyan-700  text-white rounded-md hover:bg-[#f67539]"
-						>
+							className=" mt-10 py-4 px-4 bg-cyan-700  text-white rounded-md hover:bg-[#f67539]">
 							Retour à l'accueil
 						</button>
-					</div>
+					</main>
 				</div>
-			</div>
+			</PageLayout>
 		</>
 	);
 };
 
 export default ErrorPage;
+
+
+
+
+
+// import { useNavigate } from "react-router-dom";
+// import AnimatedBalls from "../Components/AnimatedBalls";
+// import PageLayout from "../Components/PageLayout";
+
+// interface Props {
+// 	statusCode: string;
+// }
+
+// const ErrorPage = ({ statusCode }: Props) => {
+// 	const navigate = useNavigate();
+
+// 	return (
+// 		<>
+// 			<PageLayout>
+// 				<AnimatedBalls />
+// 				<div className="flex justify-center items-center">
+// 					<main
+// 						className="min-w-fit w-96 flex flex-col border-white rounded-md p-20 gap-4">
+// 						<h1 className="text-9xl font-bold text-[#f67539]">{statusCode}</h1>
+// 						<h2 className="text-4xl font-bold text-[#f67539]">
+// 							Page Not Found
+// 						</h2>
+// 						<button
+// 							onClick={() => navigate("/")}
+// 							className=" mt-10 py-4 px-4 bg-cyan-700  text-white rounded-md hover:bg-[#f67539]">
+// 							Retour à l'accueil
+// 						</button>
+// 					</main>
+// 				</div>
+// 			</PageLayout>
+// 		</>
+// 	);
+// };
+
+// export default ErrorPage;
+

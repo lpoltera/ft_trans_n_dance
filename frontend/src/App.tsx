@@ -129,7 +129,10 @@ function App() {
 							/>
 							<Route path="/twofa-verify" element={<TfaPage />}></Route>
 							<Route path="*" element={<ErrorPage statusCode="404" />} />
+							<Route path="/404" element={<ErrorPage statusCode="404" />} />
 						</Routes>
+
+
 					</BrowserRouter>
 					<ToastContainer
 						position="bottom-right"

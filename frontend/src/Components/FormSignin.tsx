@@ -151,10 +151,8 @@ const FormSignin = () => {
 										<div className="flex flex-col space-y-4">
 											<h3 className="text-2xl font-semibold text-center mb-4">
 												Assure-toi d'avoir bien scanné le QR Code
+												<span className="animate-pulse" style={{ fontSize: "70px" }}> 🤳</span>
 											</h3>
-											<div className="flex justify-center animate-bounce">
-												<span style={{ fontSize: "100px" }}>🤳</span>
-											</div>
 											<div className="flex justify-center items-center py-6">
 												<img
 													src={qrLink}

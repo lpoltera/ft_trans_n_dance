@@ -57,13 +57,13 @@ const FormLogin = () => {
 						CONNEXION
 					</h1>
 				</div>
-				<div className="flex flex-col gap-2 border border-x-0 border-t-0 border-gray-400 py-10">
+				<div className="flex flex-col gap-2 border-2 border-x-0 border-t-0 border-gray-400 py-10">
 					<input
 						type="text"
 						id="username"
 						value={login.username}
 						name="username"
-						className="border border-[#f67539] px-3 py-2 bg-transparent text-white rounded-md custom-input"
+						className="border-2 border-[#f67539] px-3 py-2 bg-transparent text-white rounded-md custom-input"
 						placeholder="Pseudo"
 						onChange={(e) => onChangeForm(e)}
 					/>
@@ -72,7 +72,7 @@ const FormLogin = () => {
 						value={login.password}
 						name="password"
 						id="password"
-						className="border border-[#f67539] px-3 py-2 bg-transparent text-white rounded-md custom-input"
+						className="border-2 border-[#f67539] px-3 py-2 bg-transparent text-white rounded-md custom-input"
 						placeholder="Mot de passe"
 						onChange={(e) => onChangeForm(e)}
 					/>
