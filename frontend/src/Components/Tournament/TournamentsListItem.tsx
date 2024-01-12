@@ -8,13 +8,14 @@ interface TournamentsListItemProps {
 	handleTournamentListChange: () => void;
 	tournoi: string[];
 	username: string;
+	selectedTournament: string | null;
 }
 
 
-const TournamentsListItem: React.FC<TournamentsListItemProps> = ({ tournoi, username, handleStatsButtonClick, handleTournamentListChange }) => {
+const TournamentsListItem: React.FC<TournamentsListItemProps> = ({ tournoi, username, handleStatsButtonClick, handleTournamentListChange, selectedTournament }) => {
 
-	console.log("tournoi name", tournoi[0])
-	console.log("tournoi creator", tournoi[1])
+	// console.log("tournoi name", tournoi[0])
+	// console.log("tournoi creator", tournoi[1])
 
 	const deleteTournament = async () => {
 		const isConfirmed = window.confirm(
@@ -34,7 +35,7 @@ const TournamentsListItem: React.FC<TournamentsListItemProps> = ({ tournoi, user
 
 	return (
 		<>
-			<div className="flex justify-between items-center pr-4 m-1 hover:bg-[#f67539] rounded-md">
+			<div className={`flex justify-between items-center pr-4 m-1 rounded-md ${selectedTournament === tournoi[0] ? "bg-cyan-700" : "hover:bg-[#f67539]"}`}>
 				<a href="#" className="py-4 px-4">
 					<div className="flex justify-center gap-4">
 						<div className="flex flex-col justify-start">

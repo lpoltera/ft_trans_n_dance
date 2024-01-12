@@ -29,11 +29,10 @@ html {
 }
 
 .custom-checked:checked {
-	/* outline: none !important; */
+	outline: none !important;
 	background-color: #f67539 !important;
 	border-color: #f67539 !important;
 	box-shadow: none !important;
-	/* border-width: 20px !important; */
 }
 
 .custom-radio[type="radio"] {

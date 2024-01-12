@@ -62,7 +62,7 @@ const AvatarRadioSelect = ({ onChange }: Props) => {
 							value={avatar.path}
 							checked={selectedAvatar === avatar.id}
 							onChange={handleAvatarChange}
-							className="absolute inset-0 w-full h-full  border hover:bg-purple-500 custom-checked"
+							className="absolute inset-0 w-full h-full  border hover:bg-cyan-700 custom-checked"
 						/>
 						{/* <div className="p-1"> */}
 						<label htmlFor={`avatar-${index}`} >

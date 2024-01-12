@@ -120,8 +120,9 @@ const Navbar = () => {
 	const showNotificationPanel = async () => {
 		setUnreadNotif(false);
 		setNotifModal(!notifModal);
-		const response = await axios.get('api/notifications');
-		setNumberOfNotifs(response.data.length);
+		// const response = await axios.get('api/notifications');
+		// setNumberOfNotifs(response.data.length);
+		// console.log("number of notifications = ", response.data.length);
 	};
 
 	const url = window.location.href;
