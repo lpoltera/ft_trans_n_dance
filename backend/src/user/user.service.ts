@@ -25,8 +25,7 @@ export class UserService {
 
   async create(newUser: CreateUserDto, session: Record<string, any>) {
     try {
-      let { avatar, password, twoFaEnable } = newUser;
-      console.log('NEW USER = ', avatar, twoFaEnable); // delete password
+      let { password, twoFaEnable } = newUser;
       let twoFa: boolean;
       if (twoFaEnable === 'false') {
         twoFa = false;
@@ -36,14 +35,14 @@ export class UserService {
 
       let log: string = session.login42;
       if (!log) log = 'johndoe';
-      let av = avatar;
-      if (!av) av = '/src/assets/avatar-cat.png';
+      // let av = avatar;
+      // if (!av) av = '/src/assets/avatar-cat.png';
       if (!session.secret) session.secret = '';
       const hash = await bcrypt.hash(password, 10);
       const user = this.userDB.create({
         ...newUser,
         password: hash,
-        avatar: av,
+        // avatar: av,
         connected: 'déconnecté',
         win: 0,
         loss: 0,
@@ -163,7 +162,7 @@ export class UserService {
         session.user = {
           ...session.user,
           avatar: user.avatar,
-        }
+        };
       }
       if (userUpdate.username) {
         user.username = userUpdate.username;
@@ -187,9 +186,9 @@ export class UserService {
     const userToDelete = await this.userDB.findOne({
       where: { username: name },
     });
-    if (userToDelete){
-    session.destroy();
-    return await this.userDB.softDelete({ id: userToDelete.id });
+    if (userToDelete) {
+      session.destroy();
+      return await this.userDB.softDelete({ id: userToDelete.id });
     }
     return 'User not found';
   }

@@ -13,7 +13,8 @@ export class CreateUserDto {
 
   readonly twoFaEnable?: string;
 
-  readonly avatar?: string;
+  @IsNotEmpty({ message: 'Please select an avatar\n' })
+  readonly avatar: string;
 
   readonly totalXP?: number; // pour faire des tests
 
