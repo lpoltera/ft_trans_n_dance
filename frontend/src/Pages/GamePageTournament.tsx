@@ -53,7 +53,7 @@ const GamePageTournament = () => {
 		setTournamentGames(games.data);
 		setRanking(tmp.data);
 		for (let i in games.data) {
-			if (games.data[i].status != "terminer") {
+			if (games.data[i].status != "terminé") {
 				setTournamentFinished(false);
 				break;
 			} else {

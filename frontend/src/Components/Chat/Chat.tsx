@@ -89,6 +89,13 @@ const Chat = ({ ami }: Props) => {
 		};
 	}, [socket, currentUser?.username, ami.username]);
 
+
+	function addHours(date: Date, h: number): Date {
+		const newHour = new Date(date);
+		newHour.setHours(newHour.getHours() + h);
+		return newHour;
+	}
+
 	// Update messages state when a message is sent
 	const sendMessage = (e: FormEvent, messageContent: string) => {
 		e.preventDefault();
@@ -98,7 +105,7 @@ const Chat = ({ ami }: Props) => {
 				sender: currentUser.username,
 				receiver: ami.username,
 				text: messageContent,
-				createdAt: currentTime.toISOString(),
+				createdAt: addHours(currentTime, 1).toISOString(),
 			};
 
 			socket?.emit("sendMessage", message);
@@ -127,8 +134,9 @@ const Chat = ({ ami }: Props) => {
 			<div className="shrink">
 				<form onSubmit={(e) => sendMessage(e, newMessage)}>
 					<input
+						autoFocus
 						type="text"
-						className="border-white rounded-md px-3 py-2 bg-transparent w-full focus:border-cyan-500 focus:outline-none appearance-none"
+						className="border-white rounded-md px-3 py-2 bg-transparent w-full focus:border-cyan-500 focus:outline-none appearance-none custom-input"
 						value={newMessage}
 						onChange={(e) => setNewMessage(e.target.value)}
 						placeholder="Ecrivez un message..."

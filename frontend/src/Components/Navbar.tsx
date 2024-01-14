@@ -42,12 +42,22 @@ const Navbar = () => {
 	const checkIfGame = () => {
 		return /\/game\/\d+/.test(location.pathname);
 	};
+
+	const checkIfTournament = () => {
+		return /\/tournaments\/\d+/.test(location.pathname);
+	};
+
 	const navigateToProfil = () => {
-		if (checkIfGame()) {
+		if (checkIfGame() || checkIfTournament()) {
 			const isConfirm = window.confirm(
-				"Êtes-vous sûr de vouloir quitter le jeu ?"
+				"Êtes-vous sûr de vouloir quitter le jeu ou le tournoi ? Cette action supprimera le jeu ou le tournoi en cours"
+				// remove rights access to the game or tournament
 			);
 			if (isConfirm) {
+				if (localStorage.getItem("canAccessGame"))
+					localStorage.removeItem("canAccessGame");
+				if (localStorage.getItem("canAccessTournament"))
+					localStorage.removeItem("canAccessTournament");
 				navigate("/profil");
 			} else {
 				return;
@@ -57,11 +67,16 @@ const Navbar = () => {
 		}
 	};
 	const navigateToAccueil = () => {
-		if (checkIfGame()) {
+		if (checkIfGame() || checkIfTournament()) {
 			const isConfirm = window.confirm(
-				"Êtes-vous sûr de vouloir quitter le jeu ?"
+				"Êtes-vous sûr de vouloir quitter le jeu ou le tournoi ? Cette action supprimera le jeu ou le tournoi en cours"
+				// remove rights access to the game or tournament
 			);
 			if (isConfirm) {
+				if (localStorage.getItem("canAccessGame"))
+					localStorage.removeItem("canAccessGame");
+				if (localStorage.getItem("canAccessTournament"))
+					localStorage.removeItem("canAccessTournament");
 				navigate("/accueil");
 			} else {
 				return;
@@ -72,11 +87,16 @@ const Navbar = () => {
 	};
 
 	const navigateToChat = () => {
-		if (checkIfGame()) {
+		if (checkIfGame() || checkIfTournament()) {
 			const isConfirm = window.confirm(
-				"Êtes-vous sûr de vouloir quitter le jeu ?"
+				"Êtes-vous sûr de vouloir quitter le jeu ou le tournoi ? Cette action supprimera le jeu ou le tournoi en cours"
+				// remove rights access to the game or tournament
 			);
 			if (isConfirm) {
+				if (localStorage.getItem("canAccessGame"))
+					localStorage.removeItem("canAccessGame");
+				if (localStorage.getItem("canAccessTournament"))
+					localStorage.removeItem("canAccessTournament");
 				navigate("/chat");
 				setUnreadChat(false);
 			} else {
@@ -89,11 +109,16 @@ const Navbar = () => {
 	};
 
 	const navigateToTournaments = () => {
-		if (checkIfGame()) {
+		if (checkIfGame() || checkIfTournament()) {
 			const isConfirm = window.confirm(
-				"Êtes-vous sûr de vouloir quitter le jeu ?"
+				"Êtes-vous sûr de vouloir quitter le jeu ou le tournoi ? Cette action supprimera le jeu ou le tournoi en cours"
+				// remove rights access to the game or tournament
 			);
 			if (isConfirm) {
+				if (localStorage.getItem("canAccessGame"))
+					localStorage.removeItem("canAccessGame");
+				if (localStorage.getItem("canAccessTournament"))
+					localStorage.removeItem("canAccessTournament");
 				navigate("/tournaments");
 			} else {
 				return;
@@ -103,11 +128,17 @@ const Navbar = () => {
 		}
 	};
 	const navigateToUsers = () => {
-		if (checkIfGame()) {
+		if (checkIfGame() || checkIfTournament()) {
 			const isConfirm = window.confirm(
-				"Êtes-vous sûr de vouloir quitter le jeu ?"
+				"Êtes-vous sûr de vouloir quitter le jeu ou le tournoi ? Cette action supprimera le jeu ou le tournoi en cours"
+				// remove rights access to the game or tournament
 			);
 			if (isConfirm) {
+				// remove tournanment delete api/tounament/name
+				if (localStorage.getItem("canAccessGame"))
+					localStorage.removeItem("canAccessGame");
+				if (localStorage.getItem("canAccessTournament"))
+					localStorage.removeItem("canAccessTournament");
 				navigate("/users");
 			} else {
 				return;

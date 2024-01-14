@@ -1,5 +1,5 @@
 import axios from "axios";
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AvatarRadioSelect from "./AvatarRadioSelect";
 
@@ -23,7 +23,8 @@ const FormSignin = () => {
 			.finally(() => console.log(`QR CODE = ${qrLink}`));
 	}
 
-	const createUser = async () => {
+	const createUser = async (e: FormEvent) => {
+		e?.preventDefault();
 		if (passwordConfirmed === false) {
 			return alert("Les mots de passe ne correspondent pas");
 		}
@@ -104,12 +105,14 @@ const FormSignin = () => {
 
 	return (
 		<>
-			<form className="min-w-fit w-96 flex flex-col border-white border-2 rounded-md p-20 gap-4 z-10" name="loginForm">
+			<form className="min-w-fit w-96 flex flex-col border-white border-2 rounded-md p-20 gap-4 z-10" name="loginForm"
+				onSubmit={(e) => createUser(e)}
+			>
 				{
 					<>
 						<div className="flex flex-row gap-4">
 							<AvatarRadioSelect
-								onChange={handleAvatarChange}
+								onChange={(e) => handleAvatarChange(e)}
 							></AvatarRadioSelect>
 						</div>
 						<div className="flex flex-col gap-2 border border-x-0 border-t-0 border-gray-400 py-4">
@@ -118,28 +121,30 @@ const FormSignin = () => {
 								name="username"
 								className="border-2 border-[#f67539] px-3 py-2 bg-transparent text-white rounded-md custom-input"
 								placeholder="Pseudo"
-								onChange={handleFormChange}
+								onChange={(e) => handleFormChange(e)}
 							/>
 							<input
 								type="password"
 								name="password"
 								className="border-2 border-[#f67539] px-3 py-2 bg-transparent text-white rounded-md custom-input"
-								placeholder="Mot de passe"
-								onChange={handleFormChange}
+								placeholder="Mot de passe (*)"
+								onChange={(e) => handleFormChange(e)}
 							/>
 							<input
 								type="password"
 								name="confirmPassword"
 								className={`border-2 border-[#f67539] px-3 py-2 bg-transparent rounded-md custom-input ${passwordConfirmed ? "text-white border-[#f67539]" : "custom-input-confirm"}`}
 								placeholder="Confirmer le mot de passe"
-								onChange={handleFormChange}
+								onChange={(e) => handleFormChange(e)}
 							/>
+							<div className="flex flex-row items-center italic text-xs"><sup className=" pr-1">*</sup>8 caractères min, 1 majuscule, 1 chiffre, 1 caractère spécial
+							</div>
 							<div className="flex gap-3 items-center py-6">
 								<input
 									type="checkbox"
 									id="twoFaEnable"
 									name="twoFaEnable"
-									onChange={handleFormChange}
+									onChange={(e) => handleFormChange(e)}
 								/>
 								<label htmlFor="twoFaEnable" className="ml-2">
 									Activer la double authentification
@@ -172,12 +177,6 @@ const FormSignin = () => {
 										</div>
 									</div>
 								</div>
-								// <div className="flex justify-center items-center py-6">
-								// 	<img
-								// 		src={qrLink}
-								// 		alt="QR Code for Two-Factor Authentication"
-								// 	/>
-								// </div>
 							)}
 						</div>
 					</>
@@ -185,8 +184,8 @@ const FormSignin = () => {
 				<div className="flex flex-row mt-4 justify-between items-center">
 					{
 						<button
-							type="button"
-							onClick={() => createUser()}
+							type="submit"
+							// onSubmit={() => createUser()}
 							className="py-2 px-4 bg-cyan-700  text-white rounded-md hover:bg-[#f67539]"
 						>
 							Terminer l'inscription

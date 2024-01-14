@@ -68,7 +68,7 @@ export class TournamentsService {
     const gameToUpdate = await this.MatchDB.findOneBy({ id: gameId });
     gameToUpdate.score_p1 = score_p1;
     gameToUpdate.score_p2 = score_p2;
-    gameToUpdate.status = 'terminer';
+    gameToUpdate.status = 'terminé';
     await this.MatchDB.save(gameToUpdate);
 
     return `This action updates game #${gameId} to ${score_p1} - ${score_p2}`;

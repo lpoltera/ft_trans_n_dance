@@ -157,33 +157,43 @@ export class MatchsHistoryService {
     try {
       const gameToUpdate = await this.MatchDB.findOneBy({
         id: gameid,
-        status: Not('terminer'),
+        status: Not('terminé'),
       });
       if (gameToUpdate) {
         gameToUpdate.score_p1 = scoreP1;
         gameToUpdate.score_p2 = scoreP2;
-        gameToUpdate.status = 'terminer';
+        gameToUpdate.status = 'terminé';
         await this.MatchDB.save(gameToUpdate);
         console.log('gameToUpdate', gameToUpdate);
-        if (scoreP1 > scoreP2) {
-          console.log('p1 win');
-          this.userDB.increment({ username: gameToUpdate.name_p1 }, 'win', 1);
-          this.userDB.increment({ username: gameToUpdate.name_p2 }, 'loss', 1);
-        } else {
-          console.log('p2 win');
-          this.userDB.increment({ username: gameToUpdate.name_p2 }, 'win', 1);
-          this.userDB.increment({ username: gameToUpdate.name_p1 }, 'loss', 1);
+        if (gameToUpdate.tournament_name === null) {
+          if (scoreP1 > scoreP2) {
+            console.log('p1 win');
+            this.userDB.increment({ username: gameToUpdate.name_p1 }, 'win', 1);
+            this.userDB.increment(
+              { username: gameToUpdate.name_p2 },
+              'loss',
+              1,
+            );
+          } else {
+            console.log('p2 win');
+            this.userDB.increment({ username: gameToUpdate.name_p2 }, 'win', 1);
+            this.userDB.increment(
+              { username: gameToUpdate.name_p1 },
+              'loss',
+              1,
+            );
+          }
+          this.userDB.increment(
+            { username: gameToUpdate.name_p1 },
+            'totalGame',
+            1,
+          );
+          this.userDB.increment(
+            { username: gameToUpdate.name_p2 },
+            'totalGame',
+            1,
+          );
         }
-        this.userDB.increment(
-          { username: gameToUpdate.name_p1 },
-          'totalGame',
-          1,
-        );
-        this.userDB.increment(
-          { username: gameToUpdate.name_p2 },
-          'totalGame',
-          1,
-        );
         return `This action updates a #${gameid} matchsHistory to ${scoreP1} - ${scoreP2}`;
       }
       return `Nothing to do`;
