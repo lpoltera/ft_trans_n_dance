@@ -22,7 +22,6 @@ const FormLogin = () => {
 				if (twoFaEnable === true) navigate("/twofa-verify");
 				else {
 					window.location.href = "/accueil";
-					// navigate("/loading");
 				}
 			})
 			.catch((err) => {

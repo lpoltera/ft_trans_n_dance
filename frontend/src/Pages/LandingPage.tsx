@@ -1,8 +1,11 @@
+import { useNavigate } from "react-router-dom";
 import AnimatedBalls from "../Components/AnimatedBalls";
 import FooterMain from "../Components/FooterMain";
 import PageLayout from "../Components/PageLayout";
 
 const LandingPage = () => {
+
+	const navigate = useNavigate();
 
 	return (
 		<>
@@ -22,13 +25,13 @@ const LandingPage = () => {
 					<div className="flex gap-4">
 						<button
 							className=" text-white py-2 px-4 rounded-md  bg-cyan-700 hover:bg-[#f67539] hover:border-none"
-							onClick={() => (window.location.href = "/login")}
+							onClick={() => navigate("/login")}
 						>
 							Se connecter
 						</button>
 						<button
 							className="py-2 px-4 rounded-md bg-cyan-700  text-white hover:bg-[#f67539] hover:border-none"
-							onClick={() => (window.location.href = "/signin")}
+							onClick={() => navigate("/signin")}
 						>
 							S'inscrire
 						</button>

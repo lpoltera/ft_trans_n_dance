@@ -6,7 +6,7 @@ import {
 	UserPlusIcon,
 } from "@heroicons/react/24/outline";
 import axios from "axios";
-import { useEffect, useState, ChangeEvent, useRef } from "react";
+import { useEffect, useState, ChangeEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import FooterMain from "../Components/FooterMain";
 import HistoryMatchRow from "../Components/HistoryMatchRow";
@@ -26,14 +26,17 @@ import { useNotificationContext } from "../contexts/NotificationContext";
 import { toast } from "react-toastify";
 import AvatarRadioSelect from "../Components/AvatarRadioSelect";
 
+
 interface Form {
 	avatar: string;
 	username: string | null;
 	password: string | null;
 }
 
+
 const ProfilPage = () => {
-	const { userRelations, user } = useUserContext();
+	const { user } = useUserContext();
+	const [userRelations, setUserRelations] = useState<UserRelation[]>([]);
 	const [passwordConfirmed, setPasswordConfirmed] = useState(false);
 	const [currentUser, setCurrentUser] = useState<User | null>(null);
 	const [userGames, setUserGames] = useState<Parties[] | null>(null);
@@ -45,27 +48,12 @@ const ProfilPage = () => {
 	const [isMyFriend, setIsMyFriend] = useState(false);
 	const [showEditAccountModal, setEditAccountModal] = useState(false);
 	const [update, setUpdate] = useState(false);
-	const fileInputRef = useRef<HTMLInputElement>(null);
 	const [form, setForm] = useState<Form>({
 		avatar: "",
 		username: null,
 		password: null,
 	});
 	const { socket } = useNotificationContext();
-
-	const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-		if (event.target.files && event.target.files[0]) {
-			const img = event.target.files[0];
-			const reader = new FileReader();
-			reader.onloadend = () => {
-				const result = reader.result as string;
-				setForm({ ...form, avatar: result });
-				console.log("imgs = ", result);
-			};
-
-			reader.readAsDataURL(img);
-		}
-	};
 
 	const url = window.location.href; // Obtient l'URL actuelle
 	const urlSegments = url.split("/"); // Divise l'URL en segments
@@ -111,15 +99,18 @@ const ProfilPage = () => {
 			if (name) {
 				try {
 					console.log("name before api request : ", name);
-					const [userResponse, friendResponse, gamesResponse] =
+					const [userResponse, friendResponse, gamesResponse, relationsResponse] =
 						await Promise.all([
 							axios.get<User>("/api/" + name),
 							axios.get<User[]>("/api/friends/all/" + name),
 							axios.get<Parties[]>("/api/game/user-history/" + name),
+							axios.get<UserRelation[]>(
+								"/api/friends/relations"),
 						]);
 					setCurrentUser(userResponse.data);
 					setUserFriends(friendResponse.data);
 					setUserGames(gamesResponse.data);
+					setUserRelations(relationsResponse.data);
 					name = null;
 				} catch (err) {
 					navigate("/404");
@@ -167,12 +158,11 @@ const ProfilPage = () => {
 					return alert("Error: " + err.message);
 				}
 			});
-		// }, [user?.username]);
 	};
 
 	const editProfil = () => {
 		setEditAccountModal(true);
-	}; // TODO modal -> axios.patch update
+	};
 
 	const handleFormChange = (event: ChangeEvent<HTMLInputElement>) => {
 		if (event.target.name === "avatar") {
@@ -215,7 +205,7 @@ const ProfilPage = () => {
 		setEditAccountModal(false);
 	};
 
-	const handleBlockedListChange = async () => { // -> handleChange
+	const handleBlockedListChange = async () => { // TODO -> rename to handleChange
 		if (update) {
 			setUpdate(false)
 		} else {
@@ -351,46 +341,12 @@ const ProfilPage = () => {
 									name="createTournamentForm"
 									className="flex flex-col items-center"
 								>
-									{/* <div className="relative group w-16 h-16 flex items-center m-5">
-										<img
-											src={form.avatar ? form.avatar : currentUser?.avatar}
-											alt="Profile picture to update"
-											className="rounded-full absolute"
-										/>
-									</div> */}
 									<div className="flex flex-row gap-4 mb-10 mt-10">
 										<AvatarRadioSelect
 											onChange={handleAvatarChange}
 										></AvatarRadioSelect>
 									</div>
-									{/* <div> */}
-									{/* <span
-											className="block w-full text-sm text-white-500 bg-cyan-700 py-2 px-4 rounded-md hover:bg-[#f67539] 
-												file:mr-4 file:py-2 file:px-4
-												file:rounded-full file:border-0
-												file:text-sm file:font-semibold
-												file:bg-violet-50 file:text-violet-700
-												hover:file:bg-violet-100
-												cursor-pointer"
-											onClick={() => {
-												// Déclenchez un clic sur l'élément d'entrée lorsque le span est cliqué
-												fileInputRef.current?.click();
-											}}
-										>
-											Modifier
-										</span> */}
-									{/* <input
-											type="file"
-											className="hidden"
-											onChange={handleImageUpload}
-											ref={fileInputRef}
-										/> */}
-									{/* </div> */}
-
 									<label>
-										{/* <span className="block text-sm font-medium text-slate-400">
-											Pseudo
-										</span> */}
 										<input
 											type="text"
 											className=" border-2 border-[#f67539] bg-transparent rounded-md mt-1 mb-3 custom-input"
@@ -402,9 +358,6 @@ const ProfilPage = () => {
 									</label>
 
 									<label>
-										{/* <span className="block text-sm font-medium text-slate-400">
-											Mot de passe
-										</span> */}
 										<input
 											type="password"
 											className="border-2 border-[#f67539] bg-transparent rounded-md mt-1 mb-3 custom-input"
@@ -416,9 +369,6 @@ const ProfilPage = () => {
 									</label>
 
 									<label>
-										{/* <span className="block text-sm font-medium text-slate-400">
-											Confirmer le mot de passe
-										</span> */}
 										<input
 											type="password"
 											className={`border-2 border-[#f67539] bg-transparent rounded-md mt-1 mb-3 custom-input ${passwordConfirmed ? "text-white border-[#f67539]" : "custom-input-confirm"}`}
@@ -489,7 +439,6 @@ const ProfilPage = () => {
 											Amis
 										</Tab>
 									</>
-									{/* )} */}
 									{isMyProfile && (
 										<>
 											<Tab
@@ -573,7 +522,6 @@ const ProfilPage = () => {
 										)}
 									</TabPanel>
 								</>
-								{/* )} */}
 								{isMyProfile && (
 									<>
 										<TabPanel index={3}>
