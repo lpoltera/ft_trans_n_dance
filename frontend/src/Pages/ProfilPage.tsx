@@ -13,14 +13,13 @@ import HistoryMatchRow from "../Components/HistoryMatchRow";
 import IconButton from "../Components/IconButton";
 import Navbar from "../Components/Navbar";
 import PageLayout from "../Components/PageLayout";
-import StatRow from "../Components/StatRow";
 import Tab from "../Components/Tab/Tab";
 import TabContainer from "../Components/Tab/TabContainer";
 import TabList from "../Components/Tab/TabList";
 import TabPanel from "../Components/Tab/TabPanel";
 import UserRow from "../Components/UserRow";
 import { useUserContext } from "../contexts/UserContext";
-import { GameStatsProps, Parties } from "../models/Game";
+import { Parties } from "../models/Game";
 import { User, UserRelation } from "../models/User";
 import { useNotificationContext } from "../contexts/NotificationContext";
 import { toast } from "react-toastify";
@@ -40,7 +39,6 @@ const ProfilPage = () => {
 	const [userGames, setUserGames] = useState<Parties[] | null>(null);
 	const [userFriends, setUserFriends] = useState<User[] | null>(null);
 	const [relationStatus, setRelationStatus] = useState<string>("none");
-	const [userStats, setUserStats] = useState<GameStatsProps[]>([]); // TODO: type this
 	const navigate = useNavigate();
 	const [isMyProfile, setIsMyProfile] = useState(false);
 	const [isMyFriend, setIsMyFriend] = useState(false);
@@ -66,7 +64,7 @@ const ProfilPage = () => {
 				);
 				const response = await axios.get<User>("/api/my-name");
 				console.log("my name = ", response.data.username);
-				if (idURL === "profil" || idURL === "") {
+				if (idURL === "profil" || idURL === "" || idURL === response.data.username) {
 					idURL = response.data.username;
 					setIsMyProfile(true);
 				} else {
@@ -128,11 +126,10 @@ const ProfilPage = () => {
 		}
 		if (update === false) setUpdate(true);
 		else setUpdate(false);
-		// useEffect(() => {
+
 		console.log("form.username : " + form.username);
 		console.log("form.password : " + form.password);
 		console.log("form.avatar : " + form.avatar);
-		// await axios.patch('api/' + user?.username, form, {
 
 		await axios
 			.patch("api/" + currentUser?.username, form, {
@@ -444,7 +441,6 @@ const ProfilPage = () => {
 											Amis
 										</Tab>
 									</>
-									{/* )} */}
 									{isMyProfile && (
 										<>
 											<Tab
@@ -537,7 +533,6 @@ const ProfilPage = () => {
 										)}
 									</TabPanel>
 								</>
-								{/* )} */}
 								{isMyProfile && (
 									<>
 										<TabPanel index={2}>

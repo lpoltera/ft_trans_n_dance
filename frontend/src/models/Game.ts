@@ -23,10 +23,9 @@ export interface GameFormProps {
 export interface GameHistoryProps {
   id: number;
   name_p1: string;
-  name_p2: string;
+  name_p2: string | null;
   score_p1: number;
   score_p2: number;
-  // updated_at: string;
   status: string;
   difficulty: string;
   mode: string;
@@ -74,7 +73,6 @@ export interface Paddle {
   color: string;
   score: number;
   speed: number;
-  // acceleration: number;
 }
 
 export interface Parties {
@@ -127,6 +125,7 @@ export type GameUpdate = {
   score_p1?: number;
   score_p2?: number;
   time?: number;
+  name_p2?: string;
   status: string;
 };
 
@@ -137,7 +136,6 @@ export type IGame = {
   score_p1: number;
   score_p2: number;
   difficulty: string;
-  // winner: string | undefined;
   time: number;
   status: string;
   mode: string;

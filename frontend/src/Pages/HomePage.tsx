@@ -47,13 +47,17 @@ const HomePage = () => {
 	};
 
 	const onlyOneCheckbox = (event: ChangeEvent<HTMLInputElement>) => {
-		// console.log("onlyOneCheckbox called value : ", event.target.value);
 		setCheckedId(event.target.value);
-		setForm({ ...form, name_p2: event.target.value });
+		if (event.target.value === "IA") {
+			setForm({ ...form, name_p2: null });
+		} else {
+			setForm({ ...form, name_p2: event.target.value });
+		}
 	};
 
 	const createGame = async () => {
-		if (form.name_p2.length === 0) {
+		console.log("name_p2 = ", form.name_p2, form.name_p2?.length)
+		if ((form.name_p2 && form.name_p2.length === 0) || form.name_p2 === "") {
 			window.alert(`Veuillez choisir un adversaire`);
 			return;
 		}
@@ -61,26 +65,34 @@ const HomePage = () => {
 		setShowEditModal(false);
 		if (user) {
 			form.name_p1 = user.username;
+			console.log("form.name_p1 = ", form.name_p1);
+			console.log("form.name_p2 = ", form.name_p2);
 			try {
-				new Promise((resolve) => {
-					socket?.emit("sendGameNotifs", {
-						game: form,
-						name_p1: user.username,
-					});
+				if (form.name_p2) { // playing againt a friend
+					new Promise((resolve) => {
+						socket?.emit("sendGameNotifs", {
+							game: form,
+							name_p1: user.username,
+						});
 
-					socket?.on("recGameNotifs", (response: any) => {
-						resolve(response);
-					});
-				})
-					.then((response: any) => {
-						navigate("/game/" + response[0]);
+						socket?.on("recGameNotifs", (response: any) => {
+							resolve(response);
+						});
 					})
-					.catch((error) => {
-						console.error(
-							"Erreur lors de l'enregistrement de la partie :",
-							error
-						);
-					});
+						.then((response: any) => {
+							navigate("/game/" + response[0]);
+						})
+						.catch((error) => {
+							console.error(
+								"Erreur lors de l'enregistrement de la partie :",
+								error
+							);
+						});
+				} else { // playing aganist the IA
+					const response = await axios.post("/api/game/create", form);
+					console.log("game created with id = ", response.data);
+					navigate("/game/" + response.data);
+				}
 			} catch (error) {
 				console.error("Erreur lors de l'enregistrement de la partie :", error);
 			}
@@ -137,17 +149,9 @@ const HomePage = () => {
 						C'est là que tout commence !
 					</h1>
 					<div className="h-screen flex items-center z-10 mt-24 mr-8">
-						{/* <button
-							className="py-2 px-4 rounded-md border-4 text-black border-black z-10 font-bold hover:bg-[#f67539] hover:bg-opacity-70 hover:text-white"
-							type="button"
-							onClick={() => navigateToGame()}
-						>
-							Partie rapide
-						</button> */}
 						<button
 							type="button"
 							className="rounded-full w-20 h-20 py-2 z-10 font-bold text-2xl animate-bounce text-center border-4 text-[#f67539] border-[#f67539] hover:bg-[#f67539] hover:bg-opacity-50 hover:text-[#fa5a45] hover:border-[#fa5a45] hover:shadow-2xl hover:shadow-[#f67539] "
-							// className="rounded-full w-20 h-20 py-2 z-10 font-bold text-2xl animate-bounce text-center border-4 bg-[#f67539] bg-opacity-70 text-[#fa5a45] border-[#f3d54e] hover:bg-[#f67539] hover:bg-opacity-50 hover:text-[#fa5a45] hover:border-[#fa5a45] hover:shadow-2xl hover:shadow-[#f67539] hover:animate-none"
 							onClick={() => fetchFriendsAndDisplayModal()}
 						>
 							Play
@@ -155,7 +159,7 @@ const HomePage = () => {
 					</div>
 				</div>
 				{/* --------------------------------------- Modal --------------------------------------- */}
-				{showEditModal && userRelations && userRelations.length > 0 && (
+				{showEditModal && (
 					<div className="fixed inset-0 overflow-y-auto z-50 flex items-center justify-center bg-black/60">
 						<div className="relative p-8 bg-grey w-full max-w-2xl mx-auto rounded-md shadow-lg bg-neutral-800">
 							<div className="flex flex-col space-y-4">
@@ -165,7 +169,18 @@ const HomePage = () => {
 								<form name="createGameForm">
 									<div className="flex justify-around mt-7">
 										<div className="flex flex-col">
-											{userRelations && (
+											<p className="font-semibold mb-3">Jouer contre l'IA</p>
+											<input
+												name="IA"
+												type="checkbox"
+												className="cursor-pointer bg-slate-200 border-none checked:bg-emerald-500 checked:outline-none focus:outline-none mr-2"
+												checked={
+													checkedId === "IA"
+												}
+												onChange={onlyOneCheckbox}
+												value={"IA"}
+											/>
+											{userRelations && userRelations.length > 0 && (
 												<p className="font-semibold mb-3">Adversaire</p>
 											)}
 											<ul className="flex-col items-center mb-2">
@@ -252,15 +267,24 @@ const HomePage = () => {
 											</select>
 										</div>
 									</div>
-
 									<div className="flex justify-end gap-4 text-sm">
-										<button
-											type="button"
-											className="mt-5 py-2 px-4 bg-emerald-600 text-white rounded-md hover:bg-emerald-800 cursor-pointer"
-											onClick={() => createGame()}
-										>
-											Envoyer invitation
-										</button>
+										{form.name_p2 && form.name_p2.length > 0 ? (
+											<button
+												type="button"
+												className="mt-5 py-2 px-4 bg-emerald-600 text-white rounded-md hover:bg-emerald-800 cursor-pointer"
+												onClick={() => createGame()}
+											>
+												Envoyer invitation
+											</button>
+										) : (
+											<button
+												type="button"
+												className="mt-5 py-2 px-4 bg-emerald-600 text-white rounded-md hover:bg-emerald-800 cursor-pointer"
+												onClick={() => createGame()}
+											>
+												Jouer contre l'IA
+											</button>
+										)}
 										<button
 											type="button"
 											className="mt-5 py-2 px-4 bg-gray-400 text-white rounded-md hover:bg-gray-500 cursor-pointer"

@@ -41,8 +41,6 @@ const GamePage = () => {
 		};
 	}, []);
 
-	console.log("gameId", gameId);
-
 	useEffect(() => {
 		if (!gameId) {
 			return;
@@ -52,7 +50,6 @@ const GamePage = () => {
 			const canAccessGame = localStorage.getItem("canAccessGame");
 
 			if (!canAccessGame && showAlert) {
-				// localStorage.removeItem("canAccessGame");
 				showAlert = false;
 				alert(
 					"Vous n'avez pas accès à cette partie via l'URL. Veuillez passer par l'interface."
@@ -81,6 +78,8 @@ const GamePage = () => {
 				const response = await axios.get(
 					"https://localhost:8000/api/game/" + gameId
 				);
+				if (response && !response.data.name_p2)
+					setShowEditModal(false)
 				if (response) {
 					settitleModal(
 						"En attente de l'acceptation de " + response.data.name_p2
@@ -101,10 +100,13 @@ const GamePage = () => {
 		try {
 			setGameFinished(true);
 			console.log("update game called - gamedId = ", gameId);
-			await axios.patch(
-				"https://localhost:8000/api/game/update-score/" + gameId,
-				updatedGame
-			);
+			console.log("name p2 = ", updatedGame.name_p2)
+			if (!updatedGame.name_p2) {
+				await axios.delete("https://localhost:8000/api/game/" + gameId);
+			} else {
+				await axios.patch(
+					"https://localhost:8000/api/game/update-score/" + gameId, updatedGame);
+			}
 			checkWinner();
 			localStorage.removeItem("canAccessGame");
 			setShowEditModalEnd(true);
@@ -163,7 +165,7 @@ const GamePage = () => {
 			if (game?.score_p1 > game?.score_p2) {
 				settitleModal(`${game?.name_p1} a gagné la partie`);
 			} else {
-				settitleModal(`${game?.name_p2} a gagné la partie`);
+				settitleModal(`${game?.name_p2 ? game.name_p2 : "Bot (AI)"} a gagné la partie`);
 			}
 		}
 	};
@@ -227,13 +229,15 @@ const GamePage = () => {
 										>
 											Quitter
 										</button>
-										<button
-											type="button"
-											className="mt-5 py-2 px-4 bg-cyan-700  text-white rounded-md hover:bg-[#f67539] cursor-pointer"
-											onClick={() => revengeGame()}
-										>
-											Revanche
-										</button>
+										{game?.name_p2 && (
+											<button
+												type="button"
+												className="mt-5 py-2 px-4 bg-cyan-700  text-white rounded-md hover:bg-[#f67539] cursor-pointer"
+												onClick={() => revengeGame()}
+											>
+												Revanche
+											</button>
+										)}
 									</div>
 								</div>
 							</div>
