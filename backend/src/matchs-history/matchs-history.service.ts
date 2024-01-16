@@ -116,8 +116,8 @@ export class MatchsHistoryService {
     try {
       const games = await this.MatchDB.createQueryBuilder('match')
         .where(
-          '(match.user_p1.username = :name OR match.user_p2.username = :name) AND match.tournament_name IS NULL',
-          { name: name },
+          '(match.user_p1.username = :name OR match.user_p2.username = :name) AND match.tournament_name IS NULL AND match.status = :status',
+          { name: name, status: 'terminé' },
         )
         .getMany();
 
@@ -159,7 +159,7 @@ export class MatchsHistoryService {
         id: gameid,
         status: Not('terminé'),
       });
-      if (gameToUpdate) {
+      if (gameToUpdate && gameToUpdate.status !== 'terminé') {
         gameToUpdate.score_p1 = scoreP1;
         gameToUpdate.score_p2 = scoreP2;
         gameToUpdate.status = 'terminé';
