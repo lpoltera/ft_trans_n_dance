@@ -11,10 +11,12 @@ import TabPanel from "../Components/Tab/TabPanel";
 import { useUserContext } from "../contexts/UserContext";
 import { User, UserRelation } from "../models/User";
 import axios from "axios";
+import { useNotificationContext } from "../contexts/NotificationContext";
 
 const ChatPage = () => {
 	const [friends, setFriends] = useState<User[] | null>(null);
 	const { user } = useUserContext();
+	const { unreadChat, msgSender } = useNotificationContext();
 	// const [loadingFriends, setLoadingFriends] = useState(true);
 	const [userRelations, setUserRelations] = useState<UserRelation[]>([]);
 
@@ -32,7 +34,7 @@ const ChatPage = () => {
 			setFriends(userFriends);
 		};
 		getRelations();
-	}, [])
+	}, [unreadChat, msgSender])
 
 
 	console.log("friendsList length =" + friends?.length);

@@ -274,7 +274,7 @@ const HomePage = () => {
 												className="mt-5 py-2 px-4 bg-emerald-600 text-white rounded-md hover:bg-emerald-800 cursor-pointer"
 												onClick={() => createGame()}
 											>
-												Envoyer invitation
+												Envoyer une invitation à {form.name_p2}
 											</button>
 										) : (
 											<button

@@ -18,6 +18,8 @@ interface NotificationContextProps {
 	notifModal: boolean;
 	unreadChat: boolean;
 	socketLoading: boolean;
+	msgSender: string;
+	setMsgSender: React.Dispatch<React.SetStateAction<string>>;
 	setUnreadNotif: React.Dispatch<React.SetStateAction<boolean>>;
 	setNotifsList: React.Dispatch<React.SetStateAction<Notifs[] | null>>;
 	setNotifModal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -49,10 +51,15 @@ export const NotificationProvider = ({
 	const [unreadNotif, setUnreadNotif] = useState(false);
 	const [notifModal, setNotifModal] = useState(false);
 	const [unreadChat, setUnreadChat] = useState(false);
+	const [msgSender, setMsgSender] = useState("");
 	const [socket, setSocket] = useState<Socket | null>(null);
 	const { user } = useUserContext();
 	const [socketLoading, setSocketLoading] = useState(true);
 	const [length, setLength] = useState(false);
+
+
+
+
 
 	useEffect(() => {
 		if (!user) return;
@@ -76,13 +83,22 @@ export const NotificationProvider = ({
 
 		socket.on("recMessage", (message: ChatMessage) => {
 			if (message.receiver === user?.username) {
+				setMsgSender(message.sender);
+				console.log("message sender :", message.sender);
 				setUnreadChat(true);
-				console.log("toast sent")
-				toast(`Nouveau message de ${message.sender}:\n ${message.text}`);
+				const url = window.location.href;
+				const urlSegments = url.split("/");
+				let page: string | any = urlSegments[urlSegments.length - 1];
+				console.log("page :", page);
+				if (page !== "chat") {
+					console.log("toast sent")
+					toast(`Nouveau message de ${message.sender}:\n ${message.text}`);
+				}
 			}
 		});
 
 		socket.on("recGameNotifs", (response: any) => {
+			console.log("user = ", user?.username)
 			if (response[1].receiver === user?.username) {
 				setUnreadNotif(true);
 				toast(`${response[1].sender} t'invite à une partie`);
@@ -98,7 +114,7 @@ export const NotificationProvider = ({
 
 		return () => {
 			socket.off("myNotifs");
-			socket.off("recMessage");
+			// socket.off("recMessage");
 			socket.off("recGameNotifs");
 			socket.off("gameInvitationResponse");
 		};
@@ -126,6 +142,8 @@ export const NotificationProvider = ({
 				unreadNotif,
 				notifModal,
 				unreadChat,
+				msgSender,
+				setMsgSender,
 				setUnreadNotif,
 				setNotifModal,
 				setNotifsList,

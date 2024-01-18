@@ -14,7 +14,7 @@ interface Props {
 const Chat = ({ ami }: Props) => {
 	const [messages, setMessages] = useState<ChatMessage[]>([]);
 	const [newMessage, setNewMessage] = useState("");
-	const { socket, socketLoading } = useNotificationContext();
+	const { socket, setUnreadChat, msgSender, setMsgSender } = useNotificationContext();
 	const messagesEndRef = useRef<HTMLDivElement | null>(null);
 	const [currentUser, setCurrentUser] = useState<User | null>(null);
 	// const { user, loadingUser } = useUserContext();
@@ -27,11 +27,15 @@ const Chat = ({ ami }: Props) => {
 	useEffect(scrollToBottom, [messages]);
 
 	useEffect(() => {
+		if (ami.username === msgSender) {
+			setMsgSender("");
+		}
 		async function fetchCurrent() {
 			try {
 				const response = await axios.get<User>("/api/my-name");
 				setCurrentUser(response.data);
 				console.log("my name :", response.data.username);
+				setUnreadChat(false);
 				return response.data.username;
 			} catch (err) {
 				console.error(err);
@@ -66,7 +70,9 @@ const Chat = ({ ami }: Props) => {
 
 	useEffect(() => {
 		if (socket && currentUser?.username && ami.username) {
+			console.log("receiving message")
 			if (!socket.hasListeners("recMessage")) {
+				console.log("receiving message 2")
 				socket.on("recMessage", (message) => {
 					if (
 						(message.sender === ami.username &&
@@ -75,6 +81,7 @@ const Chat = ({ ami }: Props) => {
 							message.receiver === ami.username)
 					) {
 						if (message.sender !== currentUser.username) {
+							setUnreadChat(true);
 							console.log("adding message to list")
 							setMessages((prevMessages) => [...prevMessages, message]);
 						}
@@ -82,11 +89,11 @@ const Chat = ({ ami }: Props) => {
 				});
 			}
 		}
-		return () => {
-			if (socket) {
-				socket.off("recMessage");
-			}
-		};
+		// return () => {
+		// 	if (socket) {
+		// 		socket.off("recMessage");
+		// 	}
+		// };
 	}, [socket, currentUser?.username, ami.username]);
 
 
@@ -107,7 +114,7 @@ const Chat = ({ ami }: Props) => {
 				text: messageContent,
 				createdAt: addHours(currentTime, 1).toISOString(),
 			};
-
+			console.log("message sent, socket = ", socket)
 			socket?.emit("sendMessage", message);
 
 			setMessages((prevMessages) => [...prevMessages, message]);
