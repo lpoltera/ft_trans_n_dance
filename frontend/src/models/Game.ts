@@ -125,7 +125,7 @@ export type GameUpdate = {
   score_p1?: number;
   score_p2?: number;
   time?: number;
-  name_p2?: string;
+  name_p2?: string | null;
   status: string;
 };
 

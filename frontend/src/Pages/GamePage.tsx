@@ -107,7 +107,7 @@ const GamePage = () => {
 				await axios.patch(
 					"https://localhost:8000/api/game/update-score/" + gameId, updatedGame);
 			}
-			checkWinner();
+			checkWinner(updatedGame);
 			localStorage.removeItem("canAccessGame");
 			setShowEditModalEnd(true);
 		} catch (error) {
@@ -160,13 +160,18 @@ const GamePage = () => {
 		}
 	});
 
-	const checkWinner = () => {
-		if (game) {
-			if (game?.score_p1 > game?.score_p2) {
+	const checkWinner = (updatedGame: GameUpdate,) => {
+		if (updatedGame) {
+			let score_p1;
+			let score_p2;
+			updatedGame.score_p1 ? score_p1 = updatedGame.score_p1 : score_p1 = 0;
+			!updatedGame.score_p2 ? score_p2 = 0 : score_p2 = updatedGame.score_p2;
+			if (score_p1 > score_p2) {
 				settitleModal(`${game?.name_p1} a gagné la partie`);
 			} else {
 				settitleModal(`${game?.name_p2 ? game.name_p2 : "Bot (AI)"} a gagné la partie`);
 			}
+
 		}
 	};
 

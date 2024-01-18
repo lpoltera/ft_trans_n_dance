@@ -126,6 +126,7 @@ const FormSignin = () => {
 							<input
 								type="password"
 								name="password"
+								autoComplete="on"
 								className="border-2 border-[#f67539] px-3 py-2 bg-transparent text-white rounded-md custom-input"
 								placeholder="Mot de passe (*)"
 								onChange={(e) => handleFormChange(e)}
@@ -133,6 +134,7 @@ const FormSignin = () => {
 							<input
 								type="password"
 								name="confirmPassword"
+								autoComplete="on"
 								className={`border-2 border-[#f67539] px-3 py-2 bg-transparent rounded-md custom-input ${passwordConfirmed ? "text-white border-[#f67539]" : "custom-input-confirm"}`}
 								placeholder="Confirmer le mot de passe"
 								onChange={(e) => handleFormChange(e)}

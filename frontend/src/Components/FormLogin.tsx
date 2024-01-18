@@ -70,6 +70,7 @@ const FormLogin = () => {
 						type="password"
 						value={login.password}
 						name="password"
+						autoComplete="on"
 						id="password"
 						className="border-2 border-[#f67539] px-3 py-2 bg-transparent text-white rounded-md custom-input"
 						placeholder="Mot de passe"
