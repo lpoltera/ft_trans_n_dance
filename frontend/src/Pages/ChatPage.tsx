@@ -16,15 +16,12 @@ import { useNotificationContext } from "../contexts/NotificationContext";
 const ChatPage = () => {
 	const [friends, setFriends] = useState<User[] | null>(null);
 	const { user } = useUserContext();
-	const { unreadChat, msgSender } = useNotificationContext();
-	// const [loadingFriends, setLoadingFriends] = useState(true);
-	const [userRelations, setUserRelations] = useState<UserRelation[]>([]);
+	const { unreadChat, unreadMessages } = useNotificationContext();
 
 	useEffect(() => {
 		const getRelations = async () => {
 			const response = await axios.get("/api/friends/relations");
 			const relations: UserRelation[] = response.data;
-			setUserRelations(response.data);
 			const userFriends: User[] = [];
 			relations?.forEach((relation) => {
 				if (relation.status === "valider") {
@@ -34,21 +31,18 @@ const ChatPage = () => {
 			setFriends(userFriends);
 		};
 		getRelations();
-	}, [unreadChat, msgSender])
+	}, [unreadChat, unreadMessages])
 
-
-	console.log("friendsList length =" + friends?.length);
 
 	return (
 		<>
 			<Navbar />
 			<PageLayout>
 				<TabContainer>
-					<div className="bg-red-600 w-full h-full rounded-xl overflow-hidden">
-						<div className="bg-green-600 h-full w-full flex flex-row">
+					<div className="w-full h-full rounded-xl overflow-hidden">
+						<div className="h-full w-full flex flex-row">
 							<div className="bg-cyan-950 h-full shrink min-w-min relative z-10">
 								<TabList classCustom="py-2 w-full overflow-auto flex flex-col h-full">
-									{/* <div className="w-full overflow-auto flex flex-col gap-0"> */}
 									{friends &&
 										friends.map(
 											(ami, index) =>
@@ -58,7 +52,6 @@ const ChatPage = () => {
 													</Tab>
 												)
 										)}
-									{/* </div> */}
 								</TabList>
 							</div>
 							<div className="bg-neutral-800 h-full grow relative z-0">

@@ -15,7 +15,7 @@ const FriendChatListItem = ({ ami, index }: Props) => {
 	const [isBlocked, setIsBlocked] = useState(false);
 	const { activeTab } = useTabContext();
 	const isActive = index === activeTab;
-	const { msgSender } = useNotificationContext();
+	const { unreadMessages } = useNotificationContext();
 
 	const changeFriendshipStatus = async () => {
 		const isConfirmed = window.confirm(
@@ -32,6 +32,7 @@ const FriendChatListItem = ({ ami, index }: Props) => {
 		window.location.href = "/profil/" + ami.username;
 	};
 
+
 	return (
 		<>
 			{!isBlocked && (
@@ -40,13 +41,18 @@ const FriendChatListItem = ({ ami, index }: Props) => {
           ${isActive ? "bg-neutral-800" : "bg-transparent"}`}
 				>
 					<div className="flex flex-row w-full gap-4">
-						<img
-							src={ami.avatar}
-							alt="user'avatar profile"
-							className="w-12 h-12 rounded-full object-cover"
-						/>
+						<div className="relative">
+							<img
+								src={ami.avatar}
+								alt="user'avatar profile"
+								className="w-12 h-12 rounded-full object-cover"
+							/>
+							{unreadMessages.includes(ami.username) && (
+								<span className="absolute top-0 right-0 w-5 h-5 bg-red-500 rounded-full"></span>
+							)}
+						</div>
 						<div className=" text-left">
-							<div className={`text-xl ${msgSender === ami.username ? "text-red-500" : ""}`}>{ami.username}</div>
+							<div className={`text-xl ${unreadMessages.includes(ami.username) ? "text-red-500 font-bold" : ""}`}>{ami.username}</div>
 							<div className="text-sm text-gray-400">{ami.connected}</div>
 						</div>
 					</div>

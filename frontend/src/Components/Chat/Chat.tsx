@@ -1,7 +1,6 @@
 import axios from "axios";
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { useNotificationContext } from "../../contexts/NotificationContext";
-import { useUserContext } from "../../contexts/UserContext";
 import { User } from "../../models/User";
 import LeftMessageContainer from "./LeftMessageContainer";
 import RightMessageContainer from "./RightMessageContainer";
@@ -14,10 +13,9 @@ interface Props {
 const Chat = ({ ami }: Props) => {
 	const [messages, setMessages] = useState<ChatMessage[]>([]);
 	const [newMessage, setNewMessage] = useState("");
-	const { socket, setUnreadChat, msgSender, setMsgSender } = useNotificationContext();
+	const { socket, setUnreadChat, unreadMessages, setUnreadMessages } = useNotificationContext();
 	const messagesEndRef = useRef<HTMLDivElement | null>(null);
 	const [currentUser, setCurrentUser] = useState<User | null>(null);
-	// const { user, loadingUser } = useUserContext();
 	const scrollToBottom = () => {
 		if (messagesEndRef.current) {
 			messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
@@ -27,8 +25,10 @@ const Chat = ({ ami }: Props) => {
 	useEffect(scrollToBottom, [messages]);
 
 	useEffect(() => {
-		if (ami.username === msgSender) {
-			setMsgSender("");
+		for (let i = 0; i < unreadMessages.length; i++) {
+			if (unreadMessages[i] === ami.username) {
+				setUnreadMessages((prev) => prev.filter((u) => u !== ami.username));
+			}
 		}
 		async function fetchCurrent() {
 			try {
@@ -42,10 +42,6 @@ const Chat = ({ ami }: Props) => {
 				return null;
 			}
 		}
-
-		// if (loadingUser) return;
-		// if (socketLoading) return;
-		// console.log("socket :", socket);
 
 		async function fetchMessages() {
 			const name = await fetchCurrent();
@@ -62,10 +58,6 @@ const Chat = ({ ami }: Props) => {
 			}
 		}
 		fetchMessages();
-
-		// return () => {
-		//   if (socket) socket.off("recMessage");
-		// };
 	}, [ami]);
 
 	useEffect(() => {
@@ -89,11 +81,6 @@ const Chat = ({ ami }: Props) => {
 				});
 			}
 		}
-		// return () => {
-		// 	if (socket) {
-		// 		socket.off("recMessage");
-		// 	}
-		// };
 	}, [socket, currentUser?.username, ami.username]);
 
 
@@ -103,7 +90,6 @@ const Chat = ({ ami }: Props) => {
 		return newHour;
 	}
 
-	// Update messages state when a message is sent
 	const sendMessage = (e: FormEvent, messageContent: string) => {
 		e.preventDefault();
 		const currentTime = new Date();
@@ -114,9 +100,7 @@ const Chat = ({ ami }: Props) => {
 				text: messageContent,
 				createdAt: addHours(currentTime, 1).toISOString(),
 			};
-			console.log("message sent, socket = ", socket)
 			socket?.emit("sendMessage", message);
-
 			setMessages((prevMessages) => [...prevMessages, message]);
 			setNewMessage("");
 		}
