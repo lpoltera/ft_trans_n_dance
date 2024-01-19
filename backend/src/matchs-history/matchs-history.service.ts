@@ -8,9 +8,7 @@ import { Repository, Not } from 'typeorm';
 import { Notification } from '../notifications/entities/notifications.entity';
 import { CreateMatchsHistoryDto } from './dto/create-matchs-history.dto';
 import { MatchsHistory } from './entities/matchs-history.entity';
-import { pbkdf2 } from 'crypto';
 import { User } from '../user/entities/user.entity';
-import { MatchsHistoryDto } from './dto/matchs-histoty.dto';
 
 @Injectable()
 export class MatchsHistoryService {
@@ -22,25 +20,6 @@ export class MatchsHistoryService {
     @InjectRepository(User)
     private readonly userDB: Repository<User>,
   ) {}
-
-  // toDto(game: MatchsHistory): MatchsHistoryDto {
-  //   return {
-  //     id: game.id,
-  //     player1: game.name_p1,
-  //     player2: game.name_p2 || null,
-  //     scorePlayer1: game.score_p1,
-  //     scorePlayer2: game.score_p2,
-  //     difficulty: game.difficulty,
-  //     duration: game.time,
-  //     status: game.status,
-  //     mode: game.mode,
-  //     mode_value: game.mode_value,
-  //     powerUps: game.power_ups,
-  //     tournament: game.tournament_name,
-  //     updatedAt: game.updated_at,
-  //     createdAt: game.created_at,
-  //   };
-  // }
 
   async create(MatchsHistoryDto: CreateMatchsHistoryDto, name_p1: string) {
     try {
@@ -75,7 +54,6 @@ export class MatchsHistoryService {
 
   async revenge(previousId: number) {
     try {
-      console.log('previousId', previousId);
       const previousGame = await this.MatchDB.findOneBy({
         id: previousId,
       });
@@ -87,26 +65,6 @@ export class MatchsHistoryService {
 
       await this.MatchDB.save(game);
       return [game.id];
-      // const previousGameDto = this.toDto(previousGame);
-      // const match = this.MatchDB.create({
-      //   ...previousGameDto,
-      //   name_p1: previousGameDto.player2,
-      //   name_p2: previousGameDto.player1,
-      //   score_p1: 0,
-      //   score_p2: 0,
-      //   time: 0,
-      //   status: 'pending',
-      // });
-      // await this.MatchDB.save(match);
-      // const notif = this.notifsDB.create({
-      //   sender: previousGameDto.player2,
-      //   receiver: previousGameDto.player1,
-      //   message: `${previousGameDto.player2} t'invite à le rejoindre pour faire une partie`,
-      //   status: 'pending',
-      //   game: match,
-      // });
-      // await this.notifsDB.save(notif);
-      // return [match.id, notif];
     } catch (error) {
       throw new ConflictException('erreur service', error.message);
     }
@@ -137,12 +95,10 @@ export class MatchsHistoryService {
       gameToUpdate.status = statusToUpdate;
       this.MatchDB.save(gameToUpdate);
       if (gameToUpdate.status === 'en cours') {
-        //envoi notification au créateur de la game pour l'informer de l'acceptation
       }
       if (gameToUpdate.status === 'refuser') {
         const id = gameid;
         this.MatchDB.delete({ id });
-        //envoi notification au créateur de la game pour l'informer du refus
       }
       const msgToDelete = await this.notifsDB.findOne({
         where: { game: { id: gameid } },
@@ -164,10 +120,8 @@ export class MatchsHistoryService {
         gameToUpdate.score_p2 = scoreP2;
         gameToUpdate.status = 'terminé';
         await this.MatchDB.save(gameToUpdate);
-        console.log('gameToUpdate', gameToUpdate);
         if (gameToUpdate.tournament_name === null) {
           if (scoreP1 > scoreP2) {
-            console.log('p1 win');
             this.userDB.increment({ username: gameToUpdate.name_p1 }, 'win', 1);
             this.userDB.increment(
               { username: gameToUpdate.name_p2 },
@@ -175,7 +129,6 @@ export class MatchsHistoryService {
               1,
             );
           } else {
-            console.log('p2 win');
             this.userDB.increment({ username: gameToUpdate.name_p2 }, 'win', 1);
             this.userDB.increment(
               { username: gameToUpdate.name_p1 },
