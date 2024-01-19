@@ -35,7 +35,6 @@ import { TournamentsModule } from './tournaments/tournaments.module';
     AuthModule,
     ChatModule,
     TournamentsModule,
-    // SessionModule
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -13,7 +13,7 @@ async function bootstrap() {
   app.use(express.json({ limit: '5mb' }));
   app.use(express.urlencoded({ limit: '5mb', extended: true }));
   app.enableCors({
-    origin: '*', // TODO precaution
+    origin: '*',
     credentials: true,
   });
 
@@ -35,8 +35,7 @@ async function bootstrap() {
       saveUninitialized: false,
       cookie: {
         maxAge: 1 * 24 * 60 * 60 * 1000, // 1 jour
-        sameSite: 'lax', // TODO for google chrome
-        // TODO secure: true (for https)
+        sameSite: 'lax',
       },
     }),
   );

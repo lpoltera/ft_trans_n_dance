@@ -35,14 +35,11 @@ export class UserService {
 
       let log: string = session.login42;
       if (!log) log = 'johndoe';
-      // let av = avatar;
-      // if (!av) av = '/src/assets/avatar-cat.png';
       if (!session.secret) session.secret = '';
       const hash = await bcrypt.hash(password, 10);
       const user = this.userDB.create({
         ...newUser,
         password: hash,
-        // avatar: av,
         connected: 'déconnecté',
         win: 0,
         loss: 0,
@@ -172,8 +169,6 @@ export class UserService {
         };
       }
       await this.userDB.save(user);
-      // const userResponse: UserResponseDto = user;
-      // session.connected = true;
       return user.username;
     } catch (error) {
       throw new Error(
@@ -204,5 +199,3 @@ export class UserService {
     } else return 'erreur podium';
   }
 }
-
-// async getmy
