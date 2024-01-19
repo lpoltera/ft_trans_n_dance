@@ -10,7 +10,7 @@ import IconButton from "./IconButton";
 import MenuDropdown from "./MenuDropdown";
 import NotificationPanel from "./NotificationPanel";
 import { useNavigate, useParams } from "react-router-dom";
-import ButtonIcon from "./ArchivedComponent/ButtonIcon";
+import ButtonIcon from "./ButtonIcon";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
