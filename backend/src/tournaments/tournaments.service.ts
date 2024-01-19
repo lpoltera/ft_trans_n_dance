@@ -60,9 +60,6 @@ export class TournamentsService {
       throw new ConflictException(error.message);
     }
   }
-  // findOne(id: number) {
-  //   return `This action returns a #${id} tournament`;
-  // }
 
   async update_score(gameId: number, score_p1: number, score_p2: number) {
     const gameToUpdate = await this.MatchDB.findOneBy({ id: gameId });
@@ -88,7 +85,6 @@ export class TournamentsService {
   }
 
   async getRankings(name: string) {
-    console.log(name);
     const rankings = await this.MatchDB.manager.query(
       `
       SELECT name, SUM(wins) as wins, SUM(losses) as losses, SUM(goals_scored) as goals_scored, SUM(goals_conceded) as goals_conceded, SUM(point_difference) as point_difference
@@ -127,8 +123,6 @@ export class TournamentsService {
       .addGroupBy('matchs_history.tournament_creator')
       .getRawMany();
 
-    console.log(tournaments);
-
     const tournaments_names = tournaments.map((tournament) => [
       tournament.matchs_history_tournament_name,
       tournament.matchs_history_tournament_creator,
@@ -148,7 +142,6 @@ export class TournamentsService {
     if (!nextGame) {
       return null;
     }
-    console.log('nextgame', nextGame.id);
     return nextGame.id;
   }
 }
