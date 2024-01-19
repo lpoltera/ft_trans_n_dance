@@ -20,15 +20,10 @@ export class Notification {
   receiver: string;
 
   @Column()
-  message: string; // ??
+  message: string;
 
   @Column()
-  status: string; // pending or valided
-
-  //   @Column()
-  //   read: string; // 'true' or 'false'
-
-  // se // game tournament friend
+  status: string;
 
   @OneToOne(() => MatchsHistory, { onDelete: 'CASCADE' })
   @JoinColumn()

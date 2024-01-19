@@ -7,41 +7,31 @@ import {
   Patch,
   Post,
   Session,
+  UseGuards,
 } from '@nestjs/common';
-import { UpdateNotificationDto } from './dto/update-notification.dto';
 import { Notification } from './entities/notifications.entity';
 import { NotificationsService } from './notifications.service';
+import { SessionGuard } from '../session/session.guard';
 
 @Controller('api/notifications')
 export class NotificationsController {
   constructor(private readonly notificationsService: NotificationsService) {}
 
-  //   (@Body() createUserDto: CreateUserDto)
   @Post('/create')
+  @UseGuards(SessionGuard)
   create(@Body() Notifs: Notification) {
     return this.notificationsService.create(Notifs);
   }
 
   @Get('/my')
+  @UseGuards(SessionGuard)
   findAll(@Session() session: Record<string, any>) {
     const username = session.user.username;
     return this.notificationsService.findAll(username);
   }
 
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.notificationsService.findOne(+id);
-  // }
-
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateNotificationDto: UpdateNotificationDto,
-  ) {
-    return this.notificationsService.update(+id, updateNotificationDto);
-  }
-
   @Delete(':id')
+  @UseGuards(SessionGuard)
   remove(@Param('id') id: string) {
     return this.notificationsService.remove(+id);
   }
