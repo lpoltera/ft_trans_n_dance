@@ -1,11 +1,13 @@
-import { Controller, Get, Param, Res } from '@nestjs/common';
+import { Controller, Get, Param, Res, UseGuards } from '@nestjs/common';
 import { ChatService } from './chat.service';
+import { SessionGuard } from '../session/session.guard';
 
 @Controller('/api/chat')
 export class ChatController {
   constructor(private readonly chatService: ChatService) {}
 
   @Get('all/:sendername/:receivername')
+  @UseGuards(SessionGuard)
   async allMessages(
     @Param('sendername') sendername: string,
     @Param('receivername') receivername: string,

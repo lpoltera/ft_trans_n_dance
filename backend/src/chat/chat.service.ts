@@ -12,11 +12,6 @@ export class ChatService {
   }
 
   async findAll(sender: string, receiver: string): Promise<Chat[]> {
-    // const receiverName: any = receiver;
-    // const senderName: any = sender;
-    console.log('Receiver in findAll = ', sender);
-    console.log('Sender in findAll = ', receiver);
-
     const room = await this.chatDB.find({
       where: [
         {
@@ -32,16 +27,4 @@ export class ChatService {
 
     return room;
   }
-
-  // findOne(id: number) {
-  //   return `This action returns a #${id} chat`;
-  // }
-
-  // update(id: number, updateChatDto: UpdateChatDto) {
-  //   return `This action updates a #${id} chat`;
-  // }
-
-  // remove(id: number) {
-  //   return `This action removes a #${id} chat`;
-  // }
 }

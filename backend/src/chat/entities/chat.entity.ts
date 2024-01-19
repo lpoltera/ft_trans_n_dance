@@ -10,8 +10,6 @@ export class Chat {
   @PrimaryGeneratedColumn()
   id: number;
 
-  // TODO ROOM ??
-
   @Column()
   sender: string;
 
