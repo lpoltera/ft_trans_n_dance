@@ -43,8 +43,6 @@ export class UserService {
         connected: 'déconnecté',
         win: 0,
         loss: 0,
-        draw: 0,
-        totalXP: 0,
         totalGame: 0,
         login42: log,
         twoFaEnable: twoFa,
@@ -186,16 +184,5 @@ export class UserService {
       return await this.userDB.softDelete({ id: userToDelete.id });
     }
     return 'User not found';
-  }
-
-  async getpodium() {
-    const users = await this.userDB.find();
-    if (users) {
-      users.sort((a: any, b: any) => b.totalXP - a.totalXP);
-
-      const podium = users.slice(0, 3);
-
-      return podium;
-    } else return 'erreur podium';
   }
 }

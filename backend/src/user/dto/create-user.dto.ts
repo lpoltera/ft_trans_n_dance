@@ -16,8 +16,6 @@ export class CreateUserDto {
   @IsNotEmpty({ message: 'Please select an avatar\n' })
   readonly avatar: string;
 
-  readonly totalXP?: number; // pour faire des tests
-
   readonly secret2fa?: string;
 
   readonly connected?: string;

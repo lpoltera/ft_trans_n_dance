@@ -18,13 +18,6 @@ export class User {
   username: string;
 
   @Column()
-  @Exclude()
-  password: string;
-
-  @Column()
-  avatar: string;
-
-  @Column()
   login42: string;
 
   @OneToMany(() => Friendship, (friendship) => friendship.user, {
@@ -55,28 +48,19 @@ export class User {
   loss: number;
 
   @Column()
-  draw: number;
-
-  @Column()
-  totalXP: number;
-
-  @Column()
   totalGame: number;
 
   @Column()
   @Exclude()
   secret2fa: string;
-  // scoresTotal: number;
 
   @DeleteDateColumn()
   deleteAt: Date;
 
-  //...
+  @Column()
+  @Exclude()
+  password: string;
+
+  @Column()
+  avatar: string;
 }
-
-// classement
-
-// id           points(logi)
-
-// 1               1/7.30min  * 10 = 1.36
-// 1               1/2.30min  * 10 = 4.34

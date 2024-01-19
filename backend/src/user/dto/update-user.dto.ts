@@ -1,7 +1,6 @@
 import { IsOptional, IsStrongPassword, Length } from 'class-validator';
 
 export class UpdateUserDto {
-  // @IsOptional()
   readonly avatar?: string;
 
   @IsOptional()

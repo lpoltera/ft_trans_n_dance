@@ -5,7 +5,5 @@ export class UserResponseDto {
   avatar: string;
   win: number;
   loss: number;
-  draw: number;
-  totalXP: number;
   totalGame: number;
 }

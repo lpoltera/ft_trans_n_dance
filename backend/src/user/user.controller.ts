@@ -11,18 +11,18 @@ import {
   Post,
   Req,
   Session,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { Request } from 'express';
-import { authenticator } from 'otplib';
-import * as speakeasy from 'speakeasy';
+
 import { QrCodeService } from '../config/otp.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { loginDto } from './dto/login-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserService } from './user.service';
 import { UserResponseDto } from './dto/UserResponseDto';
-import { NotFoundError } from 'rxjs';
+import { SessionGuard } from '../session/session.guard';
 
 @Controller('api')
 export class UserController {
@@ -31,7 +31,7 @@ export class UserController {
     private readonly optService: QrCodeService,
   ) {}
 
-  @Post('signup') // creation de session (déplace login dans signup)
+  @Post('signup')
   async create(
     @Body() createUserDto: CreateUserDto,
     @Session() session: Record<string, any>,
@@ -46,11 +46,9 @@ export class UserController {
     @Session() session: Record<string, any>,
   ) {
     const user = await this.userService.login(loginDto, session);
-    // session.user = user;			=> move to user.service login
-    // session.connected = true;	=> move to user.service login
     const response = {
       message: 'Login successful',
-      usertwoFA: user.twoFaEnable, // before : session: session.user,
+      usertwoFA: user.twoFaEnable,
     };
 
     return response;
@@ -79,11 +77,8 @@ export class UserController {
 
   @UseInterceptors(ClassSerializerInterceptor)
   @Get('/all')
-  // @UseGuards(SessionGuard) // TODO
-  async findAll(
-    @Req() request: Request,
-    @Session() session: Record<string, any>,
-  ) {
+  @UseGuards(SessionGuard)
+  async findAll() {
     return await this.userService.findAll();
   }
 
@@ -97,33 +92,21 @@ export class UserController {
   }
 
   @Get('/connected')
-  async isconnected(
-    @Req() request: Request,
-    @Session() session: Record<string, any>,
-  ) {
+  async isconnected(@Session() session: Record<string, any>) {
     if (session.connected) return true;
     else return false;
   }
 
   @UseInterceptors(ClassSerializerInterceptor)
   @Get('/user')
-  // @UseGuards(SessionGuard) // TODO
-  async getUsername(
-    @Req() request: Request,
-    @Session() session: Record<string, any>,
-  ) {
+  @UseGuards(SessionGuard)
+  async getUsername(@Session() session: Record<string, any>) {
     return await session.user;
   }
 
-  @Get('/leaderboard')
-  async getpodium() {
-    return await this.userService.getpodium();
-  }
-
   @Get('/my-name')
-  // @UseGuards(SessionGuard) // TODO
+  @UseGuards(SessionGuard)
   async getMyName(
-    @Req() request: Request,
     @Session() session: Record<string, any>,
   ): Promise<UserResponseDto | null> {
     if (session.user) {
@@ -135,15 +118,13 @@ export class UserController {
         win: session.user.win,
         loss: session.user.loss,
         totalGame: session.user.totalGame,
-        totalXP: session.user.totalXP,
-        draw: session.user.draw,
       };
       return userResponse;
     } else return null;
   }
 
   @Get('/:username')
-  // @UseGuards(SessionGuard) // TODO
+  @UseGuards(SessionGuard)
   async findOne(
     @Param('username') username: string,
   ): Promise<UserResponseDto | null> {
@@ -153,7 +134,8 @@ export class UserController {
     else throw new NotFoundException('User not found');
   }
 
-  @Patch(':username') // axios.patch('/api/username', {username: 'newUsername', avatar: 'newAvatar', password: 'newPassword'})
+  @Patch(':username')
+  @UseGuards(SessionGuard)
   async update(
     @Param('username') username: string,
     @Body() updateUserDto: UpdateUserDto,
@@ -163,7 +145,11 @@ export class UserController {
   }
 
   @Delete(':username')
-  async remove(@Param('username') name: string,  @Session() session: Record<string, any>) {
+  @UseGuards(SessionGuard)
+  async remove(
+    @Param('username') name: string,
+    @Session() session: Record<string, any>,
+  ) {
     return await this.userService.remove(name, session);
   }
 }
