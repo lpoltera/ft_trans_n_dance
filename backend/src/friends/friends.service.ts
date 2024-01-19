@@ -36,15 +36,6 @@ export class FriendsService {
       return false;
     }
     return true;
-    //   return {
-    //     friendship: null,
-    //     isSender: '',
-    //   };
-    // }
-    // return {
-    //   friendship,
-    //   isSender: friendship?.user.username === userName,
-    // };
   }
 
   async addFriend(userName: string, friendName: string) {
@@ -53,7 +44,6 @@ export class FriendsService {
       friendName,
       'valider',
     );
-    console.log('Realtion = ', existingRelation);
     if (existingRelation === true) {
       throw new ForbiddenException('Vous êtes déjà ami avec cette personne.');
     }
@@ -148,7 +138,7 @@ export class FriendsService {
     const blockedValidate = await this.friendRepository.find({
       where: [
         {
-          user: { username: username }, // blockedBy === username
+          user: { username: username },
           status: 'blocked',
           blockedBy: username,
         },
@@ -162,7 +152,6 @@ export class FriendsService {
     const blockedValidateOK = blockedValidate.map((item) =>
       item.friendName != username ? item.friendName : item.userName,
     );
-    // blockedValidateOK.unshift(username); // équivalent de pushback mais pas placé en première place placé selon ordre de l'id
 
     const userFriends = await this.userDB.find({
       where: {
@@ -171,10 +160,6 @@ export class FriendsService {
     });
     return userFriends;
   }
-
-  // findOne(id: number) {
-  //   return `This action returns a #${id} friend`;
-  // }
 
   async update(userName: string, friendName: string, statusToUpdate: string) {
     const friendToUpdate = await this.friendRepository.findOne({
@@ -260,8 +245,6 @@ export class FriendsService {
         avatar: friend.avatar,
         win: friend.win,
         loss: friend.loss,
-        draw: friend.draw,
-        totalXP: friend.totalXP,
         totalGame: friend.totalGame,
       };
       friends.push({
@@ -270,7 +253,6 @@ export class FriendsService {
         sender: senderUsername,
       });
     }
-    console.log(friends);
     return friends;
   }
 
