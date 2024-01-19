@@ -11,15 +11,13 @@ import HistoryMatchRow from "../Components/HistoryMatchRow";
 import { TournamentGameProps, RankingProps } from "../models/Game";
 import RankingPlayersRow from "../Components/RankingPlayerRow";
 import "./TournamentPage.css";
-import { useNotificationContext } from "../contexts/NotificationContext";
 import { useNavigate } from "react-router-dom";
-import GamePageTournament from "./GamePageTournament";
+
 
 const TournamentsPage: React.FC = () => {
 	const navigate = useNavigate();
 	const [update, setUpdate] = useState<boolean>(false);
 	const { user, userRelations } = useUserContext();
-	// const { socket } = useNotificationContext();
 	const [tournaments, setTournaments] = useState<string[][]>([]);
 	const [showCreateTournamentModal, setCreateTournamentModal] = useState(false);
 	const [selectedTournament, setSelectedTournament] = useState<string | null>(

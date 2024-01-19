@@ -8,6 +8,7 @@ import { GameHistoryProps } from "../models/Game";
 import axios from "axios";
 import { useNotificationContext } from "../contexts/NotificationContext";
 import { UserRelation } from "../models/User";
+import homepage_bkg from "../assets/homepage-bkg.png";
 
 const HomePage = () => {
 	const navigate = useNavigate();
@@ -142,7 +143,7 @@ const HomePage = () => {
 				<div className="w-full h-full grow flex flex-col items-center">
 					<img
 						className="absolute top-0 left-0 w-screen h-screen"
-						src="src/assets/homepage-bkg.png"
+						src={homepage_bkg}
 						alt="background"
 					></img>
 					<h1 className="text text-5xl font-bold z-10">

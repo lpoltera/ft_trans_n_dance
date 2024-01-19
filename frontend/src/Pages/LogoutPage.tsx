@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const Postlogout = () => {
 	const navigate = useNavigate();

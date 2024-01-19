@@ -9,7 +9,6 @@ const NotificationCard = ({
 	sender,
 	receiver,
 	message,
-	status,
 	game,
 	createdAt,
 }: Notifs) => {

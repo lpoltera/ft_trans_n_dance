@@ -2,7 +2,7 @@
 FROM node:latest
 
 # Créez un répertoire de travail dans le conteneur
-WORKDIR /app
+WORKDIR /dist
 
 # Copiez le package.json et le package-lock.json dans le répertoire de travail
 COPY package*.json ./
@@ -10,11 +10,19 @@ COPY package*.json ./
 # Installez les dépendances
 RUN npm install
 
+
 # Copiez le code source Nest.js dans le répertoire de travail
 COPY . .
 
-# Port exposé par l'application Nest.js
-EXPOSE 3000
+# Build the application
+RUN npm run build
 
-# Commande pour démarrer l'application Nest.js
-CMD ["npm","run", "start:dev"]
+# Port exposé par l'application Nest.js
+EXPOSE 4000
+
+# # Copy the dist directory into the Docker image
+COPY dist /app/dist
+
+
+# Command to start the application
+CMD ["npm", "run", "start:prod"]

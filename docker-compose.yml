@@ -4,15 +4,16 @@ services:
   frontend:
     build:
       context: ./frontend # Le chemin vers le répertoire du code source React.js
-    ports:
-      - "3000:3000" # Port pour le serveur de développement React
+    # ports:
+    #   - "3000:3000" # Port pour le serveur de développement React
     depends_on:
       - backend
     networks:
       - app-network
     volumes:
-      - ./frontend:/app/
-      - /app/node_modules
+      - frontend-dist:/app/dist
+      - ./frontend:/app/ # à supprimer en mode prod ?
+      - /app/node_modules # à supprimer en mode prod ?
     env_file:
       - .env
 
@@ -20,8 +21,8 @@ services:
   backend:
     build:
       context: ./backend # Le chemin vers le répertoire du code source Nest.js
-    ports:
-      - "4000:4000" # Port pour le serveur Nest.js
+    # ports:
+    #   - "4000:4000" # Port pour le serveur Nest.js
     env_file:
       - .env
     depends_on:
@@ -29,14 +30,14 @@ services:
     networks:
       - app-network
     volumes:
-      - ./backend:/app/
-      - /app/node_modules
+      - ./backend:/app/ # à supprimer en mode prod ?
+      - /app/node_modules # à supprimer en mode prod ?
 
   # Serveur nginx
   nginx:
     build:
       context: nginx
-    container_name: nginx-dev
+    container_name: nginx-prod
     tty: true
     ports:
       - "8000:443"
@@ -45,6 +46,9 @@ services:
     depends_on:
       - backend
       - frontend
+    restart: on-failure
+    volumes:
+      - frontend-dist:/usr/share/nginx/html
 
   # PostgreSQL
   postgres:
@@ -64,3 +68,4 @@ networks:
 
 volumes:
   postgres-data:
+  frontend-dist:

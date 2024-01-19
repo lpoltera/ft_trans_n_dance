@@ -1,5 +1,5 @@
 import axios from "axios";
-import { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import { ChangeEvent, FormEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AvatarRadioSelect from "./AvatarRadioSelect";
 

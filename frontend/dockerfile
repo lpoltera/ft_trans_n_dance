@@ -4,18 +4,20 @@ FROM node:latest
 # Répertoire de travail dans le conteneur
 WORKDIR /app
 
-# Copiez le package.json et le package-lock.json dans le répertoire de travail
+# Copiez le package.json dans le répertoire de travail
 COPY package*.json ./
 
-# Installez les dépendances
+# COPY output.css ./output.css
+
+# Install dependencies
 RUN npm install
 
-# Copiez tous les fichiers source dans le répertoire de travail
+# Copy all source files into the working directory
 COPY . .
 
-# Construisez l'application React
-# RUN npm run start
-# RUN npm run build
+CMD ["npm", "run", "build"]
 
-# Commande pour démarrer l'application React (elle dépendra de votre application)
-CMD ["npm", "run", "dev"]
+
+
+
+
