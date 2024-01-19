@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -49,9 +48,8 @@ export class AuthService {
       session.secret = secret.base32;
 
       console.log("utilisateur n'existe pas");
-      return 'new'; //false
+      return 'new';
     } else if (user.twoFaEnable === false) {
-      // check if user.twoFAEnable === true or false
       session.user = user;
       session.connected = true;
       session.login42 = user42name;
